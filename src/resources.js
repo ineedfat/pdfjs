@@ -1,26 +1,22 @@
-﻿(function ($) {
-    pdfJS.doc.prototype.putResourceDictionary = function() {
-        this.outToContent('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
-        this.outToContent('/Font <<');
-        // Do this for each font, the '1' bit is the index of the font
-        for (var fontKey in this.fonts) {
-            if (this.fonts.hasOwnProperty(fontKey)) {
-                this.outToContent('/' + fontKey + ' ' + this.fonts[fontKey].objectNumber + ' 0 R');
-            }
-        }
-        this.outToContent('>>');
-        this.outToContent('/XObject <<');
-        //putXobjectDict();
-        this.outToContent('>>');
-    };
-    pdfJS.doc.prototype.putResources = function() {
-        this.putFonts();
+﻿(function () {
+    //Add fonts before calling resource. 
+    pdfJS.doc.prototype.resources = function () {
+        var resourceObj = new pdfJS.obj(++this.objectNumber, 0);
         // Resource dictionary
-        this.offsets[this.objectNumber] = this.contentLength;
-        this.outToContent('2 0 obj');
-        this.outToContent('<<');
-        this.putResourceDictionary();
-        this.outToContent('>>');
-        this.outToContent('endobj');
+        //Manually increment objectNumber
+        resourceObj.body.push('<<');
+        resourceObj.body.push('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
+        resourceObj.body.push('/Font <<');
+        // Do this for each font, the '1' bit is the index of the font
+        for (var i = 0, len = this.fontObjs.length; i < len; i++) {
+                resourceObj.body.push('/F' + (i).toString(10) + ' ' + this.fontObjs[i].objectNumber + ' ' + this.fontObjs[i].generationNumber + ' R');
+        }
+        resourceObj.body.push('>>');
+        resourceObj.body.push('/XObject <<');
+        //putXobjectDict();
+        resourceObj.body.push('>>');
+        resourceObj.body.push('>>');
+
+        return resourceObj;
     };
 })();

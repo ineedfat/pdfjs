@@ -294,6 +294,19 @@
 
     // simplified (speedier) replacement for sprintf's %.2f conversion  
     pdfJS.utils = {
+        checkValidRect: function(rect) {
+            if (!rect || typeof rect !== 'object' || rect.length !== 4) {
+                console.warn('Invalid Rect');
+                return false;
+            }
+            for (var i = 0; i < 4; i++) {
+                if (typeof rect[i] !== 'number') {
+                    console.warn('Invalid Rect');
+                    return false;
+                }
+            }
+            return true;
+        },
         f2: function (number) {
             return number.toFixed(2);
         }

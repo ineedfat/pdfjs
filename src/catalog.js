@@ -1,16 +1,16 @@
-﻿(function($) {
-    pdfJS.doc.prototype.putCatalog = function () {
-        this.offsets[this.objectNumber] = this.contentLength;
-        this.outToContent(this.objectNumber + ' 0 obj');
-        this.outToContent('<<');
+﻿(function ($) {
+    //Create root pageTreeNode before calling catalog.
+    pdfJS.doc.prototype.catalog = function () {
+        var catalogObj = new pdfJS.obj(++this.objectNumber, 0);
+        catalogObj.body.push('<<');
         
-        this.outToContent('/Type /Catalog');
-        this.outToContent('/Pages 1 0 R');
-        // @TODO: Add zoom and layout modes
-        this.outToContent('/OpenAction [3 0 R /FitH null]');
-        this.outToContent('/PageLayout /OneColumn');
+        catalogObj.body.push('/Type /Catalog');
+        catalogObj.body.push('/Pages '+ this.rootNode.objectNumber + ' ' + this.rootNode.generationNumber + ' R');
 
-        this.outToContent('>>');
-        this.outToContent('endobj');
+        catalogObj.body.push('/PageLayout /OneColumn');
+
+        catalogObj.body.push('>>');
+
+        return catalogObj;
     };
 })();

@@ -14,10 +14,16 @@ module.exports = function (grunt) {
               '../src/catalog.js',
               '../src/font.js',
               '../src/info.js',
-              '../src/page.js',
               '../src/resources.js',
-              '../src/trailer.js',
-              '../src/utils.js'
+              //'../src/trailer.js',
+              '../src/utils.js',
+
+              //Classes
+              '../src/class/obj.js',
+              '../src/class/pageNode.js',
+              '../src/class/pageTreeNode.js',
+              '../src/class/stream.js'
+
             ]
         },
         concat: {

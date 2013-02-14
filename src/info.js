@@ -1,28 +1,26 @@
-﻿(function ($) {
-    pdfJS.doc.prototype.putInfo = function () {
-        this.offsets[this.objectNumber] = this.contentLength;
-        this.outToContent(this.objectNumber + ' 0 obj');
+﻿(function () {
+    pdfJS.doc.prototype.info = function () {
+        var infoObj = new pdfJS.obj(++this.objectNumber, 0);
+        infoObj.body.push('<<');
 
-        this.outToContent('<<');
-
-        this.outToContent('/Producer (PDFjs ' + PDFJS_VERSION + ')');
-        if (this.documentProperties.title) {
-            this.outToContent('/Title (' + pdfJS.pdfEscape(this.documentProperties.title) + ')');
+        infoObj.body.push('/Producer (PDFjs ' + PDFJS_VERSION + ')');
+        if (this.settings.documentProperties.title) {
+            infoObj.body.push('/Title (' + pdfJS.pdfEscape(this.settings.documentProperties.title) + ')');
         }
-        if (this.documentProperties.subject) {
-            this.outToContent('/Subject (' + pdfJS.pdfEscape(this.documentProperties.subject) + ')');
+        if (this.settings.documentProperties.subject) {
+            infoObj.body.push('/Subject (' + pdfJS.pdfEscape(this.settings.documentProperties.subject) + ')');
         }
-        if (this.documentProperties.author) {
-            this.outToContent('/Author (' + pdfJS.pdfEscape(this.documentProperties.author) + ')');
+        if (this.settings.documentProperties.author) {
+            infoObj.body.push('/Author (' + pdfJS.pdfEscape(this.settings.documentProperties.author) + ')');
         }
-        if (this.documentProperties.keywords) {
-            this.outToContent('/Keywords (' + pdfJS.pdfEscape(this.documentProperties.keywords) + ')');
+        if (this.settings.documentProperties.keywords) {
+            infoObj.body.push('/Keywords (' + pdfJS.pdfEscape(this.settings.documentProperties.keywords) + ')');
         }
-        if (this.documentProperties.creator) {
-            this.outToContent('/Creator (' + pdfJS.pdfEscape(this.documentProperties.creator) + ')');
+        if (this.settings.documentProperties.creator) {
+            infoObj.body.push('/Creator (' + pdfJS.pdfEscape(this.settings.documentProperties.creator) + ')');
         }
         var created = new Date();
-        this.outToContent('/CreationDate (D:' +
+        infoObj.body.push('/CreationDate (D:' +
             [
                 created.getFullYear(),
                 pdfJS.utils.padd2(created.getMonth() + 1),
@@ -34,10 +32,9 @@
             ')'
         );
 
-        this.outToContent('>>');
-        this.outToContent('endobj');
+        infoObj.body.push('>>');
         
-        this.objectNumber++;
+        return infoObj;
 
     };
 })(jQuery);

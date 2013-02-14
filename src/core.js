@@ -12,125 +12,154 @@
         'legal': [612, 1008]
     };
     
-    pdfJS.doc = function (format, orientation) {
+    pdfJS.doc = function (format, orientation, margin) {
         var self = this;
-        self.plugins = {};
-        self.objectNumber = 0;
-        self.pages = [];
-        self.currentPage = -1;
-        self.fonts = {};
-        self.activeFontKey = null;
-        self.activeFontSize = 16;
+        self.objectNumber = 0; //object counter used for setting indirect object.
+        self.fontObjs = [];
+        
         self.fontmap = {}; // mapping structure fontName > fontStyle > font key - performance layer. See addFont()
-        self.documentProperties = { 'title': '', 'subject': '', 'author': '', 'keywords': '', 'creator': '' };
-        self.docContent = [];
-        self.contentLength = 0;
-        self.offsets = [];
-        self.fontmap = {}; // mapping structure fontName > fontStyle > font key - performance layer. See addFont()
+        self.objectMap = {};
+        //General document setting should get set here.
         self.settings = {
-            dimensions: pdfJS.paperFormat['letter'],
-            lineWidth: 0.200025 // 2mm
+            dimension: pdfJS.paperFormat['letter'],
+            documentProperties: { 'title': '', 'subject': '', 'author': '', 'keywords': '', 'creator': '' }
         };
         
-        //Determine page navigation.
+        self.pageCount = 0;
+        //Determine page dimensions.
         if (typeof format === 'string') {
-            self.settings.dimensions = pdfJS.paperFormat[format.toLowerCase()];
+            self.settings.dimension = pdfJS.paperFormat[format.toLowerCase()];
         } else if (typeof format === 'object' && typeof format[0] === 'number' && format[1] === 'number') {
-            self.settings.dimensions = format.slice().splice(0, 2);
+            self.settings.dimension = format.slice().splice(0, 2);
         }
         
         if (typeof orientation === 'string' && orientation.toLowerCase() === 'landscape') {
-            var temp = self.settings.dimensions[0];
-            self.settings.dimensions[0] = self.settings.dimensions[1];
-            self.settings.dimensions[1] = temp;
+            var temp = self.settings.dimension[0];
+            self.settings.dimension[0] = self.settings.dimension[1];
+            self.settings.dimension[1] = temp;
+        }
+        self.currentNode = self.rootNode = new pdfJS.pageTreeNode(null, ++self.objectNumber, 0);
+        self.currentPage = null;
+        /////////////////
+        this.addStandardFonts();
+        self.resObj = this.resources();
+        self.infoObj = this.info();
+        self.catalogObj = this.catalog();
+    };
+    pdfJS.doc.prototype.newObj = function () {
+        return new pdfJS.obj(++this.objectNumber, 0);
+    }
+    pdfJS.doc.prototype.newStream = function () {
+        return new pdfJS.stream(++this.objectNumber, 0);
+    }
+    pdfJS.doc.prototype.addPage = function (height, width) {
+        this.pageCount++;
+        this.currentPage = new pdfJS.pageNode(
+            this.currentNode,
+            { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
+            ++this.objectNumber,
+            0,
+            this.newStream()
+            );
+        this.currentNode.kids.push(this.currentPage);
+        return this;
+    };
+    pdfJS.doc.prototype.buildPageTreeNodes = function (node) {
+        var self = this,
+            ret = [node.out()], i, item;
+        
+        for (i = 0; item = node.kids[i]; i++) {
+            if (item instanceof pdfJS.pageTreeNode) {
+                ret.push(this.buildPageTreeNodes(item));
+                continue
+            }
+            ret.push(item.out());
+        }
+        return ret.join('\n');
+    };
+    pdfJS.doc.prototype.buildFonts = function () {
+        var i, font,
+            ret = [];
+        for (i = 0; font = this.fontObjs[i]; i++) {
+            ret.push(font.out());
+        }
+        return ret.join('\n');
+    };
+    pdfJS.doc.prototype.getOffsets = function (data) {
+        if (typeof data !== 'string') {
+            throw 'getOffsets expects a string input';
         }
 
-        this.addFonts();
-        this.activeFontKey = 'F1';
-        this.addPage();
+        var ret = [],
+            genRegex = /\d+(?=\sobj)/,
+            objRegex = /^\d+/,
+            matches,i,match;
+        //let's search the string for all object declaration. 
+        matches = data.match(/\d+\s\d+\sobj/gim)
 
-    };
-    pdfJS.doc.prototype.addPage = function () {
-        this.currentPage++;
-        this.pages[this.currentPage] = [];
-        // Set line width
-        this.out(pdfJS.utils.f2(this.settings.lineWidth) + ' w');
-    };
-    pdfJS.doc.prototype.outToContent = function(string) {
-        this.docContent.push(string);
-        this.contentLength += string.length + 1;
-    };
-    
-    pdfJS.doc.prototype.out = function (string) {
-        this.outToPage(this.currentPage, string);
-    };
-    pdfJS.doc.prototype.outToPage = function (page, string) {
-        if (typeof page !== 'number') {
-            throw ('Invalid Page. Expect integer');
+        for (i = 0; match = matches[i]; i++) {
+            ret.push({
+                objNum: parseInt(objRegex.exec(match)),
+                genNum: parseInt(genRegex.exec(match)),
+                offset: data.indexOf(match)
+            });
         }
-        if (page >= this.pages.length) {
-            throw ('Page does not exist');
-        }
-        this.pages[this.currentPage].push(string);
-    };
-    
-    pdfJS.doc.prototype.newObj = function() {
-        this.offsets[this.objectNumber] = this.contentLength;
-        this.out(this.objectNumber + ' 0 obj');
-        this.objectNumber++;
-        return this.objectNumber - 1;
-    };
 
-    pdfJS.doc.prototype.putStream = function(str) {
-        this.out('stream');
-        this.out(str);
-        this.out('endstream');
-    };
-    
+        return ret;
+    }
     pdfJS.doc.prototype.buildDocument = function () {
-        this.docContent = [];
-        this.contentLength = 0;
-        this.offsets = [];
-        this.objectNumber = 0;
+        var contentBuilder = [],
+            i;
+        
         //Write header
-        this.outToContent('%PDF-' + PDF_VERSION);
+        contentBuilder.push('%PDF-' + PDF_VERSION);
 
-        this.putPages();
+        contentBuilder.push(this.buildPageTreeNodes(this.rootNode));
 
-        this.putResources();
+        contentBuilder.push(this.buildFonts());
 
-        this.putInfo();
+        contentBuilder.push(this.resObj.out());
+
+        contentBuilder.push(this.infoObj.out());
         
-        this.putCatalog();
+        contentBuilder.push(this.catalogObj.out());
         
+        var body = contentBuilder.join('\n');
+        var offsets = this.getOffsets(body);
+        
+        offsets = offsets.sort(function (a, b) {
+            return a.objectNumber - b.objectNumber;
+        });
+        var offsetsLength = offsets.length;
         // Cross-ref
-        var o = this.contentLength;
-        this.outToContent('xref');
-        this.outToContent('0 ' + (this.objectNumber + 1));
-        this.outToContent('0000000000 65535 f ');
-        for (var i = 0; i < this.objectNumber; i++) {
-            this.outToContent(pdfJS.utils.padd10(this.offsets[i]) + ' 00000 n ');
+        var o = body.length;
+        contentBuilder.push('xref');
+        contentBuilder.push('0 ' + (offsetsLength + 1));
+        contentBuilder.push('0000000000 65535 f ');
+        for (i = 0; i < offsetsLength; i++) {
+            contentBuilder.push(pdfJS.utils.padd10(offsets[i].offset) + ' 00000 n ');
         }
         
         // Trailer
-        this.outToContent('trailer');
-        this.outToContent('<<');
-        this.putTrailer();
-        this.outToContent('>>');
-        this.outToContent('startxref');
-        this.outToContent(o);
+        contentBuilder.push('trailer');
+        contentBuilder.push('<<');
+        contentBuilder.push('/Size ' + (offsetsLength + 1));
+        contentBuilder.push('/Root ' + this.catalogObj.objectNumber + ' 0 R');
+        contentBuilder.push('/Info ' + this.infoObj.objectNumber + ' 0 R');
+        contentBuilder.push('>>');
+        contentBuilder.push('startxref');
+        contentBuilder.push(o);
 
-        this.outToContent('%%EOF');
-
-        console.log(this.docContent.join('\n'));
-        return this.docContent.join('\n');
+        contentBuilder.push('%%EOF');
+        
+        
+        console.log(contentBuilder.join('\n'));
+        return contentBuilder.join('\n');
     };
     
     pdfJS.doc.prototype.output = function (type, options) {
-        var undef
+        
         switch (type) {
-            case undef:
-                return this.buildDocument();
             case 'datauristring':
             case 'dataurlstring':
                 return 'data:application/pdf;base64,' + btoa(this.buildDocument());
@@ -142,8 +171,7 @@
                 window.open('data:application/pdf;base64,' + btoa(this.buildDocument()));
                 break;
             default:
-                throw new Error('Output type "' + type + '" is not supported.');
+                return this.buildDocument();
         }
-        // @TODO: Add different output options
     };
 })(jQuery);
