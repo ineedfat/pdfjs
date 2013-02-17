@@ -1,10 +1,12 @@
-﻿var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams) {
+﻿var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
     this.pageOptions = pageOptions;
     this.parent = parent;
     this.contentStreams = contentStreams;
+    this.currentStream = this.contentStreams[0];
+    this.doc = document;
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
@@ -37,5 +39,25 @@ pageNode.prototype = Object.create(obj.prototype, {
             return ret.join('\n');
         }
     },
-
+    graphic: {
+        value: function (operator, operands) {
+            if (this instanceof pageNode) {
+                graphicOperators[operator].apply(this, Array.prototype.slice.call(arguments, 1));
+            }
+        }
+    },
+    text: {
+        value: function (operator, operands) {
+            if (this instanceof pageNode) {
+                textOperators[operator].apply(this, Array.prototype.slice.call(arguments, 1));
+            }
+        }
+    },
+    setStream: {
+        value: function (index) {
+            if (index >= this.contentStreams.length)
+                throw 'Invalid stream index';
+            this.currentStream = this.contentStreams[index];
+        }
+    }
 });

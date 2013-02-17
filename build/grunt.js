@@ -6,17 +6,15 @@ module.exports = function (grunt) {
         pkg: '<json:package.json>',
         meta: {
             banner: '/*! <%= pkg.title %> | <%= pkg.homepage %> | ' +
-              '<%= grunt.template.today("yyyy-mm-dd") %> | <%= pkg.author.name %>(<%= pkg.author.url %>)*/\nvar pdfVersion = \'<%= pkg.version %>\';'
+              '<%= grunt.template.today("yyyy-mm-dd") %> | <%= pkg.author.name %>(<%= pkg.author.url %>)*/\nvar PDFJS_VERSION = \'<%= pkg.version %>\';'
         },
         lint: {
             files: [
               //PDF core parts
               '../src/internals/core.js',
               '../src/internals/catalog.js',
-              '../src/internals/font.js',
               '../src/internals/info.js',
               '../src/internals/resources.js',
-              '../src/internals/graphics.js',
               '../src/internals/optionsConverter.js',
               //Supporting classes
               '../src/utils.js',
@@ -26,9 +24,11 @@ module.exports = function (grunt) {
               '../src/classes/pageNode.js',
               '../src/classes/pageTreeNode.js',
               '../src/classes/stream.js',
+              '../src/classes/font.js',
 
               //API calls
               '../src/api/graphics.js',
+              '../src/api/text.js',
 
               //Public exposure
               '../src/public.js',
