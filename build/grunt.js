@@ -16,6 +16,7 @@ module.exports = function (grunt) {
               '../src/internals/info.js',
               '../src/internals/resources.js',
               '../src/internals/optionsConverter.js',
+
               //Supporting classes
               '../src/utils.js',
 

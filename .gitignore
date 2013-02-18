@@ -167,3 +167,7 @@ pip-log.txt
 # Mac crap
 .DS_Store
 
+#############
+## Custom
+#############
+buildDoc.cmd

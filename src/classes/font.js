@@ -1,7 +1,16 @@
-﻿var font = function (font, objectNumber, generationNumber) {
+﻿/**
+*Representing font type in PDF document.
+*@constructor
+*@memberof pdfJS
+*@augments pdfJS.obj
+*/
+var font = function (font, objectNumber, generationNumber) {
     var self = this;
-
     obj.call(this, objectNumber, generationNumber);
+    /**
+        *Font description object.
+        *@Type object
+        */
     self.description = font;
 };
 

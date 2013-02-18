@@ -8,28 +8,28 @@
         switch (item.toLowerCase()) {
             //Inheritable
             case 'mediabox':
-                if (utils.checkValidRect(obj)) {
+                if (checkValidRect(obj)) {
                     ret.push('/MediaBox [' + obj.join(' ') + ']');
                 }
                 break;
                 //Inheritable
             case 'cropbox':
-                if (utils.checkValidRect(obj)) {
+                if (checkValidRect(obj)) {
                     ret.push('/CropBox [' + obj.join(' ') + ']');
                 }
                 break;
             case 'bleedbox':
-                if (utils.checkValidRect(obj)) {
+                if (checkValidRect(obj)) {
                     ret.push('/BleedBox [' + obj.join(' ') + ']');
                 }
                 break;
             case 'trimbox':
-                if (utils.checkValidRect(obj)) {
+                if (checkValidRect(obj)) {
                     ret.push('/TrimBox [' + obj.join(' ') + ']');
                 }
                 break;
             case 'artbox':
-                if (utils.checkValidRect(obj)) {
+                if (checkValidRect(obj)) {
                     ret.push('/ArtBox [' + obj.join(' ') + ']');
                 }
                 break;
