@@ -1,5 +1,6 @@
 ﻿/**
-*Representing font type in PDF document.
+*Initialize new font object.
+*@classdesc Representing font type in PDF document.
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj

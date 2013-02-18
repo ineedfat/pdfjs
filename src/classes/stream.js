@@ -1,5 +1,6 @@
 ﻿/**
-*Representing a stream object in a PDF document.
+*Initialize new steam object.
+*@classdesc Representing a stream object in a PDF document.
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj

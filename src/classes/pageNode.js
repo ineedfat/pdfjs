@@ -1,5 +1,6 @@
 ﻿/**
-*Representing a page in a PDF document.
+*Initialize new pageNode object.
+*@classdesc Representing a page in a PDF document.
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj
@@ -66,7 +67,7 @@ pageNode.prototype = Object.create(obj.prototype, {
         }
     },
     /**
-    *Graphic Operation Setter.
+    *Graphic Operation Setter. Please see [graphicOperators]{@link pdfJS.graphicOperators} for available operations and corresponding set of operands.
     *@param {string} operator Name of graphic operator.
     *@param {args} operand Operator operands (op1, op2, . . . opX)
     *@return {pageNode}
@@ -82,7 +83,7 @@ pageNode.prototype = Object.create(obj.prototype, {
         }
     },
     /**
-    *Text Operation Setter.
+    *Text Operation Setter. Please see [textOperators]{@link pdfJS.textOperators} for available operations and corresponding set of operands.
     *@param {string} operator Name of graphic operator.
     *@param {args . . .} operand Operator operands
     *@return {pageNode} Return this pageNode object

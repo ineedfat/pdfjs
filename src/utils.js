@@ -466,7 +466,7 @@ no-op,” used primarily for the side effect of changing the clipping path*/
     /**
     *See Adobe's PDF Reference v1.3 for more details
     *@readonly
-    *@enum {int}
+    *@enum {string}
     */
     colorSpace: {
         /**DeviceGray requires one value between 0.0(black) and 1.0(white).*/
@@ -475,6 +475,29 @@ no-op,” used primarily for the side effect of changing the clipping path*/
         deviceRGB: 'DeviceRGB',
         /**DeviceCMYK requires four values that are between 0.0 and 1.0 for each channel*/
         deviceCMYK: 'DeviceCMYK'
+    },
+    /**
+    *See Adobe's PDF Reference v1.3 for more details
+    *@readonly
+    *@enum {int}
+    */
+    textMode: {
+        /**Fill text.*/
+        fillText: 0,
+        /**Stroke text.*/
+        strokeText: 1,
+        /**Fill, then stroke, text.*/
+        fillStrokeText: 2,
+        /**Neither fill nor stroke text (invisible).*/
+        invisibleText: 3,
+        /**Fill text and add to path for clipping (see above).*/
+        fillClipText: 4,
+        /**Stroke text and add to path for clipping.*/
+        strokeClipText: 5,
+        /**Fill, then stroke, text and add to path for clipping.*/
+        fillStrokeClipText: 6,
+        /**Add text to path for clipping.*/
+        clipText: 7
     }
 
 };

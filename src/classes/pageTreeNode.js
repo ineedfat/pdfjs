@@ -1,5 +1,6 @@
 ﻿/**
-*Representing a page-tree node in a PDF document.
+*Initialize new pageTreeNode object.
+*@classdesc Representing a page-tree node in a PDF document.
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj

@@ -1,5 +1,6 @@
 ﻿/**
-*Representing font type in PDF document.
+*Initialize new PDf speical object.
+*@classdesc Representing font type in PDF document.
 *@constructor
 *@memberof pdfJS
 

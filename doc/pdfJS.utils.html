@@ -96,7 +96,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="colorSpace"><span class="type-signature">&lt;static, readonly> </span>colorSpace<span class="type-signature"> :int</span></h4>
+    <h4 class="name" id="colorSpace"><span class="type-signature">&lt;static, readonly> </span>colorSpace<span class="type-signature"> :string</span></h4>
     
     
 </dt>
@@ -145,7 +145,7 @@
             <td class="type">
             
                 
-<span class="param-type">int</span>
+<span class="param-type">string</span>
 
 
             
@@ -174,7 +174,7 @@
             <td class="type">
             
                 
-<span class="param-type">int</span>
+<span class="param-type">string</span>
 
 
             
@@ -203,7 +203,7 @@
             <td class="type">
             
                 
-<span class="param-type">int</span>
+<span class="param-type">string</span>
 
 
             
@@ -1421,6 +1421,320 @@ typical use might be for scanned images.</td>
     
 </dd>
 
+        
+            
+<dt>
+    <h4 class="name" id="textMode"><span class="type-signature">&lt;static, readonly> </span>textMode<span class="type-signature"> :int</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        See Adobe's PDF Reference v1.3 for more details
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>fillText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+            
+            <td class="description last">Fill text.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>strokeText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+            
+            <td class="description last">Stroke text.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fillStrokeText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    2
+                
+                </td>
+            
+            
+            <td class="description last">Fill, then stroke, text.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>invisibleText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    3
+                
+                </td>
+            
+            
+            <td class="description last">Neither fill nor stroke text (invisible).</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fillClipText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    4
+                
+                </td>
+            
+            
+            <td class="description last">Fill text and add to path for clipping (see above).</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>strokeClipText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    5
+                
+                </td>
+            
+            
+            <td class="description last">Stroke text and add to path for clipping.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fillStrokeClipText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    6
+                
+                </td>
+            
+            
+            <td class="description last">Fill, then stroke, text and add to path for clipping.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>clipText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    7
+                
+                </td>
+            
+            
+            <td class="description last">Add text to path for clipping.</td>
+        </tr>
+	
+	
+	</tbody>
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils.js.html">utils.js</a>, line 484
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
         </dl>
     
     
@@ -1439,13 +1753,13 @@ typical use might be for scanned images.</td>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="pdfJS.doc.html">doc</a></li><li><a href="pdfJS.font.html">font</a></li><li><a href="pdfJS.obj.html">obj</a></li><li><a href="pdfJS.pageNode.html">pageNode</a></li><li><a href="pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="pdfJS.html">pdfJS</a></li><li><a href="pdfJS.utils.html">utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="pdfJS.doc.html">doc</a></li><li><a href="pdfJS.font.html">font</a></li><li><a href="pdfJS.obj.html">obj</a></li><li><a href="pdfJS.pageNode.html">pageNode</a></li><li><a href="pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="pdfJS.html">pdfJS</a></li><li><a href="pdfJS.graphicOperators.html">graphicOperators</a></li><li><a href="pdfJS.textOperators.html">textOperators</a></li><li><a href="pdfJS.utils.html">utils</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sun Feb 17 2013 22:04:57 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sun Feb 17 2013 23:34:18 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

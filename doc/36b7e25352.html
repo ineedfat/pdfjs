@@ -25,35 +25,39 @@
     
     <section>
         <article>
-            <pre class="prettyprint source"><code>﻿var graphicOperators = {
+            <pre class="prettyprint source"><code>﻿/**
+*Includes all supported graphic operations. Please see [pageNode.text]{@link pdfJS.pageNode#text} for details.
+*@namespace
+*@memberof pdfJS*/
+var graphicOperators = {
     /**
-    Access through pageNode.Graphic
+
     *@inner
     *@method
     *@param {int} tx Translate by tx pt in x direction.
     *@param {int} ty Translate by ty pt in y direction.
-    *@memberof pdfJS.pageNode
+    
     */
     translate: function (tx, ty) {
         this.currentStream.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
     },
     /**
-    Access through pageNode.Graphic
+    
     *@inner
     *@method
     *@param {int} sx Scale by tx in x direction.
     *@param {int} sy Translate by ty in y direction.
-    *@memberof pdfJS.pageNode
+    
     */
     scale: function (sx, sy) {
         this.currentStream.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
     },
     /**
-    Access through pageNode.Graphic
+    
     *@inner
     *@method
     *@param {int} theta Rotate by theta.
-    *@memberof pdfJS.pageNode
+    
     */
     rotate: function (theta) {
         var cos = Math.cos(theta),
@@ -61,12 +65,12 @@
         this.currentStream.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
     },
     /**
-   Access through pageNode.Graphic
+   
    *@inner
    *@method
    *@param {int} alphaX Skew horizontally.
    *@param {int} betaY Skew vertically.
-   *@memberof pdfJS.pageNode
+   
    */
     skew: function (alphaX, betaY) {
         this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
@@ -75,7 +79,7 @@
     TODO: Implement
    *@inner
    *@method
-   *@memberof pdfJS.pageNode
+   
    */
     colorSpace: function () {
     },
@@ -83,7 +87,7 @@
     TODO: Implement
    *@inner
    *@method
-   *@memberof pdfJS.pageNode
+   
    */
     color: function () {
     },
@@ -91,44 +95,44 @@
     TODO: Implement
    *@inner
    *@method
-   *@memberof pdfJS.pageNode
+   
    */
     textState: function () {
     },
     /**
-    Access through pageNode.Graphic
+    
     *@inner
     *@method
     *@param {int} width Set line thickness by lineWidth in pt. Valid Value: Non-negative number.
     A value of zero means the thinnest line a device can print/render;
     therefore setting the value to zero is a device-dependent operation, not recommended'
-    *@memberof pdfJS.pageNode
+    
     */
     lineWidth: function (width) {
         this.currentStream.push(width + ' w');
     },
     /**
-    Access through pageNode.Graphic
+    
     *@inner
     *@method
     *@param {int} capStyle See [lineCapStyle]{@link pdfJS.utils.lineCapStyle} for valid values.
-    *@memberof pdfJS.pageNode
+    
     */
     lineCap: function (capStyle) {
         this.currentStream.push(capStyle + ' J');
     },
     /**
-    Access through pageNode.Graphic
+    
     *@inner
     *@method
     *@param {int} joinStyle See [lineCapStyle]{@link pdfJS.utils.lineJoinStyle} for valid values.
-    *@memberof pdfJS.pageNode
+    
     */
     lineJoin: function (joinStyle) {
         this.currentStream.push(joinStyle + ' j');
     },
     /**
-    Access through pageNode.Graphic
+    
     *@inner
     *@method
     *@param {int} limit When two line segments meet at a sharp angle and mitered joins have been specified
@@ -136,28 +140,28 @@ as the line join style, it is possible for the miter to extend far beyond the
 thickness of the line stroking the path. The miter limit imposes a maximum on
 the ratio of the miter length to the line width. When the limit is
 exceeded, the join is converted from a miter to a bevel.
-    *@memberof pdfJS.pageNode
+    
     */
     miterLimit: function (limit) {
         this.currentStream.push(limit + ' M');
     },
     /**
-    The line dash pattern controls the pattern of dashes and gaps used to stroke paths (Access through pageNode.Graphic).
+    The line dash pattern controls the pattern of dashes and gaps used to stroke paths .
     *@inner
     *@method
     *@param {int} dashArray Refer to Adobe's PDF Reference v1.3 for more details
     *@param {int} dashPhase Refer to Adobe's PDF Reference v1.3 for more details
-    *@memberof pdfJS.pageNode
+    
     */
     dashPattern: function (dashArray, dashPhase) {
         this.currentStream.push(dashArray + ' ' + dashPhase + ' d');
     },
     /**
-    Set the color rendering intent in the graphics state (Access through pageNode.Graphic).
+    Set the color rendering intent in the graphics state .
     *@inner
     *@method
     *@param {int} intent See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
-    *@memberof pdfJS.pageNode
+    
     */
     renderingIntent: function (intent) {
         this.currentStream.push(intent + ' ri');
@@ -166,25 +170,25 @@ exceeded, the join is converted from a miter to a bevel.
     TODO: Implement
    *@inner
    *@method
-   *@memberof pdfJS.pageNode
+   
    */
     strokeAdjustment: function () {
     },
     /**
-    *Save the current graphics state on the graphics state stack (Access through pageNode.Graphic).
+    *Save the current graphics state on the graphics state stack .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     pushState: function () {
         this.currentStream.push('q');
     },
     /**
     *Restore the graphics state by removing the most recently saved state from
-the stack and making it the current state (Access through pageNode.Graphic).
+the stack and making it the current state .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     popState: function () {
         this.currentStream.push('Q');
@@ -195,10 +199,10 @@ the stack and making it the current state (Access through pageNode.Graphic).
 (x, y), omitting any connecting line segment. If the previous path
 construction operator in the current path was also initiated by 'newSubPath', the new 'newSubPath'
 overrides it; no vestige of the previous m operation remains in the
-path. (Access through pageNode.Graphic).
+path. .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
+    
     *@param {int} x
     *@param {int} y
     */
@@ -211,10 +215,10 @@ path. (Access through pageNode.Graphic).
     },
     /**
     *Append a straight line segment from the current point to the point
-(x, y). The new current point is (x, y). (Access through pageNode.Graphic).
+(x, y). The new current point is (x, y). .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
+    
     *@param {int} x
     *@param {int} y
     */
@@ -227,10 +231,10 @@ path. (Access through pageNode.Graphic).
     },
     /**
     *Append a cubic Bézier curve to the current path. The curve extends
-from the current point to the point (x3, y3), using the other pairs of points as the Bézier control points (Access through pageNode.Graphic).
+from the current point to the point (x3, y3), using the other pairs of points as the Bézier control points .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
+    
     *@param {int} x1
     *@param {int} y1
     *@param {int} x2
@@ -262,10 +266,10 @@ operator terminates the current subpath; appending another segment
 to the current path will begin a new subpath, even if the new
 segment begins at the endpoint reached by the 'close' operation. If the
 current subpath is already closed or the current path is empty, 'close' operation
-does nothing. (Access through pageNode.Graphic).
+does nothing. .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     close: function () {
         this.currentStream.push('h');
@@ -274,10 +278,10 @@ does nothing. (Access through pageNode.Graphic).
     /**
     *Append a rectangle to the current path as a complete subpath, with
 lower-left corner (x, y) and dimensions width and height in user
-space. (Access through pageNode.Graphic).
+space. .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
+    
     *@param {int} operator See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
     */
     paintPath: function (operator) {
@@ -287,10 +291,10 @@ space. (Access through pageNode.Graphic).
     /**
     *Append a rectangle to the current path as a complete subpath, with
 lower-left corner (x, y) and dimensions width and height in user
-space. (Access through pageNode.Graphic).
+space. .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
+    
     *@param {bool} asterisk if true, then set clipping path using even-odd rule.
     */
     clip: function (asterisk) {
@@ -300,10 +304,9 @@ space. (Access through pageNode.Graphic).
     /**
     *Append a rectangle to the current path as a complete subpath, with
 lower-left corner (x, y) and dimensions width and height in user
-space. (Access through pageNode.Graphic).
+space. .
     *@inner
     *@method
-    *@memberof pdfJS.pageNode
     */
     rect: function (x, y, width, height) {
         if (arguments.length != 4) {
@@ -317,11 +320,11 @@ space. (Access through pageNode.Graphic).
     /**
     *Set the color space to use for nonstroking operations. The operand
 name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). (Access through pageNode.Graphic).
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
     *@inner
     *@param {pdfJS.utils.colorSpace | string} name See [colorSpace]{@link pdfJS.utils.colorSpace} for valid values.
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     fillColorSpace: function (name) {
         this.currentStream.push(name + ' cs')
@@ -329,11 +332,11 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). (Acce
     /**
     *Set the color space to use for stroking operations. The operand
 name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). (Access through pageNode.Graphic).
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
     *@inner
     *@param {pdfJS.utils.colorSpace | string} name See [colorSpace]{@link pdfJS.utils.colorSpace} for valid values.
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     strokeColorSpace: function (name) {
         this.currentStream.push(name + ' CS')
@@ -341,14 +344,14 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). (Acce
     /**
     *Set the color space to use for non-stroking operations. The operand
 name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). (Access through pageNode.Graphic).
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
     *@inner
     *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 
     *@param {int} colorValue4 
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     fillColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
@@ -366,14 +369,14 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). (Acce
     /**
     *Set the color space to use for stroking operations. The operand
 name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) (Access through pageNode.Graphic).
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) .
     *@inner
     *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 
     *@param {int} colorValue4 
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     strokeColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
@@ -389,33 +392,33 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) (Acces
         }
     },
     /**
-    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations (Access through pageNode.Graphic).
+    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations .
     *@inner
     *@param {int} value See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     grayFill: function (value) {
         this.currentStream.push(value + ' g');
     },
     /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations (Access through pageNode.Graphic).
+    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
     *@inner
     *@param {int} value See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     grayStroke: function (value) {
         this.currentStream.push(value + ' G');
     },
     /**
-    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations (Access through pageNode.Graphic).
+    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations .
     *@inner
     *@param {int} r set red channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} g set green channel color value.
     *@param {int} b set blue channel color value. 
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     rgbFill: function (r, g, b) {
         if (arguments.length != 3) {
@@ -425,13 +428,13 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) (Acces
         this.currentStream.push(args.join(' ') + ' rg');
     },
     /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations (Access through pageNode.Graphic).
+    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
     *@inner
     *@param {int} r set red channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} g set green channel color value.
     *@param {int} b set blue channel color value. 
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     rgbStroke: function () {
         if (arguments.length != 3) {
@@ -441,14 +444,14 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) (Acces
         this.currentStream.push(args.join(' ') + ' RG');
     },
     /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations (Access through pageNode.Graphic).
+    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
     *@inner
     *@param {int} c set cryan channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} g set magenta channel color value.
     *@param {int} b set yellow channel color value. 
     *@param {int} k set black channel color value. 
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     cmykFill: function () {
         if (arguments.length != 4) {
@@ -458,14 +461,14 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) (Acces
         this.currentStream.push(args.join(' ') + ' k');
     },
     /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations (Access through pageNode.Graphic).
+    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
     *@inner
     *@param {int} c set cryan channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} g set magenta channel color value.
     *@param {int} b set yellow channel color value. 
     *@param {int} k set black channel color value. 
     *@method
-    *@memberof pdfJS.pageNode
+    
     */
     cmykStroke: function () {
         if (arguments.length != 4) {
@@ -486,13 +489,13 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) (Acces
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="pdfJS.doc.html">doc</a></li><li><a href="pdfJS.font.html">font</a></li><li><a href="pdfJS.obj.html">obj</a></li><li><a href="pdfJS.pageNode.html">pageNode</a></li><li><a href="pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="pdfJS.html">pdfJS</a></li><li><a href="pdfJS.utils.html">utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="pdfJS.doc.html">doc</a></li><li><a href="pdfJS.font.html">font</a></li><li><a href="pdfJS.obj.html">obj</a></li><li><a href="pdfJS.pageNode.html">pageNode</a></li><li><a href="pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="pdfJS.html">pdfJS</a></li><li><a href="pdfJS.graphicOperators.html">graphicOperators</a></li><li><a href="pdfJS.textOperators.html">textOperators</a></li><li><a href="pdfJS.utils.html">utils</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sun Feb 17 2013 22:04:56 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sun Feb 17 2013 23:34:13 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>
