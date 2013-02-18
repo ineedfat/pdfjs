@@ -31,8 +31,9 @@ stream.prototype = Object.create(obj.prototype, {
     /**
         *Shortcut to pushing content to the stream (same as stream.content.push('something');
         *@param {string} args stream.push(item1, item2, . . . , itemX)
-        *@returns {pdfJS.stream} Return this stream object.
+        *@return {pdfJS.stream} Return this stream object.
         *@memberof pdfJS.stream#
+        *@method
         */
     push: {
         value: function (args) {

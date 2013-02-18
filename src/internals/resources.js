@@ -1,7 +1,8 @@
 ﻿//Add fonts before calling resurce. 
 var resources = function (fontObjs, resourceObj) {
+    //reset resource body.
+    resourceObj.body = [];
     // Resource dictionary
-    //Manually increment objectNumber
     resourceObj.body.push('<<');
     resourceObj.body.push('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
     resourceObj.body.push('/Font <<');

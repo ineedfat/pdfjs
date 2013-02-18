@@ -1,5 +1,6 @@
 ﻿//Create root pageTreeNode before calling catalog.
 var catalog = function (rootNode, catalogObj) {
+    catalogObj.body = [];
     catalogObj.body.push('<<');
 
     catalogObj.body.push('/Type /Catalog');

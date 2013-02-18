@@ -1,4 +1,5 @@
 ﻿var info = function (settings, infoObj) {
+    infoObj.body = [];
     infoObj.body.push('<<');
 
     infoObj.body.push('/Producer (PDFjs ' + PDFJS_VERSION + ')');

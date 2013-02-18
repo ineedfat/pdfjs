@@ -17,7 +17,7 @@
     wordSpace: function (wordSpace) {
         this.currentStream.push(wordSpace + ' Tw');
     },
-    scale: function (scale) {
+    scaleText: function (scale) {
         this.currentStream.push(scale + ' Tz');
     },
     leading: function (leading) {

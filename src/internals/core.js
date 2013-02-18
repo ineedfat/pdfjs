@@ -83,6 +83,8 @@
         this.resObj = resources(this.fontObjs, this.newObj());
         this.infoObj = info(this.settings, this.newObj());
         this.catalogObj = catalog(this.rootNode, this.newObj());
+
+        
     };
     doc.prototype = {
         /**
@@ -128,6 +130,9 @@
         *@return {string} PDF data string.
         */
         output: function (type) {
+
+            resources(this.fontObjs, this.resObj);
+
             var content = [
                 buildPageTreeNodes(this.rootNode),
                 buildFonts(this.fontObjs),

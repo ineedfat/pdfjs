@@ -68,9 +68,10 @@ pageNode.prototype = Object.create(obj.prototype, {
     /**
     *Graphic Operation Setter.
     *@param {string} operator Name of graphic operator.
-    *@param {args . . .} operand Operator operands
-    *@returns {pageNode} Return this pageNode object
+    *@param {args} operand Operator operands (op1, op2, . . . opX)
+    *@return {pageNode}
     *@memberof pdfJS.pageNode#
+    *@method
     */
     graphic: {
         value: function (operator, operands) {
@@ -84,8 +85,9 @@ pageNode.prototype = Object.create(obj.prototype, {
     *Text Operation Setter.
     *@param {string} operator Name of graphic operator.
     *@param {args . . .} operand Operator operands
-    *@returns {pageNode} Return this pageNode object
+    *@return {pageNode} Return this pageNode object
     *@memberof pdfJS.pageNode#
+    *@method
     */
     text: {
         value: function (operator, operands) {
@@ -98,8 +100,9 @@ pageNode.prototype = Object.create(obj.prototype, {
     /**
     *Set current stream in context by index.
     *@param {int} index index of contentStreams
-    *@returns {pageNode} Return this pageNode object
+    *@return {pageNode} Return this pageNode object
     *@memberof pdfJS.pageNode#
+    *@method
     */
     setStream: {
         value: function (index) {
