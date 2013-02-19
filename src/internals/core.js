@@ -19,13 +19,7 @@
         *@Type int
         *@memberof pdfJS.doc#
         */
-        self.objectNumber = 0; //object counter used for setting indirect object.
-
-        /**
-        *An array of all {@link pdfJS.font} objects included this document.
-        *@Type {array of [fonts]{@link pdfJS.font}}  
-        */
-        this.fontObjs = [];
+        this.objectNumber = 0; //object counter used for setting indirect object.
 
         /**
         *Current document page in context.
@@ -80,7 +74,7 @@
         */
         this.currentNode = this.rootNode;
         this.addStandardFonts();
-        this.resObj = resources(this.fontObjs, this.newObj());
+        this.resObj = new resources(++this.objectNumber, 0);
         this.infoObj = info(this.settings, this.newObj());
         this.catalogObj = catalog(this.rootNode, this.newObj());
 
@@ -131,11 +125,9 @@
         */
         output: function (type) {
 
-            resources(this.fontObjs, this.resObj);
-
             var content = [
                 buildPageTreeNodes(this.rootNode),
-                buildFonts(this.fontObjs),
+                buildFonts(this.resObj.fontObjs),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
@@ -168,18 +160,18 @@
         */
         addFont: function (postScriptName, fontName, fontStyle, encoding) {
 
-            var fontKey = 'F' + (this.fontObjs.length + 1).toString(10);
+            var fontKey = 'F' + (this.resObj.fontObjs.length + 1).toString(10);
             // This is FontObject 
             var fontDescription = {
-                'key': fontKey,
-                'PostScriptName': postScriptName,
-                'fontName': fontName,
-                'fontStyle': fontStyle,
-                'encoding': encoding,
-                'metadata': {}
+                key: fontKey,
+                postScriptName: postScriptName,
+                fontName: fontName,
+                fontStyle: fontStyle,
+                encoding: encoding,
+                metadata: {}
             };
 
-            this.fontObjs.push(new font(fontDescription, ++this.objectNumber, 0));
+            this.resObj.fontObjs.push(new font(fontDescription, ++this.objectNumber, 0));
 
             fontName = fontName.toLowerCase();
             fontStyle = fontStyle.toLowerCase();
@@ -296,6 +288,8 @@
         contentBuilder.push('0 ' + (objectCount + 1));
         contentBuilder.push('0000000000 65535 f ');
         for (i = 0; i < objectCount; i++) {
+            //TODO: take account for free objects just in case user screw up by allocating an object doesn't use it 
+            //within the document.
             contentBuilder.push(padd10(offsets[i].offset) + ' 00000 n ');
         }
         

@@ -4,6 +4,8 @@
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
 */
 var stream = function (objectNumber, generationNumber) {
     var self = this;
@@ -14,14 +16,31 @@ var stream = function (objectNumber, generationNumber) {
         *@Type [string]
         *@default []
         */
-    self.content = [];
+    this.content = [];
+    /**
+        *Specifying the dictionary part of a PDF object (e.g dictionary['SomeKey'] = 'SomeValue').
+        *@Type object 
+        *@default {}
+        */
+    this.dictionary = {};
 };
-
+var printDictionary = function (dict) {
+    var ret = [],
+        temp;
+    for (item in dict) {
+        if(dict.hasOwnProperty(item)) {
+            ret.push('/'+temp + ' ' + dict[temp]);
+        }
+    }
+    return ret.join('\n');
+};
 
 stream.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
-            this.body.push('<< /Length ' + this.content.join('\n').length + ' >>');
+            this.body.push('<< /Length ' + this.content.join('\n').length);
+            this.body.push(printDictionary(this.dictionary));
+            this.body.push(' >>');
             this.body.push('stream');
             this.body = this.body.concat(this.content);
             this.body.push('endstream');

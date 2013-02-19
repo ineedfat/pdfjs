@@ -43,7 +43,7 @@
     
         
 <dt>
-    <h4 class="name" id="pageTreeNode"><span class="type-signature"></span>new pageTreeNode<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="pageTreeNode"><span class="type-signature"></span>new pageTreeNode<span class="signature">(parent, objectNumber, generationNumber)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -59,6 +59,100 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>parent</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type"><a href="pdfJS.pageTreeNode.html">pdfJS.pageTreeNode</a></span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Parent pageTreeNode of this page.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>objectNumber</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Unique number to define this object.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>generationNumber</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">defining the number of time the pdf has been modified (default is 0 when creating).</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
     
     
     
@@ -84,7 +178,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="26a332c8f0.html">classes/pageTreeNode.js</a>, line 8
+        <a href="26a332c8f0.html">classes/pageTreeNode.js</a>, line 11
     </li></ul></dd>
     
     
@@ -172,7 +266,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="7306c3b353.html">classes/obj.js</a>, line 28
+        <a href="7306c3b353.html">classes/obj.js</a>, line 29
     </li></ul></dd>
     
     
@@ -232,7 +326,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="7306c3b353.html">classes/obj.js</a>, line 22
+        <a href="7306c3b353.html">classes/obj.js</a>, line 23
     </li></ul></dd>
     
     
@@ -284,7 +378,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="26a332c8f0.html">classes/pageTreeNode.js</a>, line 21
+        <a href="26a332c8f0.html">classes/pageTreeNode.js</a>, line 24
     </li></ul></dd>
     
     
@@ -344,7 +438,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="7306c3b353.html">classes/obj.js</a>, line 16
+        <a href="7306c3b353.html">classes/obj.js</a>, line 17
     </li></ul></dd>
     
     
@@ -396,7 +490,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="26a332c8f0.html">classes/pageTreeNode.js</a>, line 16
+        <a href="26a332c8f0.html">classes/pageTreeNode.js</a>, line 19
     </li></ul></dd>
     
     
@@ -466,7 +560,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="7306c3b353.html">classes/obj.js</a>, line 36
+        <a href="7306c3b353.html">classes/obj.js</a>, line 37
     </li></ul></dd>
     
     
@@ -521,13 +615,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="pdfJS.doc.html">doc</a></li><li><a href="pdfJS.font.html">font</a></li><li><a href="pdfJS.obj.html">obj</a></li><li><a href="pdfJS.pageNode.html">pageNode</a></li><li><a href="pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="pdfJS.html">pdfJS</a></li><li><a href="pdfJS.graphicOperators.html">graphicOperators</a></li><li><a href="pdfJS.textOperators.html">textOperators</a></li><li><a href="pdfJS.utils.html">utils</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="pdfJS.doc.html">doc</a></li><li><a href="pdfJS.font.html">font</a></li><li><a href="pdfJS.imageXObject.html">imageXObject</a></li><li><a href="pdfJS.obj.html">obj</a></li><li><a href="pdfJS.pageNode.html">pageNode</a></li><li><a href="pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="pdfJS.html">pdfJS</a></li><li><a href="pdfJS.graphicOperators.html">graphicOperators</a></li><li><a href="pdfJS.textOperators.html">textOperators</a></li><li><a href="pdfJS.utils.html">utils</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Sun Feb 17 2013 23:34:16 GMT-0800 (PST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Feb 19 2013 03:39:05 GMT-0800 (PST)
 </footer>
 
 <script> prettyPrint(); </script>

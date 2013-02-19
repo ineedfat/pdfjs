@@ -3,7 +3,8 @@
 *@classdesc Representing font type in PDF document.
 *@constructor
 *@memberof pdfJS
-
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
 */
 var obj = function (objectNumber, generationNumber) {
     var self = this;

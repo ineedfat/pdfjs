@@ -4,6 +4,12 @@
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj
+*@param {pdfJS.pageTreeNode} parent Parent pageTreeNode of this page.
+*@param {pageOptions} pageOptions for this page.
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@param {array[pdfJS.stream]} contentStreams Array of stream object that populate the page.
+*@param {pdf.doc} document The document that own this page.
 */
 var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams, document) {
     var self = this;

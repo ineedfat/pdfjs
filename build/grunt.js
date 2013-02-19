@@ -26,6 +26,8 @@ module.exports = function (grunt) {
               '../src/classes/pageTreeNode.js',
               '../src/classes/stream.js',
               '../src/classes/font.js',
+              '../src/classes/iamgeXObject.js',
+
 
               //API calls
               '../src/api/graphics.js',

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: classes/stream.js</title>
+    <title>JSDoc: Source: internals/resources.js</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: classes/stream.js</h1>
+    <h1 class="page-title">Source: internals/resources.js</h1>
     
     
 
@@ -26,66 +26,54 @@
     <section>
         <article>
             <pre class="prettyprint source"><code>﻿/**
-*Initialize new steam object.
-*@classdesc Representing a stream object in a PDF document.
+*Initialize new font object.
+*@classdesc Representing font type in PDF document.
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj
 *@param {int} objectNumber Unique number to define this object.
 *@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@private
 */
-var stream = function (objectNumber, generationNumber) {
+var resources = function (objectNumber, generationNumber) {
     var self = this;
-
     obj.call(this, objectNumber, generationNumber);
     /**
-        *The content of this stream.
-        *@Type [string]
-        *@default []
+        *An array of all {@link pdfJS.font} objects included this document.
+        *@Type {array of [fonts]{@link pdfJS.font}}  
         */
-    this.content = [];
-    /**
-        *Specifying the dictionary part of a PDF object (e.g dictionary['SomeKey'] = 'SomeValue').
-        *@Type object 
-        *@default {}
-        */
-    this.dictionary = {};
+    this.fontObjs = [];
+    this.imageXObjects = [];
 };
-var printDictionary = function (dict) {
+
+var printDictionaryElements = function (arr, prefix) {
     var ret = [],
-        temp;
-    for (item in dict) {
-        if(dict.hasOwnProperty(item)) {
-            ret.push('/'+temp + ' ' + dict[temp]);
-        }
+        i, len;
+    for (i = 0, len = fonts.length; i &lt; len; i++) {
+        ret.push('/' + prefix + (i).toString(10) + ' ' + fonts[i].objectNumber + ' ' + fonts[i].generationNumber + ' R');
     }
+
     return ret.join('\n');
 };
 
-stream.prototype = Object.create(obj.prototype, {
+
+resources.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
-            this.body.push('&lt;&lt; /Length ' + this.content.join('\n').length);
-            this.body.push(printDictionary(this.dictionary));
-            this.body.push(' >>');
-            this.body.push('stream');
-            this.body = this.body.concat(this.content);
-            this.body.push('endstream');
+            // Resource dictionary
+            this.body.push('&lt;&lt;');
+            //For compatibility only.
+            this.body.push('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
+            this.body.push('/Font &lt;&lt;');
+            // Do this for each font, the '1' bit is the index of the font
+            this.body.push(printDictionaryElements(this.fontObjs, 'F'));
+            this.body.push('>>');
+            this.body.push('/XObject &lt;&lt;');
+            this.body.push(printDictionaryElements(this.imageXObjects, 'Im'));
+            this.body.push('>>');
+            this.body.push('>>');
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
-        }
-    },
-    /**
-        *Shortcut to pushing content to the stream (same as stream.content.push('something');
-        *@param {string} args stream.push(item1, item2, . . . , itemX)
-        *@return {pdfJS.stream} Return this stream object.
-        *@memberof pdfJS.stream#
-        *@method
-        */
-    push: {
-        value: function (args) {
-            Array.prototype.push.apply(this.content, arguments);
-            return this;
         }
     }
 });

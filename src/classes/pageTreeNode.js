@@ -4,6 +4,9 @@
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj
+*@param {pdfJS.pageTreeNode} parent Parent pageTreeNode of this page.
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
 */
 var pageTreeNode = function (parent, objectNumber, generationNumber) {
     var self = this;

@@ -170,10 +170,7 @@ the next glyph painted either to the left or down by the given amount.
         this.currentStream.push(textString + ' \'');
     },
     /**
-    *Specifying text transforming matrix.\n
-    *|a b 0|\n
-    *|c d 0|\n
-    *|e f 1|\n
+    *Specifying text transforming matrix.
     *@inner
     *@method
     *@param {int} a
