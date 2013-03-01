@@ -52,11 +52,11 @@
         //Determine page dimensions.
         if (typeof format === 'string') {
             self.settings.dimension = utils.paperFormat[format.toLowerCase()];
-        } else if (typeof format === 'object' && typeof format[0] === 'number' && format[1] === 'number') {
+        } else {
             self.settings.dimension = format.slice().splice(0, 2);
         }
         
-        if (typeof orientation === 'string' && orientation.toLowerCase() === 'landscape') {
+        if (orientation.toLowerCase() === 'landscape') {
             var temp = self.settings.dimension[0];
             self.settings.dimension[0] = self.settings.dimension[1];
             self.settings.dimension[1] = temp;
@@ -66,19 +66,18 @@
         *Root of the Page-Tree
         *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
         */
-        this.rootNode = new pageTreeNode(null, ++self.objectNumber, 0);
+        this.rootNode = new pageTreeNode(null, ++self.objectNumber, 0,
+             { mediabox: [0, 0, this.settings.dimension[0], this.settings.dimension[1]] });
 
         /**
         *Current pageTreeNode in context
         *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
         */
         this.currentNode = this.rootNode;
-        this.addStandardFonts();
         this.resObj = new resources(++this.objectNumber, 0);
         this.infoObj = info(this.settings, this.newObj());
         this.catalogObj = catalog(this.rootNode, this.newObj());
-
-        
+        this.addStandardFonts();
     };
     doc.prototype = {
         /**
@@ -101,14 +100,16 @@
         *Add a new page to the document.
         *@param {number} [height] Height in pt
         *@param {number} [width] Width in pt
+        *@param {object} [options] Page options take procedence over height and width.
+        *TODO documentation for page options.
         *@memberof pdfJS.doc#
         *@return {[pageNode]{@link pdfJS.pageNode}}
         */
         //TODO: Add options/margin/etc
-        addPage: function (height, width) {
+        addPage: function (height, width, options) {
             this.currentPage = new pageNode(
                 this.currentNode,
-                { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
+                options || { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
@@ -306,6 +307,6 @@
         contentBuilder.push('%%EOF');
         
         
-        console.log(contentBuilder.join('\n'));
+        //console.log(contentBuilder.join('\n'));
         return contentBuilder.join('\n');
     };

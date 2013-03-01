@@ -51,7 +51,7 @@ pageNode.prototype = Object.create(obj.prototype, {
             this.body.push(pageOptionsConverter(this.pageOptions));
             this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
             this.body.push('/Contents ');
-
+            //TODO: add resources page 80.
             if (this.contentStreams.length) {
                 this.body.push('[');
                 for (i = 0; item = this.contentStreams[i]; i++) {

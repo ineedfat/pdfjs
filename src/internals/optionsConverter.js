@@ -82,5 +82,36 @@
                 break;
         }
     }
-    return ret.join(' ');
+    return ret.join('\n');
+};
+
+
+var pageTreeOptionsConverter = function (options) {
+    var ret = [],
+        obj;
+    for (var item in options) {
+        if (!options.hasOwnProperty(item))
+            continue;
+        obj = options[item];
+        switch (item.toLowerCase()) {
+            //Inheritable
+            case 'mediabox':
+                if (checkValidRect(obj)) {
+                    ret.push('/MediaBox [' + obj.join(' ') + ']');
+                }
+                break;
+                //Inheritable
+            case 'cropbox':
+                if (checkValidRect(obj)) {
+                    ret.push('/CropBox [' + obj.join(' ') + ']');
+                }
+                break;
+            case 'rotate':
+                if (typeof obj === 'number' && obj % 90 === 0) {
+                    ret.push('/Rotate ' + obj);
+                }
+                break;
+        }
+    }
+    return ret.join('\n');
 };

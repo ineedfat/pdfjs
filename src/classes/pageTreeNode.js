@@ -7,8 +7,9 @@
 *@param {pdfJS.pageTreeNode} parent Parent pageTreeNode of this page.
 *@param {int} objectNumber Unique number to define this object.
 *@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@param {object} options Define the attributes for pageTree that all children may inherit from.
 */
-var pageTreeNode = function (parent, objectNumber, generationNumber) {
+var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -22,6 +23,7 @@ var pageTreeNode = function (parent, objectNumber, generationNumber) {
         *@type array[[pdfJS.pageTreeNode]{@link pdfJS.pageTreeNode} | [pdfJS.pageNode]{@link pdfJS.pageNode}]
         */
     this.kids = [];
+    this.options = options;
 };
 
 
@@ -31,8 +33,9 @@ pageTreeNode.prototype = Object.create(obj.prototype, {
             var i, item;
             this.body.push(
                 '<< /Type /Pages',
+                pageTreeOptionsConverter(this.options),
                 '/Kids [');
-
+            //TODO: add resources for pageTree page 80.
             for (i = 0; item = this.kids[i]; i++) {
                 this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
             }

@@ -10,6 +10,14 @@ module.exports = function (grunt) {
         },
         lint: {
             files: [
+              //Classes
+              '../src/classes/obj.js',
+              '../src/classes/pageNode.js',
+              '../src/classes/pageTreeNode.js',
+              '../src/classes/stream.js',
+              '../src/classes/font.js',
+              '../src/classes/iamgeXObject.js',
+
               //PDF core parts
               '../src/internals/core.js',
               '../src/internals/catalog.js',
@@ -19,15 +27,6 @@ module.exports = function (grunt) {
 
               //Supporting classes
               '../src/utils.js',
-
-              //Classes
-              '../src/classes/obj.js',
-              '../src/classes/pageNode.js',
-              '../src/classes/pageTreeNode.js',
-              '../src/classes/stream.js',
-              '../src/classes/font.js',
-              '../src/classes/iamgeXObject.js',
-
 
               //API calls
               '../src/api/graphics.js',

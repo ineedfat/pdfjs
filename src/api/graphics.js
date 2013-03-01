@@ -19,7 +19,7 @@ var graphicOperators = {
     *@inner
     *@method
     *@param {int} sx Scale by tx in x direction.
-    *@param {int} sy Translate by ty in y direction.
+    *@param {int} sy Scale by ty in y direction.
     
     */
     scale: function (sx, sy) {

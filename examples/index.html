@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="myApp">
+<head>
+    <title>pdfJS</title>
+    <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/bootstrap-responsive.css" rel="stylesheet" />
+    <!--<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/css/bootstrap-combined.min.css" rel="stylesheet">-->
+    <link href="css/style.css" rel="stylesheet" />
+</head>
+<body data-ng-controller="mainController">
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="./index.html">pdfJS</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="">
+                            <a href="./#/home">Home</a>
+                        </li>
+                        <li class="">
+                            <a href="./#/docs">Documentation</a>
+                        </li>
+                        <li class="">
+                            <a href="./#/examples">Examples</a>
+                        </li>
+                        <li class="">
+                            <a href="./#/plugins">Plugins</a>
+                        </li>
+                        <li class="">
+                            <a href="./#/about">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header class="subhead" id="overview">
+        <div class="container">
+            <h1>pdfJS</h1>
+            <p class="lead">PDF JavaScript Framework</p>
+        </div>
+    </header>
+
+    <div data-ng-view=""></div>
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="span8 brand">
+                    <h3><a href="https://github.com/ineedfat/pdfjs" target="_blank">iNeedFat</a></h3>
+                </div>
+                <div class="span4 info">
+                    <p>Designed and built by<a href="https://github.com/ineedfat/pdfjs" target="_blank">Trinh Ho</a> </p>
+                    <p>Licensed under <a href="http://opensource.org/licenses/mit-license.php" target="_blank">MIT</a></p>
+                    <p>Copyright © 2013</p>
+                    <ul class="footer-links">
+                        <li><a href="https://github.com/ineedfat/pdfjs/issues?state=open">Report Bugs</a></li>
+                        <li class="muted">|</li>
+                        <li><a href="https://github.com/ineedfat/pdfjs/blob/master/README.md">Changelog</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
+    <!--<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.0/js/bootstrap.min.js"></script>-->
+    <script src="js/third/bootstrap.min.js"></script>
+    <script src="js/third/ace.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/directives/ng.example.js"></script>
+    <script src="js/classes/utiles.js"></script>
+
+    <script src="../pdfJS-0.0.1.js"></script>
+</body>
+</html>

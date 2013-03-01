@@ -93,7 +93,7 @@ var textOperators = {
     *@param {int} [size] FontSize in pt.
     */
     fontStyle: function (name, style, fontSize) {
-        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.fontObjs[0].description.key,
+        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.resObj.fontObjs[0].description.key,
             len = arguments.length;
         this.currentStream.push('/' + fontKey);
 

@@ -47,4 +47,4 @@ obj.prototype = {
     body: [],
     objectNumber: 0,
     generationNumber: 0
-}
+};
