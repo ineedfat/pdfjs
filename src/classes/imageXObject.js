@@ -62,7 +62,8 @@ var imageXObject = function (objectNumber, generationNumber, width, height, colo
 imageXObject.prototype = Object.create(stream.prototype, {
     out: {
         value: function () {
-            this.dictionary['SubType'] = '/Image';
+            this.dictionary['Type'] = '/XObject';
+            this.dictionary['Subtype'] = '/Image';
             this.dictionary['Width'] = this.width;
             this.dictionary['Height'] = this.height;
             this.dictionary['ColorSpace'] = '/' + this.colorSpace;
@@ -87,27 +88,27 @@ imageXObject.prototype = Object.create(stream.prototype, {
     */
     addImageToPage: {
         value: function (pageObj, x, y, w, h) {
-            images[imageIndex] = info
             if (!w && !h) {
                 w = -96;
                 h = -96;
             }
             if (w < 0) {
-                w = (-1) * info['w'] * 72 / w / this.internal.scaleFactor;
+                w = (-1) * this.width * 72 / w;
             }
             if (h < 0) {
-                h = (-1) * info['h'] * 72 / h / this.internal.scaleFactor;
+                h = (-1) * this.height * 72 / h;
             }
             if (w === 0) {
-                w = h * info['w'] / info['h'];
+                w = h * this.width / this.height;
             }
             if (h === 0) {
-                h = w * info['h'] / info['w'];
+                h = w * this.height / this.width;
             }
 
             pageObj.currentStream.push('q');
             pageObj.currentStream.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
             pageObj.currentStream.push('/' + this.name + ' Do');
+            pageObj.currentStream.push('Q');
 
             return this;
         }

@@ -16,6 +16,7 @@
             eval(closedEvalCode);
         }
         catch (e) {
+            console.log(e);
             return;
         }
 

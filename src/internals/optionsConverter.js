@@ -6,13 +6,21 @@
             continue;
         obj = options[item];
         switch (item.toLowerCase()) {
-            //Inheritable
+            case 'resources':
+                if (obj instanceof resources) {
+                    ret.push('/Resources ' + obj.objectNumber + ' ' + obj.generationNumber + ' R');
+                }
+                else if (typeof obj === 'string') {
+                    ret.push(obj);
+                } else {
+                    throw 'Invalid Resources!';
+                }
+                break;
             case 'mediabox':
                 if (checkValidRect(obj)) {
                     ret.push('/MediaBox [' + obj.join(' ') + ']');
                 }
                 break;
-                //Inheritable
             case 'cropbox':
                 if (checkValidRect(obj)) {
                     ret.push('/CropBox [' + obj.join(' ') + ']');
@@ -95,6 +103,17 @@ var pageTreeOptionsConverter = function (options) {
         obj = options[item];
         switch (item.toLowerCase()) {
             //Inheritable
+            case 'resources':
+                if (obj instanceof resources) {
+                    ret.push('/Resources ' + obj.objectNumber + ' ' + obj.generationNumber + ' R');
+                }
+                else if (typeof obj === 'string') {
+                    ret.push(obj);
+                } else {
+                    throw 'Invalid Resources!';
+                }
+                break;
+            //Inheritable
             case 'mediabox':
                 if (checkValidRect(obj)) {
                     ret.push('/MediaBox [' + obj.join(' ') + ']');
@@ -111,6 +130,7 @@ var pageTreeOptionsConverter = function (options) {
                     ret.push('/Rotate ' + obj);
                 }
                 break;
+            
         }
     }
     return ret.join('\n');

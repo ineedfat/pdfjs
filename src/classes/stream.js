@@ -27,8 +27,8 @@ var stream = function (objectNumber, generationNumber) {
 var printDictionary = function (dict) {
     var ret = [],
         temp;
-    for (item in dict) {
-        if(dict.hasOwnProperty(item)) {
+    for (temp in dict) {
+        if (dict.hasOwnProperty(temp)) {
             ret.push('/'+temp + ' ' + dict[temp]);
         }
     }

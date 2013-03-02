@@ -16,7 +16,7 @@ module.exports = function (grunt) {
               '../src/classes/pageTreeNode.js',
               '../src/classes/stream.js',
               '../src/classes/font.js',
-              '../src/classes/iamgeXObject.js',
+              '../src/classes/imageXObject.js',
 
               //PDF core parts
               '../src/internals/core.js',
@@ -32,8 +32,11 @@ module.exports = function (grunt) {
               '../src/api/graphics.js',
               '../src/api/text.js',
 
+              //plugins 
+              '../src/plugins/addImage.js',
+                
               //Public exposure
-              '../src/public.js',
+              '../src/public.js'
             ]
         },
         concat: {

@@ -60,14 +60,21 @@ app.directive('example', ['$compile', '$timeout', '$window', '$http', '$template
     			var updateIframe = function () {
     				var doc = utiles.evalEditorDocCode(scope.editor.getValue());
     				if (doc) {
-    					scope.pdfDataUri = doc.output('datauristring');
-    					//iframe.attr('src', doc.output('datauristring'));
+    				    if (doc.activeAsync === 0) {
+    				        scope.pdfDataUri = doc.output('datauristring');
+    				    } else {
+    				        doc.outputAsync('datauristring', function (data) {
+    				            scope.pdfDataUri = data;
+    				            scope.$digest();
+    				        });
+    				    }
     				} else {
     					console.log('empty code');
     				}
-    				try{
-    					scope.$digest();
-    				} catch (e) { }
+    				try {
+    				    scope.$digest();
+    				} catch(e) {
+    				}
     			};
 				//setting up editor
     			if (scope.editorId) {
@@ -83,8 +90,6 @@ app.directive('example', ['$compile', '$timeout', '$window', '$http', '$template
 					updateIframe();
 					scope.editor.getSession().on('change', updateIframe);
     			}
-
-				
 
 				scope.openChildWindow = function () {
 					$window.open(scope.docLink, '_blank');

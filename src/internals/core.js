@@ -14,6 +14,13 @@
     var doc = function (format, orientation, margin) {
         var self = this;
         /**
+        *@Private
+        *Number of active async calls such as adding a new image. TODO: make this field private.
+        *@Type int
+        *@memberof pdfJS.doc#
+        */
+        this.activeAsync = 0;
+        /**
         *Positive integer representing the object number of pdf internal objects. (Becareful when
         *when modifying this property).
         *@Type int
@@ -62,19 +69,27 @@
             self.settings.dimension[1] = temp;
         }
 
+        
+
+       
+        this.resObj = new resources(++this.objectNumber, 0);
+        
         /**
         *Root of the Page-Tree
         *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
         */
         this.rootNode = new pageTreeNode(null, ++self.objectNumber, 0,
-             { mediabox: [0, 0, this.settings.dimension[0], this.settings.dimension[1]] });
-
+             {
+                 mediabox: [0, 0, this.settings.dimension[0], this.settings.dimension[1]],
+                 resources: this.resObj
+             });
+        
         /**
-        *Current pageTreeNode in context
-        *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
-        */
+       *Current pageTreeNode in context
+       *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
+       */
         this.currentNode = this.rootNode;
-        this.resObj = new resources(++this.objectNumber, 0);
+        
         this.infoObj = info(this.settings, this.newObj());
         this.catalogObj = catalog(this.rootNode, this.newObj());
         this.addStandardFonts();
@@ -128,7 +143,8 @@
 
             var content = [
                 buildPageTreeNodes(this.rootNode),
-                buildFonts(this.resObj.fontObjs),
+                buildObjs(this.resObj.fontObjs),
+                buildObjs(this.resObj.imageXObjects),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
@@ -149,6 +165,21 @@
                 default:
                     return pdf;
             }
+        },
+        /**
+        *Output PDF document.
+        *@memberof pdfJS.doc#
+        *@param {string} type (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
+        *@return {string} PDF data string.
+        */
+        outputAsync: function (type, callback) {
+            var self = this;
+            var t = window.setInterval(function() {
+                if (self.activeAsync === 0) {
+                    window.clearInterval(t);
+                    callback(self.output(type));
+                }
+            }, 50);
         },
         /**
         *Add new font to document
@@ -258,11 +289,11 @@
         return ret.join('\n');
     };
 
-    var buildFonts = function (fontObjs) {
-        var i, font,
+    var buildObjs = function (objs) {
+        var i, obj,
             ret = [];
-        for (i = 0; font = fontObjs[i]; i++) {
-            ret.push(font.out());
+        for (i = 0; obj = objs[i]; i++) {
+            ret.push(obj.out());
         }
         return ret.join('\n');
     };

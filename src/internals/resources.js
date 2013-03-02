@@ -23,7 +23,7 @@ var printDictionaryElements = function (arr, prefix) {
     var ret = [],
         i, len;
     for (i = 0, len = arr.length; i < len; i++) {
-        ret.push('/' + prefix + (i).toString(10) + ' ' + arr[i].objectNumber + ' ' + arr[i].generationNumber + ' R');
+        ret.push('/' + prefix + (i +1).toString(10) + ' ' + arr[i].objectNumber + ' ' + arr[i].generationNumber + ' R');
     }
 
     return ret.join('\n');

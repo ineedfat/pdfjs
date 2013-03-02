@@ -2,12 +2,474 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 02/17/2013 19:15
+* Compiled At: 03/01/2013 18:41
 ***********************************************/
 (function(_) {
 'use strict';
-/*! pdfJS.js | https://github.com/ineedfat | 2013-02-17 | iNeedFat(https://github.com/ineedfat)*/
+/*! pdfJS.js | https://github.com/ineedfat | 2013-03-01 | iNeedFat(https://github.com/ineedfat)*/
 var PDFJS_VERSION = '0.0.1';
+
+﻿/**
+*Initialize new PDf speical object.
+*@classdesc Representing font type in PDF document.
+*@constructor
+*@memberof pdfJS
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*/
+var obj = function (objectNumber, generationNumber) {
+    var self = this;
+
+    /**
+        *Positive integer representing the object number of pdf internal objects.
+        *@Type int
+        *@default 0
+        */
+    this.objectNumber = objectNumber;
+    /**
+        *Non-negative integer representing the generation number of pdf internal objects.
+        *@Type int
+        *@default 0
+        */
+    this.generationNumber = generationNumber;
+    /**
+        *The content of this obj.
+        *@Type int
+        *@default []
+        */
+    this.body = [];
+};
+obj.prototype = {
+    /**
+    *Output PDF data string for this obj.
+    *@return {string}
+    *@memberof pdfJS.obj#
+    */
+    out: function () {
+        var self = this,
+            sb = [];
+
+        sb.push(this.objectNumber + ' ' + this.generationNumber + ' obj');
+        sb = sb.concat(this.body);
+        sb.push('endobj');
+
+        return sb.join('\n')
+    },
+    body: [],
+    objectNumber: 0,
+    generationNumber: 0
+};
+﻿/**
+*Initialize new pageNode object.
+*@classdesc Representing a page in a PDF document.
+*@constructor
+*@memberof pdfJS
+*@augments pdfJS.obj
+*@param {pdfJS.pageTreeNode} parent Parent pageTreeNode of this page.
+*@param {pageOptions} pageOptions for this page.
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@param {array[pdfJS.stream]} contentStreams Array of stream object that populate the page.
+*@param {pdf.doc} document The document that own this page.
+*/
+var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams, document) {
+    var self = this;
+
+    obj.call(this, objectNumber, generationNumber);
+    /**
+        *Page Config options.
+        *@Type object
+        */
+    this.pageOptions = pageOptions;
+    /**
+        *The parent pageTreeNode of this page.
+        *@Type pdfJS.pageTreeNode
+        */
+    this.parent = parent;
+    /**
+        *Array of content streams (the actual content of the page).
+        *@Type array[[pdfJS.stream]{@link pdfJS.stream} ]
+        */
+    this.contentStreams = contentStreams;
+    /**
+        *Current active stream in context.
+        *@Type pdfJS.stream
+        */
+    this.currentStream = this.contentStreams[0];
+    /**
+        *The document that this page belongs to.
+        *@Type pdfJS.doc
+        */
+    this.doc = document;
+};
+pageNode.prototype = Object.create(obj.prototype, {
+    out: {
+        value: function () {
+            var i, item,
+                ret = [];
+
+            this.body.push('<< /Type /Page');
+            this.body.push(pageOptionsConverter(this.pageOptions));
+            this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
+            this.body.push('/Contents ');
+            //TODO: add resources page 80.
+            if (this.contentStreams.length) {
+                this.body.push('[');
+                for (i = 0; item = this.contentStreams[i]; i++) {
+                    this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
+                }
+                this.body.push(']');
+            }
+
+            this.body.push('>>');
+
+            ret.push(obj.prototype.out.apply(this, arguments)); //calling obj super class out method.
+
+            if (this.contentStreams.length) {
+                for (i = 0; item = this.contentStreams[i]; i++) {
+                    ret.push(item.out());
+                }
+            }
+            return ret.join('\n');
+        }
+    },
+    /**
+    *Graphic Operation Setter. Please see [graphicOperators]{@link pdfJS.graphicOperators} for available operations and corresponding set of operands.
+    *@param {string} operator Name of graphic operator.
+    *@param {args} operand Operator operands (op1, op2, . . . opX)
+    *@return {pageNode}
+    *@memberof pdfJS.pageNode#
+    *@method
+    */
+    graphic: {
+        value: function (operator, operands) {
+            if (this instanceof pageNode) {
+                graphicOperators[operator].apply(this, Array.prototype.slice.call(arguments, 1));
+            }
+            return this;
+        }
+    },
+    /**
+    *Text Operation Setter. Please see [textOperators]{@link pdfJS.textOperators} for available operations and corresponding set of operands.
+    *@param {string} operator Name of graphic operator.
+    *@param {args . . .} operand Operator operands
+    *@return {pageNode} Return this pageNode object
+    *@memberof pdfJS.pageNode#
+    *@method
+    */
+    text: {
+        value: function (operator, operands) {
+            if (this instanceof pageNode) {
+                textOperators[operator].apply(this, Array.prototype.slice.call(arguments, 1));
+            }
+            return this;
+        }
+    },
+    /**
+    *Set current stream in context by index.
+    *@param {int} index index of contentStreams
+    *@return {pageNode} Return this pageNode object
+    *@memberof pdfJS.pageNode#
+    *@method
+    */
+    setStream: {
+        value: function (index) {
+            if (index >= this.contentStreams.length)
+                throw 'Invalid stream index';
+            this.currentStream = this.contentStreams[index];
+            return this;
+        }
+    }
+});
+
+﻿/**
+*Initialize new pageTreeNode object.
+*@classdesc Representing a page-tree node in a PDF document.
+*@constructor
+*@memberof pdfJS
+*@augments pdfJS.obj
+*@param {pdfJS.pageTreeNode} parent Parent pageTreeNode of this page.
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@param {object} options Define the attributes for pageTree that all children may inherit from.
+*/
+var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
+    var self = this;
+
+    obj.call(this, objectNumber, generationNumber);
+    /**
+        *The parent pageTreeNode of this page-tree.
+        *@Type pdfJS.pageTreeNode
+        */
+    this.parent = parent;
+    /**
+        *Children of this page-tree node.
+        *@type array[[pdfJS.pageTreeNode]{@link pdfJS.pageTreeNode} | [pdfJS.pageNode]{@link pdfJS.pageNode}]
+        */
+    this.kids = [];
+    this.options = options;
+};
+
+
+pageTreeNode.prototype = Object.create(obj.prototype, {
+    out: {
+        value: function () {
+            var i, item;
+            this.body.push(
+                '<< /Type /Pages',
+                pageTreeOptionsConverter(this.options),
+                '/Kids [');
+            //TODO: add resources for pageTree page 80.
+            for (i = 0; item = this.kids[i]; i++) {
+                this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
+            }
+            this.body.push(']');
+
+            this.body.push('/Count ' + walkPageTree(this));
+
+            if (this.parent) {
+                this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
+            }
+
+            this.body.push('>>');
+
+            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+        }
+    }
+});
+
+var walkPageTree = function (pageTree) {
+    var count = 0,
+        i, item;
+
+    for (i = 0; item = pageTree.kids[i]; i++) {
+        if (item instanceof pageNode) {
+            count++;
+        } else {
+            count += walkPageTree(item);
+        }
+    }
+    return count;
+};
+
+﻿/**
+*Initialize new steam object.
+*@classdesc Representing a stream object in a PDF document.
+*@constructor
+*@memberof pdfJS
+*@augments pdfJS.obj
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*/
+var stream = function (objectNumber, generationNumber) {
+    var self = this;
+
+    obj.call(this, objectNumber, generationNumber);
+    /**
+        *The content of this stream.
+        *@Type [string]
+        *@default []
+        */
+    this.content = [];
+    /**
+        *Specifying the dictionary part of a PDF object (e.g dictionary['SomeKey'] = 'SomeValue').
+        *@Type object 
+        *@default {}
+        */
+    this.dictionary = {};
+};
+var printDictionary = function (dict) {
+    var ret = [],
+        temp;
+    for (temp in dict) {
+        if (dict.hasOwnProperty(temp)) {
+            ret.push('/'+temp + ' ' + dict[temp]);
+        }
+    }
+    return ret.join('\n');
+};
+
+stream.prototype = Object.create(obj.prototype, {
+    out: {
+        value: function () {
+            this.body.push('<< /Length ' + this.content.join('\n').length);
+            this.body.push(printDictionary(this.dictionary));
+            this.body.push(' >>');
+            this.body.push('stream');
+            this.body = this.body.concat(this.content);
+            this.body.push('endstream');
+
+            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+        }
+    },
+    /**
+        *Shortcut to pushing content to the stream (same as stream.content.push('something');
+        *@param {string} args stream.push(item1, item2, . . . , itemX)
+        *@return {pdfJS.stream} Return this stream object.
+        *@memberof pdfJS.stream#
+        *@method
+        */
+    push: {
+        value: function (args) {
+            Array.prototype.push.apply(this.content, arguments);
+            return this;
+        }
+    }
+});
+
+﻿/**
+*Initialize new font object.
+*@classdesc Representing font type in PDF document.
+*@constructor
+*@memberof pdfJS
+*@augments pdfJS.obj
+*@param {object} font
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*/
+var font = function (font, objectNumber, generationNumber) {
+    var self = this;
+    obj.call(this, objectNumber, generationNumber);
+    /**
+        *Font description object.
+        *@Type object
+        */
+    this.description = font;
+};
+
+font.prototype = Object.create(obj.prototype, {
+    out: {
+        value: function () {
+            this.body.push('<< /Type /Font');
+            this.body.push('/Subtype /Type1');
+            this.body.push('/BaseFont /' + this.description.postScriptName);
+
+            if (typeof font.encoding === 'string') {
+                this.body.push('/Encoding /' + this.description.encoding);
+            }
+            this.body.push('>>');
+
+            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+        }
+    }
+});
+
+﻿/**
+*Initialize new imageXObject object.
+*@classdesc Representing an image object in a PDF document.
+*@constructor
+*@memberof pdfJS
+*@augments pdfJS.stream
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@param {int} width Width of the image to be rendered on page in pt.
+*@param {int} height Height of the image to be rendered on page in pt.
+*@param {int} [colorSpace=DeviceRGB] Color space of the image.
+*@param {int} [bpc=8] Number of bits per color channel component.
+*@param {int} [filter] Filter for decoding the image data.
+*@param {object} [options] Extra options that can be set.
+*/
+var imageXObject = function (objectNumber, generationNumber, width, height, colorSpace, bpc, filter, options) {
+    var self = this;
+
+    stream.call(this, objectNumber, generationNumber);
+    /**
+        *Width of the image to be rendered on page in pt.
+        *@Type int
+        */
+    this.width = width;
+    /**
+        *Height of the image to be rendered on page in pt.
+        *@Type int
+        */
+    this.height = height;
+    /**
+        *Color space of the image.
+        *@Type pdfJS.utils.colorSpace
+        */
+    this.colorSpace = colorSpace || utils.deviceRGB
+    /**
+        *Bits per component
+        *@Type int
+        *@Default 8
+        */
+    this.bpc = bpc || 8;
+    /**
+        *Decoding filter for the image data.
+        *@Type pdfJS.utils.filterDecoder
+        */
+    this.filter = filter;
+
+    /**
+        *Name
+        *@Type string
+        *@Default Im1
+        */
+    this.name = 'Im1';
+    /**
+        *TODO: Extra options
+        *@Type object
+        *@Default {}
+        */
+    this.options = options || {};
+};
+
+
+imageXObject.prototype = Object.create(stream.prototype, {
+    out: {
+        value: function () {
+            this.dictionary['Type'] = '/XObject';
+            this.dictionary['Subtype'] = '/Image';
+            this.dictionary['Width'] = this.width;
+            this.dictionary['Height'] = this.height;
+            this.dictionary['ColorSpace'] = '/' + this.colorSpace;
+            this.dictionary['BitsPerComponent'] = this.bpc;
+
+            if (this.filter) {
+                this.dictionary['Filter'] = '/' + this.filter;
+            }
+            return stream.prototype.out.apply(this, arguments); //calling obj super class out method.
+        }
+    },
+    /**
+    *Graphic Operation Setter. Please see [graphicOperators]{@link pdfJS.graphicOperators} for available operations and corresponding set of operands.
+    *@param {pdfJS.pageNode} pageObj Page to add image.
+    *@param {int} x Translation in X direction (pt).
+    *@param {int} y Translation in Y direction (pt).
+    *@param {int} w Width of the image on page (pt).
+    *@param {int} h Height of the image on page (pt).
+    *@return {pdfJS.imageXObject#}
+    *@memberof pdfJS.imageXObject#
+    *@method
+    */
+    addImageToPage: {
+        value: function (pageObj, x, y, w, h) {
+            if (!w && !h) {
+                w = -96;
+                h = -96;
+            }
+            if (w < 0) {
+                w = (-1) * this.width * 72 / w;
+            }
+            if (h < 0) {
+                h = (-1) * this.height * 72 / h;
+            }
+            if (w === 0) {
+                w = h * this.width / this.height;
+            }
+            if (h === 0) {
+                h = w * this.height / this.width;
+            }
+
+            pageObj.currentStream.push('q');
+            pageObj.currentStream.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+            pageObj.currentStream.push('/' + this.name + ' Do');
+            pageObj.currentStream.push('Q');
+
+            return this;
+        }
+    }
+});
 
 ﻿    // Size in pt of various paper formats
     var PDF_VERSION = '1.3';
@@ -25,18 +487,19 @@ var PDFJS_VERSION = '0.0.1';
     var doc = function (format, orientation, margin) {
         var self = this;
         /**
+        *@Private
+        *Number of active async calls such as adding a new image. TODO: make this field private.
+        *@Type int
+        *@memberof pdfJS.doc#
+        */
+        this.activeAsync = 0;
+        /**
         *Positive integer representing the object number of pdf internal objects. (Becareful when
         *when modifying this property).
         *@Type int
         *@memberof pdfJS.doc#
         */
-        self.objectNumber = 0; //object counter used for setting indirect object.
-
-        /**
-        *An array of all {@link pdfJS.font} objects included this document.
-        *@Type {array of [fonts]{@link pdfJS.font}}  
-        */
-        this.fontObjs = [];
+        this.objectNumber = 0; //object counter used for setting indirect object.
 
         /**
         *Current document page in context.
@@ -69,31 +532,40 @@ var PDFJS_VERSION = '0.0.1';
         //Determine page dimensions.
         if (typeof format === 'string') {
             self.settings.dimension = utils.paperFormat[format.toLowerCase()];
-        } else if (typeof format === 'object' && typeof format[0] === 'number' && format[1] === 'number') {
+        } else {
             self.settings.dimension = format.slice().splice(0, 2);
         }
         
-        if (typeof orientation === 'string' && orientation.toLowerCase() === 'landscape') {
+        if (orientation.toLowerCase() === 'landscape') {
             var temp = self.settings.dimension[0];
             self.settings.dimension[0] = self.settings.dimension[1];
             self.settings.dimension[1] = temp;
         }
 
+        
+
+       
+        this.resObj = new resources(++this.objectNumber, 0);
+        
         /**
         *Root of the Page-Tree
         *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
         */
-        this.rootNode = new pageTreeNode(null, ++self.objectNumber, 0);
-
+        this.rootNode = new pageTreeNode(null, ++self.objectNumber, 0,
+             {
+                 mediabox: [0, 0, this.settings.dimension[0], this.settings.dimension[1]],
+                 resources: this.resObj
+             });
+        
         /**
-        *Current pageTreeNode in context
-        *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
-        */
+       *Current pageTreeNode in context
+       *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
+       */
         this.currentNode = this.rootNode;
-        this.addStandardFonts();
-        this.resObj = resources(this.fontObjs, this.newObj());
+        
         this.infoObj = info(this.settings, this.newObj());
         this.catalogObj = catalog(this.rootNode, this.newObj());
+        this.addStandardFonts();
     };
     doc.prototype = {
         /**
@@ -116,14 +588,16 @@ var PDFJS_VERSION = '0.0.1';
         *Add a new page to the document.
         *@param {number} [height] Height in pt
         *@param {number} [width] Width in pt
+        *@param {object} [options] Page options take procedence over height and width.
+        *TODO documentation for page options.
         *@memberof pdfJS.doc#
         *@return {[pageNode]{@link pdfJS.pageNode}}
         */
         //TODO: Add options/margin/etc
-        addPage: function (height, width) {
+        addPage: function (height, width, options) {
             this.currentPage = new pageNode(
                 this.currentNode,
-                { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
+                options || { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
@@ -139,9 +613,11 @@ var PDFJS_VERSION = '0.0.1';
         *@return {string} PDF data string.
         */
         output: function (type) {
+
             var content = [
                 buildPageTreeNodes(this.rootNode),
-                buildFonts(this.fontObjs),
+                buildObjs(this.resObj.fontObjs),
+                buildObjs(this.resObj.imageXObjects),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
@@ -164,6 +640,21 @@ var PDFJS_VERSION = '0.0.1';
             }
         },
         /**
+        *Output PDF document.
+        *@memberof pdfJS.doc#
+        *@param {string} type (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
+        *@return {string} PDF data string.
+        */
+        outputAsync: function (type, callback) {
+            var self = this;
+            var t = window.setInterval(function() {
+                if (self.activeAsync === 0) {
+                    window.clearInterval(t);
+                    callback(self.output(type));
+                }
+            }, 50);
+        },
+        /**
         *Add new font to document
         *@param {string} postScriptName (e.g 'Helvetica-Oblique')
         *@param {string} fontName (e.g 'HELVETICA')
@@ -174,18 +665,18 @@ var PDFJS_VERSION = '0.0.1';
         */
         addFont: function (postScriptName, fontName, fontStyle, encoding) {
 
-            var fontKey = 'F' + (this.fontObjs.length + 1).toString(10);
+            var fontKey = 'F' + (this.resObj.fontObjs.length + 1).toString(10);
             // This is FontObject 
             var fontDescription = {
-                'key': fontKey,
-                'PostScriptName': postScriptName,
-                'fontName': fontName,
-                'fontStyle': fontStyle,
-                'encoding': encoding,
-                'metadata': {}
+                key: fontKey,
+                postScriptName: postScriptName,
+                fontName: fontName,
+                fontStyle: fontStyle,
+                encoding: encoding,
+                metadata: {}
             };
 
-            this.fontObjs.push(new font(fontDescription, ++this.objectNumber, 0));
+            this.resObj.fontObjs.push(new font(fontDescription, ++this.objectNumber, 0));
 
             fontName = fontName.toLowerCase();
             fontStyle = fontStyle.toLowerCase();
@@ -271,11 +762,11 @@ var PDFJS_VERSION = '0.0.1';
         return ret.join('\n');
     };
 
-    var buildFonts = function (fontObjs) {
-        var i, font,
+    var buildObjs = function (objs) {
+        var i, obj,
             ret = [];
-        for (i = 0; font = fontObjs[i]; i++) {
-            ret.push(font.out());
+        for (i = 0; obj = objs[i]; i++) {
+            ret.push(obj.out());
         }
         return ret.join('\n');
     };
@@ -302,6 +793,8 @@ var PDFJS_VERSION = '0.0.1';
         contentBuilder.push('0 ' + (objectCount + 1));
         contentBuilder.push('0000000000 65535 f ');
         for (i = 0; i < objectCount; i++) {
+            //TODO: take account for free objects just in case user screw up by allocating an object doesn't use it 
+            //within the document.
             contentBuilder.push(padd10(offsets[i].offset) + ' 00000 n ');
         }
         
@@ -318,11 +811,12 @@ var PDFJS_VERSION = '0.0.1';
         contentBuilder.push('%%EOF');
         
         
-        console.log(contentBuilder.join('\n'));
+        //console.log(contentBuilder.join('\n'));
         return contentBuilder.join('\n');
     };
 ﻿//Create root pageTreeNode before calling catalog.
 var catalog = function (rootNode, catalogObj) {
+    catalogObj.body = [];
     catalogObj.body.push('<<');
 
     catalogObj.body.push('/Type /Catalog');
@@ -335,6 +829,7 @@ var catalog = function (rootNode, catalogObj) {
     return catalogObj;
 };
 ﻿var info = function (settings, infoObj) {
+    infoObj.body = [];
     infoObj.body.push('<<');
 
     infoObj.body.push('/Producer (PDFjs ' + PDFJS_VERSION + ')');
@@ -371,25 +866,59 @@ var catalog = function (rootNode, catalogObj) {
     return infoObj;
 
 };
-﻿//Add fonts before calling resurce. 
-var resources = function (fontObjs, resourceObj) {
-    // Resource dictionary
-    //Manually increment objectNumber
-    resourceObj.body.push('<<');
-    resourceObj.body.push('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
-    resourceObj.body.push('/Font <<');
-    // Do this for each font, the '1' bit is the index of the font
-    for (var i = 0, len = fontObjs.length; i < len; i++) {
-        resourceObj.body.push('/F' + (i).toString(10) + ' ' + fontObjs[i].objectNumber + ' ' + fontObjs[i].generationNumber + ' R');
-    }
-    resourceObj.body.push('>>');
-    resourceObj.body.push('/XObject <<');
-    //putXobjectDict();
-    resourceObj.body.push('>>');
-    resourceObj.body.push('>>');
-
-    return resourceObj;
+﻿/**
+*Initialize new font object.
+*@classdesc Representing font type in PDF document.
+*@constructor
+*@memberof pdfJS
+*@augments pdfJS.obj
+*@param {int} objectNumber Unique number to define this object.
+*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@private
+*/
+var resources = function (objectNumber, generationNumber) {
+    var self = this;
+    obj.call(this, objectNumber, generationNumber);
+    /**
+        *An array of all {@link pdfJS.font} objects included this document.
+        *@Type {array of [fonts]{@link pdfJS.font}}  
+        */
+    this.fontObjs = [];
+    this.imageXObjects = [];
 };
+
+var printDictionaryElements = function (arr, prefix) {
+    var ret = [],
+        i, len;
+    for (i = 0, len = arr.length; i < len; i++) {
+        ret.push('/' + prefix + (i +1).toString(10) + ' ' + arr[i].objectNumber + ' ' + arr[i].generationNumber + ' R');
+    }
+
+    return ret.join('\n');
+};
+
+
+resources.prototype = Object.create(obj.prototype, {
+    out: {
+        value: function () {
+            // Resource dictionary
+            this.body.push('<<');
+            //For compatibility only.
+            this.body.push('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
+            this.body.push('/Font <<');
+            // Do this for each font, the '1' bit is the index of the font
+            this.body.push(printDictionaryElements(this.fontObjs, 'F'));
+            this.body.push('>>');
+            this.body.push('/XObject <<');
+            this.body.push(printDictionaryElements(this.imageXObjects, 'Im'));
+            this.body.push('>>');
+            this.body.push('>>');
+
+            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+        }
+    }
+});
+
 ﻿var pageOptionsConverter = function (options) {
     var ret = [],
         obj;
@@ -398,13 +927,21 @@ var resources = function (fontObjs, resourceObj) {
             continue;
         obj = options[item];
         switch (item.toLowerCase()) {
-            //Inheritable
+            case 'resources':
+                if (obj instanceof resources) {
+                    ret.push('/Resources ' + obj.objectNumber + ' ' + obj.generationNumber + ' R');
+                }
+                else if (typeof obj === 'string') {
+                    ret.push(obj);
+                } else {
+                    throw 'Invalid Resources!';
+                }
+                break;
             case 'mediabox':
                 if (checkValidRect(obj)) {
                     ret.push('/MediaBox [' + obj.join(' ') + ']');
                 }
                 break;
-                //Inheritable
             case 'cropbox':
                 if (checkValidRect(obj)) {
                     ret.push('/CropBox [' + obj.join(' ') + ']');
@@ -474,7 +1011,50 @@ var resources = function (fontObjs, resourceObj) {
                 break;
         }
     }
-    return ret.join(' ');
+    return ret.join('\n');
+};
+
+
+var pageTreeOptionsConverter = function (options) {
+    var ret = [],
+        obj;
+    for (var item in options) {
+        if (!options.hasOwnProperty(item))
+            continue;
+        obj = options[item];
+        switch (item.toLowerCase()) {
+            //Inheritable
+            case 'resources':
+                if (obj instanceof resources) {
+                    ret.push('/Resources ' + obj.objectNumber + ' ' + obj.generationNumber + ' R');
+                }
+                else if (typeof obj === 'string') {
+                    ret.push(obj);
+                } else {
+                    throw 'Invalid Resources!';
+                }
+                break;
+            //Inheritable
+            case 'mediabox':
+                if (checkValidRect(obj)) {
+                    ret.push('/MediaBox [' + obj.join(' ') + ']');
+                }
+                break;
+                //Inheritable
+            case 'cropbox':
+                if (checkValidRect(obj)) {
+                    ret.push('/CropBox [' + obj.join(' ') + ']');
+                }
+                break;
+            case 'rotate':
+                if (typeof obj === 'number' && obj % 90 === 0) {
+                    ret.push('/Rotate ' + obj);
+                }
+                break;
+            
+        }
+    }
+    return ret.join('\n');
 };
 ﻿// this will run on <=IE9, possibly some niche browsers
 // new webkit-based, FireFox, IE10 already have native version of this.
@@ -809,399 +1389,357 @@ var padd10 = function (number) {
 var utils = {
     /**
     *@readonly
-    *@enum {array of int}
+    *@enum {[width, height]}
     */
     paperFormat: {
-        'a3': [841.89, 1190.55],
-        'a4': [595.28, 841.89],
-        'a5': [420.94, 595.28],
-        'letter': [612, 792],
-        'legal': [612, 1008]
-    }
-};
-﻿/**
-*Representing font type in PDF document.
-*@constructor
-*@memberof pdfJS
-
-*/
-var obj = function (objectNumber, generationNumber) {
-    var self = this;
-
+        a3: [841.89, 1190.55],
+        a4: [595.28, 841.89],
+        a5: [420.94, 595.28],
+        letter: [612, 792],
+        legal: [612, 1008]
+    },
     /**
-        *Positive integer representing the object number of pdf internal objects.
-        *@Type int
-        *@default 0
-        */
-    this.objectNumber = objectNumber;
-    /**
-        *Non-negative integer representing the generation number of pdf internal objects.
-        *@Type int
-        *@default 0
-        */
-    this.generationNumber = generationNumber;
-    /**
-        *The content of this obj.
-        *@Type int
-        *@default []
-        */
-    this.body = [];
-};
-obj.prototype = {
-    /**
-    *Output PDF data string for this obj.
-    *@return {string}
-    *@memberof pdfJS.obj#
+    *See Adobe's PDF Reference v1.3 for more details
+    *@readonly
+    *@enum {int}
     */
-    out: function () {
-        var self = this,
-            sb = [];
-
-        sb.push(this.objectNumber + ' ' + this.generationNumber + ' obj');
-        sb = sb.concat(this.body);
-        sb.push('endobj');
-
-        return sb.join('\n')
-    },
-    body: [],
-    objectNumber: 0,
-    generationNumber: 0
-}
-﻿/**
-*Representing a page in a PDF document.
-*@constructor
-*@memberof pdfJS
-*@augments pdfJS.obj
-*/
-var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams, document) {
-    var self = this;
-
-    obj.call(this, objectNumber, generationNumber);
-    /**
-        *Page Config options.
-        *@Type object
-        */
-    this.pageOptions = pageOptions;
-    /**
-        *The parent pageTreeNode of this page.
-        *@Type pdfJS.pageTreeNode
-        */
-    this.parent = parent;
-    /**
-        *Array of content streams (the actual content of the page).
-        *@Type array[[pdfJS.stream]{@link pdfJS.stream} ]
-        */
-    this.contentStreams = contentStreams;
-    /**
-        *Current active stream in context.
-        *@Type pdfJS.stream
-        */
-    this.currentStream = this.contentStreams[0];
-    /**
-        *The document that this page belongs to.
-        *@Type pdfJS.doc
-        */
-    this.doc = document;
-};
-pageNode.prototype = Object.create(obj.prototype, {
-    out: {
-        value: function () {
-            var i, item,
-                ret = [];
-
-            this.body.push('<< /Type /Page');
-            this.body.push(pageOptionsConverter(this.pageOptions));
-            this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
-            this.body.push('/Contents ');
-
-            if (this.contentStreams.length) {
-                this.body.push('[');
-                for (i = 0; item = this.contentStreams[i]; i++) {
-                    this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
-                }
-                this.body.push(']');
-            }
-
-            this.body.push('>>');
-
-            ret.push(obj.prototype.out.apply(this, arguments)); //calling obj super class out method.
-
-            if (this.contentStreams.length) {
-                for (i = 0; item = this.contentStreams[i]; i++) {
-                    ret.push(item.out());
-                }
-            }
-            return ret.join('\n');
-        }
+    lineCapStyle: {
+        /**The stroke is squared off at the endpoint of
+the path. There is no projection beyond the end of
+the path.*/
+        buttCap: 0,
+        /**A semicircular arc with a diameter equal
+to the line width is drawn around the endpoint and
+filled in.*/
+        roundCap: 1,
+        /**The stroke continues beyond
+the endpoint of the path for a distance equal to half
+the line width and is then squared off.*/
+        projectinSquareCap: 2
     },
     /**
-    *Graphic Operation Setter.
-    *@param {string} operator Name of graphic operator.
-    *@param {args . . .} operand Operator operands
-    *@returns {pageNode} Return this pageNode object
-    *@memberof pdfJS.pageNode#
+    *See Adobe's PDF Reference v1.3 for more details
+    *@readonly
+    *@enum {int}
     */
-    graphic: {
-        value: function (operator, operands) {
-            if (this instanceof pageNode) {
-                graphicOperators[operator].apply(this, Array.prototype.slice.call(arguments, 1));
-            }
-            return this;
-        }
+    lineJoinStyle: {
+        /**The outer edges of the strokes for the two
+segments are extended until they meet at an angle, as
+in a picture frame. If the segments meet at too sharp
+an angle (as defined by the miter limit parameter—
+see “Miter Limit,” below), a bevel join is used instead.*/
+        miterJoin: 0,
+        /**A circle with a diameter equal to the line
+width is drawn around the point where the two
+segments meet and is filled in, producing a rounded
+corner. Note: If path segments shorter than half the line width
+meet at a sharp angle, an unintended “wrong side” of
+the circle may appear.*/
+        roundJoin: 1,
+        /**The two segments are finished with butt
+caps (see “Line Cap Style” on page 139) and the
+resulting notch beyond the ends of the segments is
+filled with a triangle.*/
+        bevelJoin: 2
     },
     /**
-    *Text Operation Setter.
-    *@param {string} operator Name of graphic operator.
-    *@param {args . . .} operand Operator operands
-    *@returns {pageNode} Return this pageNode object
-    *@memberof pdfJS.pageNode#
+    *See Adobe's PDF Reference v1.3 for more details
+    *@readonly
+    *@enum {int}
     */
-    text: {
-        value: function (operator, operands) {
-            if (this instanceof pageNode) {
-                textOperators[operator].apply(this, Array.prototype.slice.call(arguments, 1));
-            }
-            return this;
-        }
+    renderingIntentOption: {
+        /**Colors are represented solely with respect to the light source; no
+correction is made for the output medium’s white point (such as
+the color of unprinted paper). Thus, for example, a monitor’s
+white point, which is bluish compared to that of a printer’s
+paper, would be reproduced with a blue cast. In-gamut colors
+are reproduced exactly; out-of-gamut colors are mapped to the
+nearest value within the reproducible gamut. This style of
+reproduction has the advantage of providing exact color
+matches from one output medium to another. It has the
+disadvantage of causing colors with Y values between the
+medium’s white point and 1.0 to be out of gamut. A typical use
+might be for logos and solid colors that require exact
+reproduction across different media.*/
+        absoluteColorimetric: 'AbsoluteColorimetric',
+        /**Colors are represented with respect to the combination of the
+light source and the output medium’s white point (such as the
+color of unprinted paper). Thus, for example, a monitor’s white
+point would be reproduced on a printer by simply leaving the
+paper unmarked, ignoring color differences between the two
+media. In-gamut colors are reproduced exactly; out-of-gamut
+colors are mapped to the nearest value within the reproducible
+gamut. This style of reproduction has the advantage of adapting
+for the varying white points of different output media. It has the
+disadvantage of not providing exact color matches from one
+medium to another. A typical use might be for vector graphics.*/
+        relativeColorimetric: 'RelativeColorimetric',
+        /**Colors are represented in a manner that preserves or emphasizes
+saturation. Reproduction of in-gamut colors may or may not be
+colorimetrically accurate. A typical use might be for business
+graphics, where saturation is the most important attribute of the
+color.*/
+        saturation: 'Saturation',
+        /**Colors are represented in a manner that provides a pleasing
+perceptual appearance. This generally means that both in-gamut
+and out-of-gamut colors are modified from their precise
+colorimetric values in order to preserve color relationships. A
+typical use might be for scanned images.*/
+        perceptual: 'Perceptual'
     },
     /**
-    *Set current stream in context by index.
-    *@param {int} index index of contentStreams
-    *@returns {pageNode} Return this pageNode object
-    *@memberof pdfJS.pageNode#
+    *See Adobe's PDF Reference v1.3 for more details
+    *@readonly
+    *@enum {int}
     */
-    setStream: {
-        value: function (index) {
-            if (index >= this.contentStreams.length)
-                throw 'Invalid stream index';
-            this.currentStream = this.contentStreams[index];
-            return this;
-        }
-    }
-});
-
-﻿/**
-*Representing a page-tree node in a PDF document.
-*@constructor
-*@memberof pdfJS
-*@augments pdfJS.obj
-*/
-var pageTreeNode = function (parent, objectNumber, generationNumber) {
-    var self = this;
-
-    obj.call(this, objectNumber, generationNumber);
-    /**
-        *The parent pageTreeNode of this page-tree.
-        *@Type pdfJS.pageTreeNode
-        */
-    this.parent = parent;
-    /**
-        *Children of this page-tree node.
-        *@type array[[pdfJS.pageTreeNode]{@link pdfJS.pageTreeNode} | [pdfJS.pageNode]{@link pdfJS.pageNode}]
-        */
-    this.kids = [];
-};
-
-
-pageTreeNode.prototype = Object.create(obj.prototype, {
-    out: {
-        value: function () {
-            var i, item;
-            this.body.push(
-                '<< /Type /Pages',
-                '/Kids [');
-
-            for (i = 0; item = this.kids[i]; i++) {
-                this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
-            }
-            this.body.push(']');
-
-            this.body.push('/Count ' + walkPageTree(this));
-
-            if (this.parent) {
-                this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
-            }
-
-            this.body.push('>>');
-
-            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
-        }
-    }
-});
-
-var walkPageTree = function (pageTree) {
-    var count = 0,
-        i, item;
-
-    for (i = 0; item = pageTree.kids[i]; i++) {
-        if (item instanceof pageNode) {
-            count++;
-        } else {
-            count += walkPageTree(item);
-        }
-    }
-    return count;
-};
-
-﻿/**
-*Representing a stream object in a PDF document.
-*@constructor
-*@memberof pdfJS
-*@augments pdfJS.obj
-*/
-var stream = function (objectNumber, generationNumber) {
-    var self = this;
-
-    obj.call(this, objectNumber, generationNumber);
-    /**
-        *The content of this stream.
-        *@Type [string]
-        *@default []
-        */
-    self.content = [];
-};
-
-
-stream.prototype = Object.create(obj.prototype, {
-    out: {
-        value: function () {
-            this.body.push('<< /Length ' + this.content.join('\n').length + ' >>');
-            this.body.push('stream');
-            this.body = this.body.concat(this.content);
-            this.body.push('endstream');
-
-            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
-        }
+    pathPaintingOption: {
+        /**Stroke the path.*/
+        bigS: 'S',
+        /**Close and stroke the path.*/
+        smallS: 's',
+        /**Fill the path, using the nonzero winding number rule to determine the region to fill.*/
+        smallF: 'f',
+        /**Fill the path, using the even-odd rule to determine the region to fill*/
+        fStar: 'f*',
+        /**Fill and then stroke the path, using the nonzero winding number rule to determine
+the region to fill. This produces the same result as constructing two identical path
+objects, painting the first with f and the second with S. Note, however, that the filling
+and stroking portions of the operation consult different values of several graphics
+state parameters, such as the color.*/
+        bigB: 'B',
+        /**Fill and then stroke the path, using the even-odd rule to determine the region to fill.
+This operator produces the same result as B, except that the path is filled as if with
+f* instead of f.*/
+        bigBStar: 'B*',
+        /**Close, fill, and then stroke the path, using the nonzero winding number rule to
+determine the region to fill.*/
+        smallB: 'b',
+        /**Close, fill, and then stroke the path, using the even-odd rule to determine the
+region to fill..*/
+        smallBStar: 'b*',
+        /**End the path object without filling or stroking it. This operator is a “path-painting
+no-op,” used primarily for the side effect of changing the clipping path*/
+        n: 'n'
     },
     /**
-        *Shortcut to pushing content to the stream (same as stream.content.push('something');
-        *@param {string} args stream.push(item1, item2, . . . , itemX)
-        *@returns {pdfJS.stream} Return this stream object.
-        *@memberof pdfJS.stream#
-        */
-    push: {
-        value: function (args) {
-            Array.prototype.push.apply(this.content, arguments);
-            return this;
-        }
-    }
-});
-
-﻿/**
-*Representing font type in PDF document.
-*@constructor
-*@memberof pdfJS
-*@augments pdfJS.obj
-*/
-var font = function (font, objectNumber, generationNumber) {
-    var self = this;
-    obj.call(this, objectNumber, generationNumber);
+    *See Adobe's PDF Reference v1.3 for more details
+    *@readonly
+    *@enum {string}
+    */
+    colorSpace: {
+        /**DeviceGray requires one value between 0.0(black) and 1.0(white).*/
+        deviceGray: 'DeviceGray',
+        /**DeviceRGB requires three values that are between 0.0 and 1.0 for each channel*/
+        deviceRGB: 'DeviceRGB',
+        /**DeviceCMYK requires four values that are between 0.0 and 1.0 for each channel*/
+        deviceCMYK: 'DeviceCMYK'
+    },
     /**
-        *Font description object.
-        *@Type object
-        */
-    self.description = font;
-};
-
-font.prototype = Object.create(obj.prototype, {
-    out: {
-        value: function () {
-            this.body.push('<< /Type /Font');
-            this.body.push('/Subtype /Type1');
-            this.body.push('/BaseFont /' + this.description.PostScriptName);
-
-            if (typeof font.encoding === 'string') {
-                this.body.push('/Encoding /' + this.description.encoding);
-            }
-            this.body.push('>>');
-
-            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
-        }
+    *See Adobe's PDF Reference v1.3 for more details
+    *@readonly
+    *@enum {int}
+    */
+    textMode: {
+        /**Fill text.*/
+        fillText: 0,
+        /**Stroke text.*/
+        strokeText: 1,
+        /**Fill, then stroke, text.*/
+        fillStrokeText: 2,
+        /**Neither fill nor stroke text (invisible).*/
+        invisibleText: 3,
+        /**Fill text and add to path for clipping (see above).*/
+        fillClipText: 4,
+        /**Stroke text and add to path for clipping.*/
+        strokeClipText: 5,
+        /**Fill, then stroke, text and add to path for clipping.*/
+        fillStrokeClipText: 6,
+        /**Add text to path for clipping.*/
+        clipText: 7
     }
-});
 
-﻿doc.prototype.setGraphicsState = function (options) {
-    for (var item in options) {
-        if (!options.hasOwnProperty(item))
-            return;
-        switch (item.toLowerCase()) {
-            //Setting the text font and font size
-            //Expect object: {fontName: Time, fontStyle: Normal, size: 16}
-            case 'font':
-                var opt = options[item];
-                var fontKey;
-                try {
-                    fontKey = this.fontmap[opt.fontName][opt.fontStyle];
-                }
-                catch (e) {
-                    throw Error('font does not exist.');
-                }
-
-                var font = this.fonts[fontKey];
-                //TODO: Search for font name from font dictionary
-        }
-    }
 };
-
+﻿/**
+*Includes all supported graphic operations. Please see [pageNode.text]{@link pdfJS.pageNode#text} for details.
+*@namespace
+*@memberof pdfJS*/
 var graphicOperators = {
-    /*
-Transformation should be done in the following order: 
-####Translate -> Rotate -> Scale or Skew.
-*/
-    transform: {
-        translate: function (tx, ty) {
-            this.currentStream.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
-        },
-        scale: function (sx, sy) {
-            this.currentStream.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
-        },
-        rotate: function (theta) {
-            var cos = Math.cos(theta),
-                sin = Math.sin(theta);
-            this.currentStream.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
-        },
-        skew: function (alphaX, betaY) {
-            this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
-        }
+    /**
+
+    *@inner
+    *@method
+    *@param {int} tx Translate by tx pt in x direction.
+    *@param {int} ty Translate by ty pt in y direction.
+    
+    */
+    translate: function (tx, ty) {
+        this.currentStream.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
     },
+    /**
+    
+    *@inner
+    *@method
+    *@param {int} sx Scale by tx in x direction.
+    *@param {int} sy Scale by ty in y direction.
+    
+    */
+    scale: function (sx, sy) {
+        this.currentStream.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
+    },
+    /**
+    
+    *@inner
+    *@method
+    *@param {int} theta Rotate by theta.
+    
+    */
+    rotate: function (theta) {
+        var cos = Math.cos(theta),
+            sin = Math.sin(theta);
+        this.currentStream.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
+    },
+    /**
+   
+   *@inner
+   *@method
+   *@param {int} alphaX Skew horizontally.
+   *@param {int} betaY Skew vertically.
+   
+   */
+    skew: function (alphaX, betaY) {
+        this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
+    },
+    /**
+    TODO: Implement
+   *@inner
+   *@method
+   
+   */
     colorSpace: function () {
     },
+    /**
+    TODO: Implement
+   *@inner
+   *@method
+   
+   */
     color: function () {
     },
+    /**
+    TODO: Implement
+   *@inner
+   *@method
+   
+   */
     textState: function () {
     },
-    /*
-    Valid Value: Non-negative number.
+    /**
+    
+    *@inner
+    *@method
+    *@param {int} width Set line thickness by lineWidth in pt. Valid Value: Non-negative number.
     A value of zero means the thinnest line a device can print/render;
     therefore setting the value to zero is a device-dependent operation, not recommended'
+    
     */
-    lineWidth: function (lineWidth) {
-        this.currentStream.push(lineWidth + ' w');
+    lineWidth: function (width) {
+        this.currentStream.push(width + ' w');
     },
-    lineCap: function (lineCap) {
-        this.currentStream.push(lineCap + ' J');
+    /**
+    
+    *@inner
+    *@method
+    *@param {int} capStyle See [lineCapStyle]{@link pdfJS.utils.lineCapStyle} for valid values.
+    
+    */
+    lineCap: function (capStyle) {
+        this.currentStream.push(capStyle + ' J');
     },
-    lineJoin: function (lineJoin) {
-        this.currentStream.push(lineJoin + ' j');
+    /**
+    
+    *@inner
+    *@method
+    *@param {int} joinStyle See [lineCapStyle]{@link pdfJS.utils.lineJoinStyle} for valid values.
+    
+    */
+    lineJoin: function (joinStyle) {
+        this.currentStream.push(joinStyle + ' j');
     },
-    miterLimit: function (miterLimit) {
-        this.currentStream.push(miterLimit + ' M');
+    /**
+    
+    *@inner
+    *@method
+    *@param {int} limit When two line segments meet at a sharp angle and mitered joins have been specified
+as the line join style, it is possible for the miter to extend far beyond the
+thickness of the line stroking the path. The miter limit imposes a maximum on
+the ratio of the miter length to the line width. When the limit is
+exceeded, the join is converted from a miter to a bevel.
+    
+    */
+    miterLimit: function (limit) {
+        this.currentStream.push(limit + ' M');
     },
+    /**
+    The line dash pattern controls the pattern of dashes and gaps used to stroke paths .
+    *@inner
+    *@method
+    *@param {int} dashArray Refer to Adobe's PDF Reference v1.3 for more details
+    *@param {int} dashPhase Refer to Adobe's PDF Reference v1.3 for more details
+    
+    */
     dashPattern: function (dashArray, dashPhase) {
         this.currentStream.push(dashArray + ' ' + dashPhase + ' d');
     },
+    /**
+    Set the color rendering intent in the graphics state .
+    *@inner
+    *@method
+    *@param {int} intent See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+    
+    */
     renderingIntent: function (intent) {
         this.currentStream.push(intent + ' ri');
     },
+    /**
+    TODO: Implement
+   *@inner
+   *@method
+   
+   */
     strokeAdjustment: function () {
     },
+    /**
+    *Save the current graphics state on the graphics state stack .
+    *@inner
+    *@method
+    
+    */
     pushState: function () {
         this.currentStream.push('q');
     },
+    /**
+    *Restore the graphics state by removing the most recently saved state from
+the stack and making it the current state .
+    *@inner
+    *@method
+    
+    */
     popState: function () {
         this.currentStream.push('Q');
     },
     /*Path Controls Begin*/
+    /**
+    *Begin a new subpath by moving the current point to coordinates
+(x, y), omitting any connecting line segment. If the previous path
+construction operator in the current path was also initiated by 'newSubPath', the new 'newSubPath'
+overrides it; no vestige of the previous m operation remains in the
+path. .
+    *@inner
+    *@method
+    
+    *@param {int} x
+    *@param {int} y
+    */
     newSubPath: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid new path parameters';
@@ -1209,6 +1747,15 @@ Transformation should be done in the following order:
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' m');
     },
+    /**
+    *Append a straight line segment from the current point to the point
+(x, y). The new current point is (x, y). .
+    *@inner
+    *@method
+    
+    *@param {int} x
+    *@param {int} y
+    */
     straightLine: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid straight line  parameters';
@@ -1216,7 +1763,20 @@ Transformation should be done in the following order:
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' l');
     },
-    bezierCurve: function () {
+    /**
+    *Append a cubic Bézier curve to the current path. The curve extends
+from the current point to the point (x3, y3), using the other pairs of points as the Bézier control points .
+    *@inner
+    *@method
+    
+    *@param {int} x1
+    *@param {int} y1
+    *@param {int} x2
+    *@param {int} y2
+    *@param {int} x3
+    *@param {int} y3
+    */
+    bezierCurve: function (x1, y1, x2, y2, x3, y3) {
         var args = Array.prototype.slice.call(arguments);
         switch (arguments.length) {
             case 4:
@@ -1233,20 +1793,55 @@ Transformation should be done in the following order:
                 break;
         }
     },
+    /**
+    *Close the current subpath by appending a straight line segment
+from the current point to the starting point of the subpath. This
+operator terminates the current subpath; appending another segment
+to the current path will begin a new subpath, even if the new
+segment begins at the endpoint reached by the 'close' operation. If the
+current subpath is already closed or the current path is empty, 'close' operation
+does nothing. .
+    *@inner
+    *@method
+    
+    */
     close: function () {
         this.currentStream.push('h');
     },
+    /*Path Controls END*/
+    /**
+    *Append a rectangle to the current path as a complete subpath, with
+lower-left corner (x, y) and dimensions width and height in user
+space. .
+    *@inner
+    *@method
+    
+    *@param {int} operator See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+    */
     paintPath: function (operator) {
         this.currentStream.push(operator);
     },
+    /*Path Controls END*/
+    /**
+    *Append a rectangle to the current path as a complete subpath, with
+lower-left corner (x, y) and dimensions width and height in user
+space. .
+    *@inner
+    *@method
+    
+    *@param {bool} asterisk if true, then set clipping path using even-odd rule.
+    */
     clip: function (asterisk) {
         this.currentStream.push('W' + (asterisk ? ' *' : ''));
     },
-    noOp: function () {
-        this.currentStream.push('n');
-    },
     /*Path Controls END*/
-
+    /**
+    *Append a rectangle to the current path as a complete subpath, with
+lower-left corner (x, y) and dimensions width and height in user
+space. .
+    *@inner
+    *@method
+    */
     rect: function (x, y, width, height) {
         if (arguments.length != 4) {
             throw 'Invalid rectangle parameters';
@@ -1255,13 +1850,44 @@ Transformation should be done in the following order:
         this.currentStream.push(args.join(' ') + ' re');
     },
     /*Color Controls Begin */
+    /*Path Controls END*/
+    /**
+    *Set the color space to use for nonstroking operations. The operand
+name must be a name object. If the color space is one that can be specified by a
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
+    *@inner
+    *@param {pdfJS.utils.colorSpace | string} name See [colorSpace]{@link pdfJS.utils.colorSpace} for valid values.
+    *@method
+    
+    */
     fillColorSpace: function (name) {
         this.currentStream.push(name + ' cs')
     },
+    /**
+    *Set the color space to use for stroking operations. The operand
+name must be a name object. If the color space is one that can be specified by a
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
+    *@inner
+    *@param {pdfJS.utils.colorSpace | string} name See [colorSpace]{@link pdfJS.utils.colorSpace} for valid values.
+    *@method
+    
+    */
     strokeColorSpace: function (name) {
         this.currentStream.push(name + ' CS')
     },
-    fillColor: function () {
+    /**
+    *Set the color space to use for non-stroking operations. The operand
+name must be a name object. If the color space is one that can be specified by a
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
+    *@inner
+    *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@param {int} colorValue2 
+    *@param {int} colorValue3 
+    *@param {int} colorValue4 
+    *@method
+    
+    */
+    fillColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
             case 1:
             case 3:
@@ -1274,7 +1900,19 @@ Transformation should be done in the following order:
                 break;
         }
     },
-    strokeColor: function () {
+    /**
+    *Set the color space to use for stroking operations. The operand
+name must be a name object. If the color space is one that can be specified by a
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) .
+    *@inner
+    *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@param {int} colorValue2 
+    *@param {int} colorValue3 
+    *@param {int} colorValue4 
+    *@method
+    
+    */
+    strokeColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
             case 1:
             case 3:
@@ -1287,19 +1925,51 @@ Transformation should be done in the following order:
                 break;
         }
     },
+    /**
+    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations .
+    *@inner
+    *@param {int} value See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@method
+    
+    */
     grayFill: function (value) {
         this.currentStream.push(value + ' g');
     },
+    /**
+    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
+    *@inner
+    *@param {int} value See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@method
+    
+    */
     grayStroke: function (value) {
         this.currentStream.push(value + ' G');
     },
-    rgbFill: function () {
+    /**
+    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations .
+    *@inner
+    *@param {int} r set red channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@param {int} g set green channel color value.
+    *@param {int} b set blue channel color value. 
+    *@method
+    
+    */
+    rgbFill: function (r, g, b) {
         if (arguments.length != 3) {
             throw 'Invalid RGB color values';
         }
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' rg');
     },
+    /**
+    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
+    *@inner
+    *@param {int} r set red channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@param {int} g set green channel color value.
+    *@param {int} b set blue channel color value. 
+    *@method
+    
+    */
     rgbStroke: function () {
         if (arguments.length != 3) {
             throw 'Invalid RGB color values';
@@ -1307,6 +1977,16 @@ Transformation should be done in the following order:
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' RG');
     },
+    /**
+    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
+    *@inner
+    *@param {int} c set cryan channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@param {int} g set magenta channel color value.
+    *@param {int} b set yellow channel color value. 
+    *@param {int} k set black channel color value. 
+    *@method
+    
+    */
     cmykFill: function () {
         if (arguments.length != 4) {
             throw 'Invalid CMYK color values';
@@ -1314,6 +1994,16 @@ Transformation should be done in the following order:
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' k');
     },
+    /**
+    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
+    *@inner
+    *@param {int} c set cryan channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@param {int} g set magenta channel color value.
+    *@param {int} b set yellow channel color value. 
+    *@param {int} k set black channel color value. 
+    *@method
+    
+    */
     cmykStroke: function () {
         if (arguments.length != 4) {
             throw 'Invalid CMYK color values';
@@ -1324,36 +2014,102 @@ Transformation should be done in the following order:
     /*Color Controls End*/
 
 };
-﻿var textOperators = {
+﻿/**
+*Includes all supported text operations. Please see [pageNode.text]{@link pdfJS.pageNode#text} for details.
+*@namespace
+*@memberof pdfJS*/
+var textOperators = {
+    /**
+    Begin text operator.
+    *@inner
+    *@method
+    */
     beginText: function () {
         this.currentStream.push('BT');
     },
+    /**
+    End text operator.
+    *@inner
+    *@method
+    */
     endText: function () {
         this.currentStream.push('ET');
     },
+    /**
+    *Move from current text coordinate.
+    *@inner
+    *@method
+    *@param {int} x Translate by x pt in x direction from current text coordinate.
+    *@param {int} y Translate by y pt in y direction. from current text coordinate
+    */
     textPosition: function (x, y) {
         this.currentStream.push(x + ' ' + y + ' td');
     },
+    /**
+    *Move from current text coordinate without leading.
+    *@inner
+    *@method
+    *@param {int} x Translate by x pt in x direction from current text coordinate.
+    *@param {int} y Translate by y pt in y direction. from current text coordinate
+    */
     textPositionWithLeading: function (x, y) {
         this.currentStream.push(x + ' ' + y + ' TD');
     },
+    /**
+    *Character Spacing
+    *@inner
+    *@method
+    *@param {int} charSpace Space between characters.
+    */
     charSpace: function (charSpace) {
         this.currentStream.push(charSpace + ' Tc');
     },
+    /**
+    *Word Spacing
+    *@inner
+    *@method
+    *@param {int} wordSpace Space between words.
+    */
     wordSpace: function (wordSpace) {
         this.currentStream.push(wordSpace + ' Tw');
     },
-    scale: function (scale) {
+    /**
+    *Scale text by value.
+    *@inner
+    *@method
+    *@param {int} scale Scaling factor.
+    */
+    scaleText: function (scale) {
         this.currentStream.push(scale + ' Tz');
     },
-    leading: function (leading) {
-        this.currentStream.push(leading + ' TL');
+    /**
+    *Set 'leading'
+    *@inner
+    *@method
+    *@param {int} val
+    */
+    leading: function (val) {
+        this.currentStream.push(val + ' TL');
     },
-    fontSize: function (fontSize) {
-        this.currentStream.push(fontSize + ' Tf');
+    /**
+    *Set font size.
+    *@inner
+    *@method
+    *@param {int} size FontSize in pt.
+    */
+    fontSize: function (size) {
+        this.currentStream.push(size + ' Tf');
     },
+    /**
+    *Set font size.
+    *@inner
+    *@method
+    *@param {string} [name=F1] Font internal reference name.
+    *@param {string} [style] Font style.
+    *@param {int} [size] FontSize in pt.
+    */
     fontStyle: function (name, style, fontSize) {
-        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.fontObjs[0].description.key,
+        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.resObj.fontObjs[0].description.key,
             len = arguments.length;
         this.currentStream.push('/' + fontKey);
 
@@ -1361,12 +2117,33 @@ Transformation should be done in the following order:
             this.text('fontSize', arguments[2]);
         }
     },
-    render: function (render) {
+    /**
+    *Set text rendering mode.
+    *@inner
+    *@method
+    *@param {pdf.utils.textMode} mode
+    */
+    renderMode: function (mode) {
         this.currentStream.push(render + ' Tr');
     },
+    /**
+    *Set text rendering mode.
+    *@inner
+    *@method
+    *@param {int} rise Positive values of text rise move the
+baseline up and opposite for negative values.
+    */
     rise: function (rise) {
         this.currentStream.push(rise + ' Ts');
     },
+    /**
+    *Print text
+    *@inner
+    *@method
+    *@param {string} textString
+    *@param {int} [wordSpace] word spacing
+    *@param {int} [charSpace] charcter spacing
+    */
     showText: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
             this.currentStream.push('(' + textString + ') Tj');
@@ -1375,6 +2152,19 @@ Transformation should be done in the following order:
             this.currentStream.push(wordSpace + ' ' + charSpace + ' (' + textString + ') "');
         }
     },
+    /**
+    *Print text
+    *@inner
+    *@method
+    *@param {array[string]} arr Show one or more text strings, allowing individual glyph positioning. Each element of array can be a string or a
+number. If the element is a string, this operator shows the string. If it is a number,
+the operator adjusts the text position by that amount; that is, it translates
+the text matrix. The number is expressed in thousandths of a unit of text
+space. This amount is subtracted from the current x coordinate in horizontal
+writing mode or from the current y coordinate in vertical writing mode.
+In the default coordinate system, a positive adjustment has the effect of moving
+the next glyph painted either to the left or down by the given amount.
+    */
     showArrayText: function (arr) {
         var i; len, temp;
         for (i = 0, len = arr.length; I < len; i++) {
@@ -1386,10 +2176,26 @@ Transformation should be done in the following order:
         this.currentStream.push(arr.join(' ') + ' TJ');
 
     },
+    /**
+    *Print text on newline.
+    *@inner
+    *@method
+    *@param {string} textString
+    */
     showTextln: function (textString) {
         this.currentStream.push(textString + ' \'');
     },
-
+    /**
+    *Specifying text transforming matrix.
+    *@inner
+    *@method
+    *@param {int} a
+    *@param {int} b
+    *@param {int} c
+    *@param {int} d
+    *@param {int} e
+    *@param {int} f
+    */
     textMatrix: function (a, b, c, d, e, f) {
         var args = Array.prototype.slice.call(arguments);
         if (args.length !== 6) {
@@ -1397,8 +2203,138 @@ Transformation should be done in the following order:
         }
         this.currentStream.push(args.join(' ') + ' Tm');
     },
+    /**
+    *Move to the start of the next line.
+    *@inner
+    *@method
+    */
     nextLine: function () {
         this.currentStream.push('T*');
+    }
+};
+﻿doc.prototype.newImage = function (imageData, crossOrigin, resources) {
+    var newImage = new imageXObject(++this.objectNumber, 0, 0, 0, utils.colorSpace.deviceRGB, 8, 'DCTDecode');
+
+    analyzeImage.call(this, imageData, newImage, resources || this.resObj, crossOrigin, this);
+
+    return newImage;
+};
+
+var analyzeImage = function (image) {
+    if (image instanceof HTMLImageElement) {
+        processImage.apply(this, [image].concat(Array.prototype.slice.call(arguments, 1, 3)));
+    } else if (typeof image === 'string') {
+        processImageSource.apply(this, [image].concat(Array.prototype.slice.call(arguments, 1)));
+    } else if (image instanceof HTMLCanvasElement) {
+        processCanvas.apply(this, [image].concat(Array.prototype.slice.call(arguments, 1, 3)));
+    } else {
+        throw 'Invalid Image Type';
+    }
+};
+
+var processImageSource = function (imgSrc, imgXObj, resources, crossOrigin, doc) {
+    var img = new Image();
+    img.onload = function (e) {
+        doc.activeAsync--;
+        processImage.call(this, img, imgXObj, resources);
+    };
+
+    //Enable crossOrigin based on CORS if crossOrigin is true.
+    if (crossOrigin) {
+        img.crossOrigin = 'anonymous';
+    }
+    doc.activeAsync++;
+    img.src = imgSrc;
+};
+
+var processImage = function (img) {
+    var canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) {
+        throw ('addImage requires canvas to be supported by browser.');
+    }
+
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    processCanvas.apply(this, [canvas].concat(Array.prototype.slice.call(arguments, 1)));
+};
+
+var processCanvas = function (canvas, imgXObj, resources) {
+
+    var imageData = canvas.toDataURL('image/jpeg');
+    var imageInfo = processImageData(imageData, 'jpeg');
+
+    imgXObj.content.push(imageInfo.data);
+    imgXObj.name = 'Im' + (resources.imageXObjects.length + 1);
+    imgXObj.width = imageInfo.width;
+    imgXObj.height = imageInfo.height;
+
+    //Add image to the resource dictionary.
+    resources.imageXObjects.push(imgXObj);
+};
+
+var processImageData = function (imageData, format) {
+    var ret = {
+        width: 0,
+        height: 0,
+        data: ''
+    },
+        temp;
+    format = format.toLowerCase();
+
+    //TODO replace using regex.
+    //Convert dataString to binary.
+    if (imageData.substring(0, 23) === 'data:image/jpeg;base64,') {
+        imageData = atob(imageData.replace('data:image/jpeg;base64,', ''));
+        format = 'jpeg';
+    }
+
+    //Try JPEG
+    try {
+        if (format == 'jpeg' || !format) {
+            temp = getJpegSize(imageData);
+            ret.width = temp[0];
+            ret.height = temp[1];
+        }
+    } catch (e) {
+        console.log('Image is not JPEG');
+    }
+
+    ret.data = imageData;
+    return ret;
+};
+
+// Algorithm from: http://www.64lines.com/jpeg-width-height
+var getJpegSize = function (imgData) {
+    var width, height;
+    // Verify we have a valid jpeg header 0xff,0xd8,0xff,0xe0,?,?,'J','F','I','F',0x00
+    if (!imgData.charCodeAt(0) === 0xff ||
+        !imgData.charCodeAt(1) === 0xd8 ||
+        !imgData.charCodeAt(2) === 0xff ||
+        !imgData.charCodeAt(3) === 0xe0 ||
+        !imgData.charCodeAt(6) === 'J'.charCodeAt(0) ||
+        !imgData.charCodeAt(7) === 'F'.charCodeAt(0) ||
+        !imgData.charCodeAt(8) === 'I'.charCodeAt(0) ||
+        !imgData.charCodeAt(9) === 'F'.charCodeAt(0) ||
+        !imgData.charCodeAt(10) === 0x00) {
+        throw new Error('getJpegSize requires a binary jpeg file');
+    }
+    var blockLength = imgData.charCodeAt(4) * 256 + imgData.charCodeAt(5);
+    var i = 4, len = imgData.length;
+    while (i < len) {
+        i += blockLength;
+        if (imgData.charCodeAt(i) !== 0xff) {
+            throw new Error('getJpegSize could not find the size of the image');
+        }
+        if (imgData.charCodeAt(i + 1) === 0xc0) {
+            height = imgData.charCodeAt(i + 5) * 256 + imgData.charCodeAt(i + 6);
+            width = imgData.charCodeAt(i + 7) * 256 + imgData.charCodeAt(i + 8);
+            return [width, height];
+        } else {
+            i += 2;
+            blockLength = imgData.charCodeAt(i) * 256 + imgData.charCodeAt(i + 1)
+        }
     }
 };
 ﻿//Public
