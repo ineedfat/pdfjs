@@ -2,16 +2,16 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/01/2013 18:41
+* Compiled At: 03/05/2013 00:39
 ***********************************************/
 (function(_) {
 'use strict';
-/*! pdfJS.js | https://github.com/ineedfat | 2013-03-01 | iNeedFat(https://github.com/ineedfat)*/
+/*! pdfJS.js | https://github.com/ineedfat | 2013-03-05 | iNeedFat(https://github.com/ineedfat)*/
 var PDFJS_VERSION = '0.0.1';
 
 ﻿/**
 *Initialize new PDf speical object.
-*@classdesc Representing font type in PDF document.
+*@classdesc A PDF internal object.
 *@constructor
 *@memberof pdfJS
 *@param {int} objectNumber Unique number to define this object.
@@ -319,7 +319,7 @@ stream.prototype = Object.create(obj.prototype, {
 
 ﻿/**
 *Initialize new font object.
-*@classdesc Representing font type in PDF document.
+*@classdesc Representing font type in a PDF document.
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj
@@ -479,7 +479,7 @@ imageXObject.prototype = Object.create(stream.prototype, {
     *@constructor
     *@memberof pdfJS
     *@Author Trinh Ho (https://github.com/ineedfat/pdfjs)
-    *@classdesc Representing a PDF document with all the supported API calls.
+    *@classdesc Representing a PDF document.
     *@param {string|array} [format=letter] Paper format name or array containing width and height (e.g [width, height])
     *@param {string} [orientation=portrait] Document orientation.
     *@param {array} [margin=[18,18]] Horizontal and vertical margin in points (e.g [horizontal, vertical])
@@ -487,7 +487,6 @@ imageXObject.prototype = Object.create(stream.prototype, {
     var doc = function (format, orientation, margin) {
         var self = this;
         /**
-        *@Private
         *Number of active async calls such as adding a new image. TODO: make this field private.
         *@Type int
         *@memberof pdfJS.doc#
@@ -1876,10 +1875,10 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
         this.currentStream.push(name + ' CS')
     },
     /**
-    *Set the color space to use for non-stroking operations. The operand
-name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
-    *@inner
+    *Set the color space to use for non-stroking operations. Depending on the color space,
+    *specify the correct number of color values (e.g DeviceGray requires 1, DeviceRGB requires 2,
+    *etc)
+     *@inner
     *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 

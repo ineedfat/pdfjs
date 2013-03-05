@@ -1,7 +1,61 @@
-﻿<div class="container">
+﻿<div class="pjs-social">
+    <div class="container">
+        <ul>
+            <li>
+                <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=ineedfat&repo=pdfjs&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
+            </li>
+            <li>
+                <iframe class="github-btn" src="http://ghbtns.com/github-btn.html?user=ineedfat&repo=pdfjs&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="102px" height="20px"></iframe>
+            </li>
+        </ul>
+
+    </div>
+</div>
+<div class="container">
     <div class="row">
         <div class="span12">
-           <h1>This is the home page.</h1>
+            <example id="Example3" editor-wrap="true" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="A JavaScript PDF Framework"
+                editor-id="'editor-home'">
+                <p>PdfJS is built around PDF version 1.3 specification that allows alot of flexibility for on demand client-side PDF generation. It attempts to provide a low level API that closely resembles the PDF specification.
+                </p>
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor-home" >
+var doc = new pdfJS.doc('letter', 'portrait');
+    doc.addPage();
+    
+    //Title
+    doc.currentPage.graphic('pushState');
+    doc.currentPage.graphic('translate', 160, 700);
+    doc.currentPage.text('beginText');
+    doc.currentPage.text('fontStyle', null, null, 50);
+    doc.currentPage.text('showText', 'Hello World!');
+    doc.currentPage.text('fontStyle', null, null, 20);
+    doc.currentPage.text('textPositionWithLeading', 200, -30);
+    doc.currentPage.text('showText', 'pdfJS by iNeedFat :\\)');
+    doc.currentPage.text('endText');
+    
+    doc.currentPage.graphic('popState');
+    
+    //Image
+    var imgXObj = doc.newImage('./img/sample.jpg', true);
+    imgXObj.addImageToPage(doc.currentPage, 60, 50, 300, 100);
+    
+    //More Text
+    doc.currentPage.graphic('translate', 400, 175);
+    doc.currentPage.text('beginText');
+    doc.currentPage.text('fontStyle', null, null, 15);
+    doc.currentPage.text('showText', 'It\'s just that easy :D!');
+    doc.currentPage.text('endText');
+                    </div>
+                    <h4>Note</h4>
+                            <p>It is good to understand the internal structure of a PDF file by
+                                referencing the 'Adobe PDF 1.3 Reference'.
+                    </p>
+                            </div>
+                    <iframe class="span5" src="./views/exampleview.html"></iframe>
+                        </div>
+                </example>
         </div>
     </div>
 </div>

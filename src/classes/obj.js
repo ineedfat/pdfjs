@@ -1,6 +1,6 @@
 ﻿/**
 *Initialize new PDf speical object.
-*@classdesc Representing font type in PDF document.
+*@classdesc A PDF internal object.
 *@constructor
 *@memberof pdfJS
 *@param {int} objectNumber Unique number to define this object.

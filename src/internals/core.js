@@ -6,7 +6,7 @@
     *@constructor
     *@memberof pdfJS
     *@Author Trinh Ho (https://github.com/ineedfat/pdfjs)
-    *@classdesc Representing a PDF document with all the supported API calls.
+    *@classdesc Representing a PDF document.
     *@param {string|array} [format=letter] Paper format name or array containing width and height (e.g [width, height])
     *@param {string} [orientation=portrait] Document orientation.
     *@param {array} [margin=[18,18]] Horizontal and vertical margin in points (e.g [horizontal, vertical])
@@ -14,7 +14,6 @@
     var doc = function (format, orientation, margin) {
         var self = this;
         /**
-        *@Private
         *Number of active async calls such as adding a new image. TODO: make this field private.
         *@Type int
         *@memberof pdfJS.doc#

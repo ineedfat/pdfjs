@@ -315,10 +315,10 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
         this.currentStream.push(name + ' CS')
     },
     /**
-    *Set the color space to use for non-stroking operations. The operand
-name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
-    *@inner
+    *Set the color space to use for non-stroking operations. Depending on the color space,
+    *specify the correct number of color values (e.g DeviceGray requires 1, DeviceRGB requires 2,
+    *etc)
+     *@inner
     *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 

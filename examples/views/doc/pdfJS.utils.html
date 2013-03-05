@@ -1,0 +1,1767 @@
+
+
+
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+
+
+
+
+<div id="main">
+    
+    <h1 class="page-title">Namespace: utils</h1>
+    
+    
+
+
+
+<section>
+    
+<header>
+    <h2>
+        <span class="ancestors"><a href="#/docs?link=pdfJS.html">pdfJS</a>.</span>
+    
+    utils
+    </h2>
+    
+</header>  
+
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=utils.js.html">utils.js</a>, line 331
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+        
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Members</h3>
+        
+        <dl>
+            
+<dt>
+    <h4 class="name" id="colorSpace"><span class="type-signature">&lt;static, readonly> </span>colorSpace<span class="type-signature"> :string</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        See Adobe's PDF Reference v1.3 for more details
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>deviceGray</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    DeviceGray
+                
+                </td>
+            
+            
+            <td class="description last">DeviceGray requires one value between 0.0(black) and 1.0(white).</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>deviceRGB</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    DeviceRGB
+                
+                </td>
+            
+            
+            <td class="description last">DeviceRGB requires three values that are between 0.0 and 1.0 for each channel</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>deviceCMYK</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    DeviceCMYK
+                
+                </td>
+            
+            
+            <td class="description last">DeviceCMYK requires four values that are between 0.0 and 1.0 for each channel</td>
+        </tr>
+	
+	
+	
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=utils.js.html">utils.js</a>, line 471
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="lineCapStyle"><span class="type-signature">&lt;static, readonly> </span>lineCapStyle<span class="type-signature"> :int</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        See Adobe's PDF Reference v1.3 for more details
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>buttCap</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+            
+            <td class="description last">The stroke is squared off at the endpoint of
+the path. There is no projection beyond the end of
+the path.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>roundCap</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+            
+            <td class="description last">A semicircular arc with a diameter equal
+to the line width is drawn around the endpoint and
+filled in.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>projectinSquareCap</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    2
+                
+                </td>
+            
+            
+            <td class="description last">The stroke continues beyond
+the endpoint of the path for a distance equal to half
+the line width and is then squared off.</td>
+        </tr>
+	
+	
+	
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=utils.js.html">utils.js</a>, line 348
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="lineJoinStyle"><span class="type-signature">&lt;static, readonly> </span>lineJoinStyle<span class="type-signature"> :int</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        See Adobe's PDF Reference v1.3 for more details
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>miterJoin</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+            
+            <td class="description last">The outer edges of the strokes for the two
+segments are extended until they meet at an angle, as
+in a picture frame. If the segments meet at too sharp
+an angle (as defined by the miter limit parameter—
+see “Miter Limit,” below), a bevel join is used instead.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>roundJoin</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+            
+            <td class="description last">A circle with a diameter equal to the line
+width is drawn around the point where the two
+segments meet and is filled in, producing a rounded
+corner. Note: If path segments shorter than half the line width
+meet at a sharp angle, an unintended “wrong side” of
+the circle may appear.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>bevelJoin</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    2
+                
+                </td>
+            
+            
+            <td class="description last">The two segments are finished with butt
+caps (see “Line Cap Style” on page 139) and the
+resulting notch beyond the ends of the segments is
+filled with a triangle.</td>
+        </tr>
+	
+	
+	
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=utils.js.html">utils.js</a>, line 367
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="paperFormat"><span class="type-signature">&lt;static, readonly> </span>paperFormat<span class="type-signature"> :[width, height]</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>a3</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">[width, height]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    ARRAYLIT
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>a4</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">[width, height]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    ARRAYLIT
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>a5</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">[width, height]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    ARRAYLIT
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>letter</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">[width, height]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    ARRAYLIT
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>legal</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">[width, height]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    ARRAYLIT
+                
+                </td>
+            
+            
+            <td class="description last"></td>
+        </tr>
+	
+	
+	
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=utils.js.html">utils.js</a>, line 336
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="pathPaintingOption"><span class="type-signature">&lt;static, readonly> </span>pathPaintingOption<span class="type-signature"> :int</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        See Adobe's PDF Reference v1.3 for more details
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>bigS</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    S
+                
+                </td>
+            
+            
+            <td class="description last">Stroke the path.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>smallS</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    s
+                
+                </td>
+            
+            
+            <td class="description last">Close and stroke the path.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>smallF</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    f
+                
+                </td>
+            
+            
+            <td class="description last">Fill the path, using the nonzero winding number rule to determine the region to fill.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fStar</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    f*
+                
+                </td>
+            
+            
+            <td class="description last">Fill the path, using the even-odd rule to determine the region to fill</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>bigB</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    B
+                
+                </td>
+            
+            
+            <td class="description last">Fill and then stroke the path, using the nonzero winding number rule to determine
+the region to fill. This produces the same result as constructing two identical path
+objects, painting the first with f and the second with S. Note, however, that the filling
+and stroking portions of the operation consult different values of several graphics
+state parameters, such as the color.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>bigBStar</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    B*
+                
+                </td>
+            
+            
+            <td class="description last">Fill and then stroke the path, using the even-odd rule to determine the region to fill.
+This operator produces the same result as B, except that the path is filled as if with
+f* instead of f.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>smallB</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    b
+                
+                </td>
+            
+            
+            <td class="description last">Close, fill, and then stroke the path, using the nonzero winding number rule to
+determine the region to fill.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>smallBStar</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    b*
+                
+                </td>
+            
+            
+            <td class="description last">Close, fill, and then stroke the path, using the even-odd rule to determine the
+region to fill..</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>n</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    n
+                
+                </td>
+            
+            
+            <td class="description last">End the path object without filling or stroking it. This operator is a “path-painting
+no-op,” used primarily for the side effect of changing the clipping path</td>
+        </tr>
+	
+	
+	
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=utils.js.html">utils.js</a>, line 437
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="renderingIntentOption"><span class="type-signature">&lt;static, readonly> </span>renderingIntentOption<span class="type-signature"> :int</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        See Adobe's PDF Reference v1.3 for more details
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>absoluteColorimetric</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    AbsoluteColorimetric
+                
+                </td>
+            
+            
+            <td class="description last">Colors are represented solely with respect to the light source; no
+correction is made for the output medium’s white point (such as
+the color of unprinted paper). Thus, for example, a monitor’s
+white point, which is bluish compared to that of a printer’s
+paper, would be reproduced with a blue cast. In-gamut colors
+are reproduced exactly; out-of-gamut colors are mapped to the
+nearest value within the reproducible gamut. This style of
+reproduction has the advantage of providing exact color
+matches from one output medium to another. It has the
+disadvantage of causing colors with Y values between the
+medium’s white point and 1.0 to be out of gamut. A typical use
+might be for logos and solid colors that require exact
+reproduction across different media.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>relativeColorimetric</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    RelativeColorimetric
+                
+                </td>
+            
+            
+            <td class="description last">Colors are represented with respect to the combination of the
+light source and the output medium’s white point (such as the
+color of unprinted paper). Thus, for example, a monitor’s white
+point would be reproduced on a printer by simply leaving the
+paper unmarked, ignoring color differences between the two
+media. In-gamut colors are reproduced exactly; out-of-gamut
+colors are mapped to the nearest value within the reproducible
+gamut. This style of reproduction has the advantage of adapting
+for the varying white points of different output media. It has the
+disadvantage of not providing exact color matches from one
+medium to another. A typical use might be for vector graphics.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>saturation</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    Saturation
+                
+                </td>
+            
+            
+            <td class="description last">Colors are represented in a manner that preserves or emphasizes
+saturation. Reproduction of in-gamut colors may or may not be
+colorimetrically accurate. A typical use might be for business
+graphics, where saturation is the most important attribute of the
+color.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>perceptual</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    Perceptual
+                
+                </td>
+            
+            
+            <td class="description last">Colors are represented in a manner that provides a pleasing
+perceptual appearance. This generally means that both in-gamut
+and out-of-gamut colors are modified from their precise
+colorimetric values in order to preserve color relationships. A
+typical use might be for scanned images.</td>
+        </tr>
+	
+	
+	
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=utils.js.html">utils.js</a>, line 392
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="textMode"><span class="type-signature">&lt;static, readonly> </span>textMode<span class="type-signature"> :int</span></h4>
+    
+    
+</dt>
+<dd>
+    
+    <div class="description">
+        See Adobe's PDF Reference v1.3 for more details
+    </div>
+    
+    
+    
+<dl class="details">
+    
+        
+        <h5 class="subsection-title">Properties:</h5>
+        
+        <dl>
+
+<table class="props">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fillText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+            
+            <td class="description last">Fill text.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>strokeText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    1
+                
+                </td>
+            
+            
+            <td class="description last">Stroke text.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fillStrokeText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    2
+                
+                </td>
+            
+            
+            <td class="description last">Fill, then stroke, text.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>invisibleText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    3
+                
+                </td>
+            
+            
+            <td class="description last">Neither fill nor stroke text (invisible).</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fillClipText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    4
+                
+                </td>
+            
+            
+            <td class="description last">Fill text and add to path for clipping (see above).</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>strokeClipText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    5
+                
+                </td>
+            
+            
+            <td class="description last">Stroke text and add to path for clipping.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>fillStrokeClipText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    6
+                
+                </td>
+            
+            
+            <td class="description last">Fill, then stroke, text and add to path for clipping.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>clipText</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+                <td class="default">
+                
+                    7
+                
+                </td>
+            
+            
+            <td class="description last">Add text to path for clipping.</td>
+        </tr>
+	
+	
+	
+</table></dl>
+        
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=utils.js.html">utils.js</a>, line 484
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+</dd>
+
+        </dl>
+    
+    
+    
+    
+    
+    
+    
+</article>
+
+</section>  
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="#/docs?link=index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="#/docs?link=pdfJS.doc.html">doc</a></li><li><a href="#/docs?link=pdfJS.font.html">font</a></li><li><a href="#/docs?link=pdfJS.imageXObject.html">imageXObject</a></li><li><a href="#/docs?link=pdfJS.obj.html">obj</a></li><li><a href="#/docs?link=pdfJS.pageNode.html">pageNode</a></li><li><a href="#/docs?link=pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="#/docs?link=pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="#/docs?link=pdfJS.html">pdfJS</a></li><li><a href="#/docs?link=pdfJS.graphicOperators.html">graphicOperators</a></li><li><a href="#/docs?link=pdfJS.textOperators.html">textOperators</a></li><li><a href="#/docs?link=pdfJS.utils.html">utils</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="#/docs?link=https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Mar 05 2013 00:38:03 GMT-0800 (PST)
+</footer>
+
+
+
+</html>

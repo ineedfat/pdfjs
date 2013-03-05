@@ -6,7 +6,7 @@ var app = angular.module('myApp', ['$controllersModule'])
       function (r) {
           r.when('/', { templateUrl: './views/home.html' });
           //r.when('/docs', { templateUrl: './views/docs.html' });
-          r.when('/docs', { templateUrl: '/doc/index.html' });
+          r.when('/docs', { templateUrl: './views/docs.html', reloadOnSearch: false, controller: 'docsController' });
           r.when('/examples', { templateUrl: './views/examples.html' });
           r.when('/examples/:exNum', { templateUrl: './views/examples.html', reloadOnSearch: false });
           r.when('/plugins', { templateUrl: './views/plugins.html' });
