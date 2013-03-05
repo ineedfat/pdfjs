@@ -1,74 +1,86 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" data-ng-app="myApp">
+<head>
+    <title>pdfJS</title>
+    <link rel="stylesheet" href="css/bootstrap.css" />
+    <link rel="stylesheet" href="css/bootstrap-responsive.css" />
+    <link rel="stylesheet" href="css/jsdoc-default.css"/>
+    <link href="css/style.css" rel="stylesheet" />
 
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+</head>
+<body data-ng-controller="mainController">
+    <div class="outer_container">
+
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="brand" href="./index.html">pdfJS</a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="">
+                                <a href="./#/docs">Documentation</a>
+                            </li>
+                            <li class="">
+                                <a href="./#/examples">Examples</a>
+                            </li>
+                            <li class="">
+                                <a href="./#/plugins">Plugins</a>
+                            </li>
+                            <li class="">
+                                <a href="./#/about">About</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <header class="subhead" id="overview">
+            <div class="container">
+                <h1>pdfJS</h1>
+                <p class="lead">PDF JavaScript Framework [alpha]</p>
+                    <small>v0.0.1</small>
+
+            </div>
+        </header>
+        <div data-ng-view="" class="templateBody"></div>
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="span8 brand">
+                        <h3><a href="https://github.com/ineedfat/pdfjs" target="_blank">iNeedFat</a></h3>
+                    </div>
+                    <div class="span4 info">
+                        <p>Designed and built by<a href="https://github.com/ineedfat/pdfjs" target="_blank">Trinh Ho</a> </p>
+                        <p>Licensed under <a href="http://opensource.org/licenses/mit-license.php" target="_blank">MIT</a></p>
+                        <p>Copyright © 2013</p>
+                        <ul class="footer-links">
+                            <li><a href="https://github.com/ineedfat/pdfjs/issues?state=open">Report Bugs</a></li>
+                            <li class="muted">|</li>
+                            <li><a href="https://github.com/ineedfat/pdfjs/blob/master/README.md">Changelog</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.4/angular.min.js"></script>
+        <script src="js/third/bootstrap.min.js"></script>
+        <script src="js/third/ace.js"></script>
+        <script src="js/main.js"></script>
+        <script src="js/directives/ng.example.js"></script>
+        <script src="js/classes/utiles.js"></script>
+        <script src="js/controllers/docsController.js"></script>
+        <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
-    <title>pdfJS by ineedfat</title>
-  </head>
-
-  <body>
-    <header>
-      <div class="inner">
-        <h1>pdfJS</h1>
-        <h2>PDF JavaScript Framework</h2>
-        <a href="https://github.com/ineedfat/pdfjs" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
-
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>pdfJS - PDF JavaScript Framework (Alpha)</h1>
-
-<h2>About</h2>
-
-<p><strong>pdfJS</strong> targets Adobe PDF v1.3 specifications. Its goal is to provide a client-side JavaScript API for generating PDF documents.</p>
-
-<p>Inspired by <a href="https://github.com/MrRio/jsPDF">jsPDF</a>.</p>
-
-<h2>Author</h2>
-
-<p>*<a href="https://github.com/ineedfat/pdfjs">Trinh Ho</a></p>
-
-<h2>License: <a href="http://www.opensource.org/licenses/mit-license.php">MIT</a>
-</h2>
-
-<p>Copyright (c) 2013 Trinh Ho (<a href="https://github.com/ineedfat/pdfjs">https://github.com/ineedfat/pdfjs</a>)</p>
-
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
-
-<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-
-<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/ineedfat/pdfjs/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/ineedfat/pdfjs/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/ineedfat/pdfjs"></a> is maintained by <a href="https://github.com/ineedfat">ineedfat</a>.</p>
-
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
+        <script src="../pdfJS-0.0.1.js"></script>
     </div>
 
-  
-  </body>
+</body>
 </html>

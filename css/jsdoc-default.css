@@ -1,0 +1,279 @@
+#doc-body 
+{
+    overflow: auto;
+    background-color: #fff;
+    font: 14px "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans serif;
+	line-height: 130%;
+	color: #000;
+	background-color: #fff;
+}
+
+#doc-body a {
+    color: #444;
+}
+
+#doc-body a:visited {
+    color: #444;
+}
+
+#doc-body a:active {
+    color: #444;
+}
+
+#doc-body header
+{
+	display: block;
+	padding: 6px 4px;
+}
+
+#doc-body .class-description {
+    font-style: italic;
+	font-family: Palatino, 'Palatino Linotype', serif;
+	font-size: 130%;
+	line-height: 140%;
+	margin-bottom: 1em;
+	margin-top: 1em;
+}
+
+#doc-body #main {
+    float: left;
+    width: 100%;
+}
+
+#doc-body section
+{
+	display: block;
+	
+	background-color: #fff;
+	padding: 12px 24px;
+    border-bottom: 1px solid #ccc;
+    margin-right: 240px;
+}
+
+#doc-body .variation {
+    display: none;
+}
+
+#doc-body .optional:after {
+	content: "opt";
+	font-size: 60%;
+	color: #aaa;
+	font-style: italic;
+	font-weight: lighter;
+}
+
+#doc-body nav
+{
+	display: block;
+	float: left;
+    margin-left: -230px;
+    margin-top: 28px;
+    width: 220px;
+    border-left: 1px solid #ccc;
+    padding-left: 9px;
+}
+
+#doc-body nav ul {
+    font-family: 'Lucida Grande', 'Lucida Sans Unicode', arial, sans-serif;
+    font-size: 100%;
+    line-height: 17px;
+    padding:0;
+    margin:0;
+    list-style-type:none;
+}
+
+#doc-body nav h2 a, #doc-body nav h2 a:visited {
+    color: #A35A00;
+    text-decoration: none;
+}
+
+#doc-body nav h3 {
+    margin-top: 12px;
+}
+
+#doc-body nav li {
+    margin-top: 6px;
+}
+
+#doc-body nav a {
+    color: #5C5954;
+}
+
+#doc-body nav a:visited {
+    color: #5C5954;
+}
+
+#doc-body nav a:active {
+    color: #5C5954;
+}
+
+#doc-body footer {
+    display: block;
+    padding: 6px;
+    margin-top: 12px;
+    font-style: italic;
+    font-size: 90%;
+}
+
+#doc-body h1
+{
+	font-size: 200%;
+	font-weight: bold;
+	letter-spacing: -0.01em;
+	margin: 6px 0 9px 0;
+}
+
+#doc-body h2
+{
+	font-size: 170%;
+	font-weight: bold;
+	letter-spacing: -0.01em;
+	margin: 6px 0 3px 0;
+}
+
+#doc-body h3
+{
+	font-size: 150%;
+	font-weight: bold;
+	letter-spacing: -0.01em;
+	margin-top: 16px;
+	margin: 6px 0 3px 0;
+}
+
+#doc-body h4
+{
+	font-size: 130%;
+	font-weight: bold;
+	letter-spacing: -0.01em;
+	margin-top: 16px;
+	margin: 18px 0 3px 0;
+	color: #A35A00;
+}
+
+#doc-body h5, #doc-body .container-overview .subsection-title
+{
+	font-size: 120%;
+	font-weight: bold;
+	letter-spacing: -0.01em;
+	margin: 8px 0 3px -16px;
+}
+
+#doc-body h6
+{
+	font-size: 100%;
+	letter-spacing: -0.01em;
+	margin: 6px 0 3px 0;
+	font-style: italic;
+}
+
+#doc-body .ancestors { color: #999; }
+#doc-body .ancestors a
+{
+    color: #999 !important;
+    text-decoration: none;
+}
+
+#doc-body .important
+{
+	font-weight: bold;
+	color: #950B02;
+}
+
+#doc-body .yes-def {
+    text-indent: -1000px;
+}
+
+#doc-body .type-signature {
+    color: #aaa;
+}
+
+#doc-body .name, #doc-body .signature {
+	font-family: Consolas, "Lucida Console", Monaco, monospace;
+}
+
+#doc-body .details { margin-top: 14px; }
+#doc-body .details dt { width:100px; float:left; border-left: 2px solid #DDD; padding-left: 10px;  padding-top: 6px; }
+#doc-body .details dd { margin-left: 50px; }
+#doc-body .details ul { margin: 0; }
+#doc-body .details ul { list-style-type: none; }
+#doc-body .details li { margin-left: 30px; padding-top: 6px; }
+
+#doc-body .description {
+	margin-bottom: 1em;
+	margin-left: -16px;
+	margin-top: 1em;
+}
+
+#doc-body .code-caption
+{
+	font-style: italic;
+	font-family: Palatino, 'Palatino Linotype', serif;
+	font-size: 107%;
+	margin: 0;
+}
+
+#doc-body .prettyprint
+{
+	border: 1px solid #ddd;
+	width: 80%;
+    overflow: auto;
+}
+
+#doc-body .prettyprint.source {
+    width: inherit;
+}
+
+#doc-body .prettyprint code
+{
+	font-family: Consolas, 'Lucida Console', Monaco, monospace;
+	font-size: 100%;
+	line-height: 18px;
+	display: block;
+	padding: 4px 12px;
+	margin: 0;
+	background-color: #fff;
+	color: #000;
+	border-left: 3px #ddd solid;
+}
+
+#doc-body .params, #doc-body .props
+{
+	border-spacing: 0;
+	border: 0;
+	border-collapse: collapse;
+}
+
+#doc-body .params .name, #doc-body .props .name, .name code {
+	color: #A35A00;
+	font-family: Consolas, 'Lucida Console', Monaco, monospace;
+	font-size: 100%;
+}
+
+#doc-body .params td, #doc-body .params th, .props td, .props th
+{
+	border: 1px solid #ddd;
+	margin: 0px;
+	text-align: left;
+	vertical-align: top;
+	padding: 4px 6px;
+	display: table-cell;
+}
+
+#doc-body .params thead tr, #doc-body .props thead tr
+{
+	background-color: #ddd;
+	font-weight: bold;
+}
+
+#doc-body .params .params thead tr, #doc-body .props .props thead tr
+{
+	background-color: #fff;
+	font-weight: bold;
+}
+
+#doc-body .params th, #doc-body .props th { border-right: 1px solid #aaa; }
+#doc-body .params thead .last, #doc-body .props thead .last { border-right: 1px solid #ddd; }
+
+#doc-body .disabled {
+    color: #454545;
+}

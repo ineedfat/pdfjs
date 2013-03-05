@@ -1,0 +1,142 @@
+﻿<div class="container">
+    <div class="row">
+        <div class="span12">
+            <example id="ex1" editor-wrap="true" doc-link="#/docs?link=pdfJS.doc.html" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Create A Simple PDF"
+                editor-id="'editor1'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor1" >
+    //Create a new pdf document with 'letter' papersize and in portrait mode.
+    var doc = new pdfJS.doc('letter', 'portrait');
+    //new document is always empty, so we need to add a new page. 
+    doc.addPage();
+    //Origin starts at bottom left corner, so we want to move up 160 pt and over 700 pt.
+    doc.currentPage.graphic('translate', 160, 700);
+    doc.currentPage.text('beginText');
+    //Setting font size to 50pt. 
+    doc.currentPage.text('fontStyle', null, null, 50);
+    doc.currentPage.text('showText', 'Hello World!');
+    doc.currentPage.text('fontStyle', null, null, 20);
+    doc.currentPage.text('textPositionWithLeading', 200, -30);
+    // Use '\\' as escape character.
+    doc.currentPage.text('showText', 'pdfJS by iNeedFat :\\)');
+    doc.currentPage.text('endText');
+                    </div>
+                    <h4>Note</h4>
+                    <p>This example explores basic translation and text manipulation.</p>
+                   </div>
+                    <iframe class="span5" src="./views/exampleview.html"></iframe>
+                        </div>
+                </example>
+
+            <example id="Example1" editor-wrap="true" doc-link="#/docs?link=pdfJS.graphicOperators.html" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Drawing Rects"
+                editor-id="'editor2'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor2" >
+    var doc = new pdfJS.doc('letter', 'portrait');
+    doc.addPage();
+    doc.currentPage.graphic('translate', 160, 400);
+    doc.currentPage.graphic('rect', 50, 50, 100, 100);
+    doc.currentPage.graphic('grayFill', 1);
+    doc.currentPage.graphic('grayStroke',  0.5);
+    doc.currentPage.graphic('paintPath', 'B');
+    doc.currentPage.graphic('grayFill', 0);
+    doc.currentPage.graphic('rect', 75, 75, 100, 100);
+    doc.currentPage.graphic('grayFill', 0);
+    doc.currentPage.graphic('grayStroke',  0.5);
+    doc.currentPage.graphic('paintPath', 'B');
+    doc.currentPage.graphic('grayFill', 0);
+    doc.currentPage.text('beginText');
+    doc.currentPage.text('fontStyle', null, null, 22);
+    doc.currentPage.text('showText', 'Pretty Cool Huh?');
+    doc.currentPage.text('endText');
+                    </div>
+                    <h4>Note</h4>
+                    <p>Here shows a basic <code>rect</code> operator that draws a rectangular path by
+                         specifying the x-coord, y-coord, width, and height. Drawing the path
+                         alone will not actually render anything on the page. We must
+                         first specify the stroke and fill color and then finally close the path
+                        by using the <code>paintPath</code> operator. Also note that in this example, we
+                        are using the grayscale color space. Generally all color value ranges from 
+                        0.0 to 1.0 unless otherwise specified.
+                    </p>
+                            </div>
+                    <iframe class="span5" src="./views/exampleview.html"></iframe>
+                        </div>
+                </example>
+
+            <example id="Example2" editor-wrap="true" doc-link="#/docs?link=pdfJS.graphicOperators.html" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Push and Pop Graphic State"
+                     editor-id="'editor3'">
+                <div class="row">
+                    <div class="span7">
+                        <div id="editor3" >
+                            var doc = new pdfJS.doc('letter', 'portrait');
+    
+                            var drawRect = function() {
+                            doc.currentPage.graphic('rect', 0, 0, 100, 100);
+                            doc.currentPage.graphic('grayStroke',  .5);
+                            doc.currentPage.graphic('paintPath', 'B');
+                            doc.currentPage.graphic('grayFill', 0);
+                            doc.currentPage.graphic('popState');
+                            };
+        
+                            doc.addPage();
+                            doc.currentPage.graphic('translate', 160, 400);
+                            doc.currentPage.graphic('pushState');
+                            doc.currentPage.graphic('grayFill', 1);
+                            drawRect();
+                            doc.currentPage.graphic('translate', 100, 100);
+                            doc.currentPage.graphic('grayFill', 0.4);
+                            drawRect();
+                            doc.currentPage.graphic('translate', 100, -100);
+                            doc.currentPage.graphic('grayFill', 0.2);
+                            drawRect();
+    
+                            doc.currentPage.graphic('translate', 10, -50);
+                            doc.currentPage.text('beginText');
+                            doc.currentPage.text('fontStyle', null, null, 22);
+                            doc.currentPage.text('showText', 'Push and Pop :}');
+                            doc.currentPage.text('endText');
+                        </div>
+                        <h4>Note</h4>
+                        <p>Note the amount of code required to generate a simple object like the filled
+                            square in the above example. This example explores how we can
+                            group repeated code and reduces our code footprint. Also
+                            PDF (as well as PostScript) allows graphic state to get pushed (save) on
+                            to the stack and pop (restore) off the stack to recover to the original
+                            configuration.
+                        </p>
+                    </div>
+                    <iframe class="span5" src="./views/exampleview.html"></iframe>
+                </div>
+            </example>
+            
+            <example id="Example3" editor-wrap="true" doc-link="#/docs?link=pdfJS.imageXObject.html" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Adding Graphics"
+                editor-id="'editor4'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor4" >
+var doc = new pdfJS.doc('letter', 'portrait');
+    doc.addPage();
+    var imgXObj = doc.newImage('./img/sample.jpg', true);
+    imgXObj.addImageToPage(doc.currentPage, 60, 300, 500, 200);
+    
+    doc.currentPage.graphic('translate', 400, 475);
+    doc.currentPage.text('beginText');
+    doc.currentPage.text('fontStyle', null, null, 15);
+    doc.currentPage.text('showText', 'Miyajima, Japan');
+    doc.currentPage.text('endText');
+                    </div>
+                    <h4>Note</h4>
+                            <p>pdfJS uses HTML5 canvas internally to support different kinds of image format.
+                                The <code>newImage</code> function accepts a <code>string</code> url to an image,
+                                 <code>HTMLImageElement</code>, or <code>HTMLCavasElement</code> as graphics to render. 
+                    </p>
+                            </div>
+                    <iframe class="span5" src="./views/exampleview.html"></iframe>
+                        </div>
+                </example>
+        </div>
+    </div>
+</div>
