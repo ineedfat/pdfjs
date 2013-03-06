@@ -6,8 +6,26 @@ __pdfJS__ targets Adobe PDF v1.3 specifications. Its goal is to provide a client
 
 Inspired by [jsPDF](https://github.com/MrRio/jsPDF).
 
-##Author##
-* [Trinh Ho](https://github.com/ineedfat/pdfjs)
+##Build
+```
+//Navigate to root folder of project.
+
+//First time building
+npm install 
+
+//debug
+grunt debug
+
+//build documentation
+grunt doc
+
+//build everything 
+grunt
+```
+
+##Contributors##
+* [Trinh Ho](https://github.com/ineedfat)
+* [Patrick Naughton](https://github.com/naughton)
 
 ##License: [MIT](http://www.opensource.org/licenses/mit-license.php)
 Copyright (c) 2013 Trinh Ho (https://github.com/ineedfat/pdfjs)

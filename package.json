@@ -1,0 +1,44 @@
+{
+  "name": "pdfJS",
+  "version": "0.0.1",
+  "description": "PDF JavaScript Framework",
+  "main": "pdfJS_0.0.1.js",
+  "devDependencies": {
+    "grunt": "~0.4.0",
+    "grunt-contrib-concat": "~0.1.2",
+    "grunt-contrib-uglify": "~0.1.1",
+    "grunt-contrib-jasmine": "~0.1.1",
+    "grunt-jsdoc": "~0.2.4",
+    "grunt-contrib-clean": "~0.4.0"
+  },
+  "directories": {
+    "doc": "doc",
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "testacular run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ineedfat/pdfjs.git"
+  },
+  "keywords": [
+    "PDF",
+    "client",
+    "javascript"
+  ],
+  "contributors": [
+    {
+      "name": "Trinh Ho (iNeedFat)",
+      "url": "https://github.com/ineedfat"
+    },
+    {
+      "name": "Patrick Naughton",
+      "url": "https://github.com/naughton"
+    }
+  ],
+  "license": "MIT",
+  "gitHead": "f295a1aa52adc4cb010475c4df328c125f659459",
+  "readmeFilename": "README.md"
+}

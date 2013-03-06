@@ -1,20 +1,7 @@
-﻿/**
-*Initialize new font object.
-*@classdesc Representing font type in PDF document.
-*@constructor
-*@memberof pdfJS
-*@augments pdfJS.obj
-*@param {int} objectNumber Unique number to define this object.
-*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
-*@private
-*/
+﻿
 var resources = function (objectNumber, generationNumber) {
     var self = this;
     obj.call(this, objectNumber, generationNumber);
-    /**
-        *An array of all {@link pdfJS.font} objects included this document.
-        *@Type {array of [fonts]{@link pdfJS.font}}  
-        */
     this.fontObjs = [];
     this.imageXObjects = [];
 };
