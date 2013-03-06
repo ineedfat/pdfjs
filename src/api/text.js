@@ -27,7 +27,7 @@ var textOperators = {
     *@param {int} y Translate by y pt in y direction. from current text coordinate
     */
     textPosition: function (x, y) {
-        this.currentStream.push(x + ' ' + y + ' td');
+        this.currentStream.push(x + ' ' + y + ' Td');
     },
     /**
     *Move from current text coordinate without leading.
@@ -111,7 +111,7 @@ var textOperators = {
         this.currentStream.push(render + ' Tr');
     },
     /**
-    *Set text rendering mode.
+    *Set text rise.
     *@inner
     *@method
     *@param {int} rise Positive values of text rise move the
@@ -126,7 +126,7 @@ baseline up and opposite for negative values.
     *@method
     *@param {string} textString
     *@param {int} [wordSpace] word spacing
-    *@param {int} [charSpace] charcter spacing
+    *@param {int} [charSpace] character spacing
     */
     showText: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
