@@ -6,21 +6,22 @@
                     <div class="row">
                         <div class="span7">
                      <div id="editor1" >
-    //Create a new pdf document with 'letter' papersize and in portrait mode.
+    //Create a new pdf document with 'letter' papersize.
     var doc = new pdfJS.doc('letter', 'portrait');
-    //new document is always empty, so we need to add a new page. 
-    doc.addPage();
-    //Origin starts at bottom left corner, so we want to move up 160 pt and over 700 pt.
-    doc.currentPage.graphic('translate', 160, 700);
-    doc.currentPage.text('beginText');
-    //Setting font size to 50pt. 
-    doc.currentPage.text('fontStyle', null, null, 50);
-    doc.currentPage.text('showText', 'Hello World!');
-    doc.currentPage.text('fontStyle', null, null, 20);
-    doc.currentPage.text('textPositionWithLeading', 200, -30);
-    // Use '\\' as escape character.
-    doc.currentPage.text('showText', 'pdfJS by iNeedFat :\\)');
-    doc.currentPage.text('endText');
+    
+    //Add New Page
+    var p = doc.addPage();
+
+    //Origin is located at lower left corner.
+    p.translate(160, 700);
+    //Render the text
+    p.beginText();
+    p.fontSize(50);
+    p.showText('Hello World!');
+    p.fontSize(20);
+    p.textPositionWithLeading(200, -30);
+    p.showText('pdfJS by iNeedFat :)');
+    p.endText();
                     </div>
                     <h4>Note</h4>
                     <p>This example explores basic translation and text manipulation.</p>
@@ -34,23 +35,23 @@
                     <div class="row">
                         <div class="span7">
                      <div id="editor2" >
-    var doc = new pdfJS.doc('letter', 'portrait');
-    doc.addPage();
-    doc.currentPage.graphic('translate', 160, 400);
-    doc.currentPage.graphic('rect', 50, 50, 100, 100);
-    doc.currentPage.graphic('grayFill', 1);
-    doc.currentPage.graphic('grayStroke',  0.5);
-    doc.currentPage.graphic('paintPath', 'B');
-    doc.currentPage.graphic('grayFill', 0);
-    doc.currentPage.graphic('rect', 75, 75, 100, 100);
-    doc.currentPage.graphic('grayFill', 0);
-    doc.currentPage.graphic('grayStroke',  0.5);
-    doc.currentPage.graphic('paintPath', 'B');
-    doc.currentPage.graphic('grayFill', 0);
-    doc.currentPage.text('beginText');
-    doc.currentPage.text('fontStyle', null, null, 22);
-    doc.currentPage.text('showText', 'Pretty Cool Huh?');
-    doc.currentPage.text('endText');
+var doc = new pdfJS.doc('letter', 'portrait');
+var p = doc.addPage();
+
+var drawRect = function (x, y, f, s) {
+    p.rect(x, y, 100, 100);
+    p.grayFill(f);
+    p.grayStroke(s);
+    p.paintPath('B');
+};
+
+p.translate(160, 400);
+drawRect(50, 50, 1, 0.5);
+drawRect(75, 75, 0, 0.5);
+p.beginText();
+p.fontSize(22);
+p.showText('Pretty Cool Huh?');
+p.endText();
                     </div>
                     <h4>Note</h4>
                     <p>Here shows a basic <code>rect</code> operator that draws a rectangular path by
@@ -71,33 +72,34 @@
                 <div class="row">
                     <div class="span7">
                         <div id="editor3" >
-                            var doc = new pdfJS.doc('letter', 'portrait');
-    
-                            var drawRect = function() {
-                            doc.currentPage.graphic('rect', 0, 0, 100, 100);
-                            doc.currentPage.graphic('grayStroke',  .5);
-                            doc.currentPage.graphic('paintPath', 'B');
-                            doc.currentPage.graphic('grayFill', 0);
-                            doc.currentPage.graphic('popState');
-                            };
-        
-                            doc.addPage();
-                            doc.currentPage.graphic('translate', 160, 400);
-                            doc.currentPage.graphic('pushState');
-                            doc.currentPage.graphic('grayFill', 1);
-                            drawRect();
-                            doc.currentPage.graphic('translate', 100, 100);
-                            doc.currentPage.graphic('grayFill', 0.4);
-                            drawRect();
-                            doc.currentPage.graphic('translate', 100, -100);
-                            doc.currentPage.graphic('grayFill', 0.2);
-                            drawRect();
-    
-                            doc.currentPage.graphic('translate', 10, -50);
-                            doc.currentPage.text('beginText');
-                            doc.currentPage.text('fontStyle', null, null, 22);
-                            doc.currentPage.text('showText', 'Push and Pop :}');
-                            doc.currentPage.text('endText');
+
+var doc = new pdfJS.doc('letter', 'portrait');
+
+var p = doc.addPage();
+
+var drawRect = function (x, y, f, s) {
+    p.pushState();
+    p.translate(x, y);
+    p.grayFill(f);
+    p.rect(0, 0, 90, 90);
+    p.lineWidth(3);
+    p.grayStroke(s);
+    p.paintPath('B');
+    p.popState();
+};
+
+p.translate(0, 400);
+
+drawRect(100, 100, .6, 0);
+drawRect(200, 200, .1, .5);
+drawRect(300, 100, .9, 0);
+drawRect(400, 200, .9, 0);
+
+p.translate(400, 30);
+p.beginText();
+p.fontSize(22);
+p.showText('Push and Pop :}');
+p.endText();
                         </div>
                         <h4>Note</h4>
                         <p>Note the amount of code required to generate a simple object like the filled
@@ -118,18 +120,19 @@
                         <div class="span7">
                      <div id="editor4" >
 var doc = new pdfJS.doc('letter', 'portrait');
-    doc.addPage();
-    var imgXObj = doc.newImage('./img/sample.jpg', true);
-    imgXObj.addImageToPage(doc.currentPage, 60, 300, 500, 200);
-    
-    doc.currentPage.graphic('translate', 400, 475);
-    doc.currentPage.text('beginText');
-    doc.currentPage.text('fontStyle', null, null, 15);
-    doc.currentPage.text('showText', 'Miyajima, Japan');
-    doc.currentPage.text('endText');
+var p = doc.addPage();
+
+var imgXObj = doc.newImage('./img/sample.jpg', true);
+p.addImage(imgXObj, 60, 300, 500, 200);
+
+p.translate(400, 475);
+p.beginText();
+p.fontSize(15);
+p.showText('Miyajima, Japan');
+p.endText();
                     </div>
                     <h4>Note</h4>
-                            <p>pdfJS uses HTML5 canvas internally to support different kinds of image format.
+                            <p>PdfJS uses HTML5 canvas internally to support different kinds of image format.
                                 The <code>newImage</code> function accepts a <code>string</code> url to an image,
                                  <code>HTMLImageElement</code>, or <code>HTMLCavasElement</code> as graphics to render. 
                     </p>

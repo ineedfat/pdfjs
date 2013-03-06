@@ -95,11 +95,33 @@
     };
     doc.prototype = {
         /**
+        *Get/Set the object number of this document.
+        *@memberof pdfJS.doc#
+        *@return {int} the object number.
+        */
+        objNumber: function(val) {
+            if (val) {
+                this.objectNumber = value;
+            }
+            return val;
+        },
+        /**
+        *Get/Set the current page of this document.
+        *@memberof pdfJS.doc#
+        *@return {pageNode} the object number.
+        */
+        page: function(val) {
+            if (val) {
+                this.objectNumber = value;
+            }
+            return val;
+        },
+        /**
         *Create new pdf object for this document.
         *@memberof pdfJS.doc#
         *@return {[obj]{@link pdfJS.obj}} a newly created pdf object for this document.
         */
-        newObj: function () {
+        newObj: function() {
             return new obj(++this.objectNumber, 0);
         },
         /**
@@ -107,7 +129,7 @@
         *@memberof pdfJS.doc#
         *@return {[stream]{@link pdfJS.stream}} a newly created pdf stream for this document.
         */
-        newStream: function () {
+        newStream: function() {
             return new stream(++this.objectNumber, 0);
         },
         /**
@@ -120,7 +142,7 @@
         *@return {[pageNode]{@link pdfJS.pageNode}}
         */
         //TODO: Add options/margin/etc
-        addPage: function (height, width, options) {
+        addPage: function(height, width, options) {
             this.currentPage = new pageNode(
                 this.currentNode,
                 options || { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
@@ -128,9 +150,10 @@
                 0,
                 [this.newStream()],
                 this
-                );
+            );
             this.currentNode.kids.push(this.currentPage);
-            return this;
+
+            return this.currentPage;
         },
         /**
         *Output PDF document.
@@ -138,7 +161,7 @@
         *@param {string} type (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
         *@return {string} PDF data string.
         */
-        output: function (type) {
+        output: function(type) {
 
             var content = [
                 buildPageTreeNodes(this.rootNode),
@@ -148,21 +171,22 @@
                 this.infoObj.out(),
                 this.catalogObj.out()
             ].join('\n');
-        
-            var pdf = buildDocument(content,this.catalogObj,this.infoObj);
+
+            var pdf = buildDocument(content, this.catalogObj, this.infoObj);
             switch (type) {
-                case 'datauristring':
-                case 'dataurlstring':
-                    return 'data:application/pdf;base64,' + btoa(pdf);
-                case 'datauri':
-                case 'dataurl':
-                    document.location.href = 'data:application/pdf;base64,' + btoa(pdf); break;
-                    break;
-                case 'dataurlnewwindow':
-                    window.open('data:application/pdf;base64,' + btoa(pdf));
-                    break;
-                default:
-                    return pdf;
+            case 'datauristring':
+            case 'dataurlstring':
+                return 'data:application/pdf;base64,' + btoa(pdf);
+            case 'datauri':
+            case 'dataurl':
+                document.location.href = 'data:application/pdf;base64,' + btoa(pdf);
+                break;
+                break;
+            case 'dataurlnewwindow':
+                window.open('data:application/pdf;base64,' + btoa(pdf));
+                break;
+            default:
+                return pdf;
             }
         },
         /**
@@ -171,7 +195,7 @@
         *@param {string} type (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
         *@return {string} PDF data string.
         */
-        outputAsync: function (type, callback) {
+        outputAsync: function(type, callback) {
             var self = this;
             var t = window.setInterval(function() {
                 if (self.activeAsync === 0) {
@@ -189,7 +213,7 @@
         *@memberof pdfJS.doc#
         *@return {string} Reference name of font used in the PDF document internally.
         */
-        addFont: function (postScriptName, fontName, fontStyle, encoding) {
+        addFont: function(postScriptName, fontName, fontStyle, encoding) {
 
             var fontKey = 'F' + (this.resObj.fontObjs.length + 1).toString(10);
             // This is FontObject 
@@ -218,7 +242,7 @@
         *@memberof pdfJS.doc#
         *Add a list of standard fonts to document.
         */
-        addStandardFonts: function () {
+        addStandardFonts: function() {
 
             var HELVETICA = "helvetica",
                 TIMES = "times",
@@ -249,7 +273,7 @@
             }
             return this;
         }
-    }
+    };
 
     var getOffsets = function (data) {
         if (typeof data !== 'string') {

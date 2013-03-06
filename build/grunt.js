@@ -10,6 +10,13 @@ module.exports = function (grunt) {
         },
         lint: {
             files: [
+              //Polyfills
+              '../src/internals/pollyfills.js',
+                
+                //API calls
+              '../src/api/graphics.js',
+              '../src/api/text.js',
+
               //Classes
               '../src/classes/obj.js',
               '../src/classes/pageNode.js',
@@ -28,10 +35,7 @@ module.exports = function (grunt) {
               //Supporting classes
               '../src/utils.js',
 
-              //API calls
-              '../src/api/graphics.js',
-              '../src/api/text.js',
-
+              
               //plugins 
               '../src/plugins/addImage.js',
                 

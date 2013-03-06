@@ -68,8 +68,6 @@ app.directive('example', ['$compile', '$timeout', '$window', '$http', '$template
     				            scope.$digest();
     				        });
     				    }
-    				} else {
-    					console.log('empty code');
     				}
     				try {
     				    scope.$digest();

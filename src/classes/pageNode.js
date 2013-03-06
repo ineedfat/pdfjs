@@ -73,38 +73,6 @@ pageNode.prototype = Object.create(obj.prototype, {
         }
     },
     /**
-    *Graphic Operation Setter. Please see [graphicOperators]{@link pdfJS.graphicOperators} for available operations and corresponding set of operands.
-    *@param {string} operator Name of graphic operator.
-    *@param {args} operand Operator operands (op1, op2, . . . opX)
-    *@return {pageNode}
-    *@memberof pdfJS.pageNode#
-    *@method
-    */
-    graphic: {
-        value: function (operator, operands) {
-            if (this instanceof pageNode) {
-                graphicOperators[operator].apply(this, Array.prototype.slice.call(arguments, 1));
-            }
-            return this;
-        }
-    },
-    /**
-    *Text Operation Setter. Please see [textOperators]{@link pdfJS.textOperators} for available operations and corresponding set of operands.
-    *@param {string} operator Name of graphic operator.
-    *@param {args . . .} operand Operator operands
-    *@return {pageNode} Return this pageNode object
-    *@memberof pdfJS.pageNode#
-    *@method
-    */
-    text: {
-        value: function (operator, operands) {
-            if (this instanceof pageNode) {
-                textOperators[operator].apply(this, Array.prototype.slice.call(arguments, 1));
-            }
-            return this;
-        }
-    },
-    /**
     *Set current stream in context by index.
     *@param {int} index index of contentStreams
     *@return {pageNode} Return this pageNode object
@@ -120,3 +88,8 @@ pageNode.prototype = Object.create(obj.prototype, {
         }
     }
 });
+
+
+mixin(pageNode, textOperators);
+mixin(pageNode, graphicOperators);
+

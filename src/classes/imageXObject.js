@@ -74,43 +74,5 @@ imageXObject.prototype = Object.create(stream.prototype, {
             }
             return stream.prototype.out.apply(this, arguments); //calling obj super class out method.
         }
-    },
-    /**
-    *Graphic Operation Setter. Please see [graphicOperators]{@link pdfJS.graphicOperators} for available operations and corresponding set of operands.
-    *@param {pdfJS.pageNode} pageObj Page to add image.
-    *@param {int} x Translation in X direction (pt).
-    *@param {int} y Translation in Y direction (pt).
-    *@param {int} w Width of the image on page (pt).
-    *@param {int} h Height of the image on page (pt).
-    *@return {pdfJS.imageXObject#}
-    *@memberof pdfJS.imageXObject#
-    *@method
-    */
-    addImageToPage: {
-        value: function (pageObj, x, y, w, h) {
-            if (!w && !h) {
-                w = -96;
-                h = -96;
-            }
-            if (w < 0) {
-                w = (-1) * this.width * 72 / w;
-            }
-            if (h < 0) {
-                h = (-1) * this.height * 72 / h;
-            }
-            if (w === 0) {
-                w = h * this.width / this.height;
-            }
-            if (h === 0) {
-                h = w * this.height / this.width;
-            }
-
-            pageObj.currentStream.push('q');
-            pageObj.currentStream.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
-            pageObj.currentStream.push('/' + this.name + ' Do');
-            pageObj.currentStream.push('Q');
-
-            return this;
-        }
     }
 });

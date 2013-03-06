@@ -449,7 +449,42 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) .
         }
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' K');
-    }
+    },
     /*Color Controls End*/
+    /**
+    *Graphic Operation Setter. Please see [graphicOperators]{@link pdfJS.graphicOperators} for available operations and corresponding set of operands.
+    *@param {pdfJS.pageNode} pageObj Page to add image.
+    *@param {int} x Translation in X direction (pt).
+    *@param {int} y Translation in Y direction (pt).
+    *@param {int} w Width of the image on page (pt).
+    *@param {int} h Height of the image on page (pt).
+    *@return {pdfJS.imageXObject#}
+    *@memberof pdfJS.imageXObject#
+    *@method
+    */
+    addImage: function (imgXObj, x, y, w, h) {
+        if (!w && !h) {
+            w = -96;
+            h = -96;
+        }
+        if (w < 0) {
+            w = (-1) * imgXObj.width * 72 / w;
+        }
+        if (h < 0) {
+            h = (-1) * imgXObj.height * 72 / h;
+        }
+        if (w === 0) {
+            w = h * imgXObj.width / imgXObj.height;
+        }
+        if (h === 0) {
+            h = w * imgXObj.height / imgXObj.width;
+        }
 
+        this.currentStream.push('q');
+        this.currentStream.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+        this.currentStream.push('/' + imgXObj.name + ' Do');
+        this.currentStream.push('Q');
+
+        return this;
+    }
 };

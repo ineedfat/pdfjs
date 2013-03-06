@@ -98,7 +98,7 @@ var textOperators = {
         this.currentStream.push('/' + fontKey);
 
         if (len >= 3) {
-            this.text('fontSize', arguments[2]);
+            this.fontSize(arguments[2]);
         }
     },
     /**
@@ -130,10 +130,10 @@ baseline up and opposite for negative values.
     */
     showText: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.currentStream.push('(' + textString + ') Tj');
+            this.currentStream.push('(' + sanitize(textString) + ') Tj');
         }
         else {
-            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' + textString + ') "');
+            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' + sanitize(textString) + ') "');
         }
     },
     /**
