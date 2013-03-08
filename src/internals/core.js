@@ -251,7 +251,7 @@
                 BOLD = "bold",
                 ITALIC = "italic",
                 BOLD_ITALIC = "bolditalic",
-                encoding = 'WinAnsiEncoding',
+                encoding = 'StandardEncoding',
                 standardFonts = [
                     ['Helvetica', HELVETICA, NORMAL],
                     ['Helvetica-Bold', HELVETICA, BOLD],
@@ -267,9 +267,8 @@
                     ['Times-BoldItalic', TIMES, BOLD_ITALIC]
                 ];
 
-            var i, l, fontKey, parts;
-            for (i = 0, l = standardFonts.length; i < l; i++) {
-                fontKey = this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
+            for (var i = 0, l = standardFonts.length; i < l; i++) {
+                this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
             }
             return this;
         }

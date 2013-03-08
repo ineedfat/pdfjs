@@ -45,7 +45,6 @@ font.prototype = Object.create(obj.prototype, {
     charactersEncode: {
         value: function (str) {
             var newStr = [],
-                unicodeStr,
                 i, len, charCode, isUnicode, hByte, lByte,
                 outputEncoding = this.description.encoding;
 
@@ -54,7 +53,9 @@ font.prototype = Object.create(obj.prototype, {
             }
 
             if (!outputEncoding) {
-                throw 'Invalid Encoder: ' + this.description.encoding;
+                /*If outputEncoding isn't specified, then we assumed it to be "StandardEncoding" or
+                assume the user know what he/she is doing.*/
+                return str;
             }
 
             for (i = 0, len = str.length; i < len; i++) {
@@ -72,7 +73,7 @@ font.prototype = Object.create(obj.prototype, {
             }
 
             if (isUnicode) {
-                unicodeStr = [];
+                var unicodeStr = [];
                 for (i = 0, len = newStr.length; i < len; i++) {
                     charCode = text.charCodeAt(i);
                     hByte = charCode >> 8;
@@ -80,13 +81,12 @@ font.prototype = Object.create(obj.prototype, {
                     if (hByte >> 8) {
                         throw 'Character exceeds 16bits: ' + text[i];
                     }
-                    ret.push(hByte, lByte);
+                    unicodeStr.push(hByte, lByte);
                 }
-                ret = String.fromCharCode.apply(null, ret);
+                return String.fromCharCode.apply(null, unicodeStr);
             } else {
                 return newStr.join('');
             }
-            return ret;
         }
     }
 });

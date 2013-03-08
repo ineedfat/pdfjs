@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/06/2013 04:37
+* Compiled At: 03/08/2013 13:56
 ***********************************************/
 (function(_) {
 'use strict';
@@ -14,73 +14,6 @@ var PDFJS_VERSION = '0.0.1';if (!Object.create) {
         function F() { }
         F.prototype = o;
         return new F();
-    };
-}
-if (typeof btoa === 'undefined') {
-    window.btoa = function (data) {
-        var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", b64a = b64.split(''), o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
-            ac = 0,
-            enc = "",
-            tmp_arr = [];
-
-        do { 
-            o1 = data.charCodeAt(i++);
-            o2 = data.charCodeAt(i++);
-            o3 = data.charCodeAt(i++);
-
-            bits = o1 << 16 | o2 << 8 | o3;
-
-            h1 = bits >> 18 & 0x3f;
-            h2 = bits >> 12 & 0x3f;
-            h3 = bits >> 6 & 0x3f;
-            h4 = bits & 0x3f;
-            tmp_arr[ac++] = b64a[h1] + b64a[h2] + b64a[h3] + b64a[h4];
-        } while (i < data.length);
-
-        enc = tmp_arr.join('');
-        var r = data.length % 3;
-        return (r ? enc.slice(0, r - 3) : enc) + '==='.slice(r || 3);
-    };
-}
-
-if (typeof atob === 'undefined') {
-    window.atob = function (data) {
-        var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-        var o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
-            ac = 0,
-            dec = "",
-            tmp_arr = [];
-
-        if (!data) {
-            return data;
-        }
-
-        data += '';
-
-        do { 
-            h1 = b64.indexOf(data.charAt(i++));
-            h2 = b64.indexOf(data.charAt(i++));
-            h3 = b64.indexOf(data.charAt(i++));
-            h4 = b64.indexOf(data.charAt(i++));
-
-            bits = h1 << 18 | h2 << 12 | h3 << 6 | h4;
-
-            o1 = bits >> 16 & 0xff;
-            o2 = bits >> 8 & 0xff;
-            o3 = bits & 0xff;
-
-            if (h3 == 64) {
-                tmp_arr[ac++] = String.fromCharCode(o1);
-            } else if (h4 == 64) {
-                tmp_arr[ac++] = String.fromCharCode(o1, o2);
-            } else {
-                tmp_arr[ac++] = String.fromCharCode(o1, o2, o3);
-            }
-        } while (i < data.length);
-
-        dec = tmp_arr.join('');
-
-        return dec;
     };
 }
 
@@ -108,12 +41,6 @@ var graphicOperators = {
     skew: function (alphaX, betaY) {
         this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
     },
-    colorSpace: function () {
-    },
-    color: function () {
-    },
-    textState: function () {
-    },
     lineWidth: function (width) {
         this.currentStream.push(width + ' w');
     },
@@ -140,14 +67,14 @@ var graphicOperators = {
     popState: function () {
         this.currentStream.push('Q');
     },
-    newSubPath: function (x, y) {
+    moveTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid new path parameters';
         }
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' m');
     },
-    straightLine: function (x, y) {
+    lineTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid straight line  parameters';
         }
@@ -175,7 +102,17 @@ var graphicOperators = {
         this.currentStream.push('h');
     },
     paintPath: function (operator) {
-        this.currentStream.push(operator);
+        if (operator) {
+            this.currentStream.push(operator);
+        } else {
+            this.currentStream.push('B');
+        }
+    },
+    strokePath: function () {
+        this.currentStream.push('S');
+    },
+    fillPath: function () {
+        this.currentStream.push('F');
     },
     clip: function (asterisk) {
         this.currentStream.push('W' + (asterisk ? ' *' : ''));
@@ -187,71 +124,41 @@ var graphicOperators = {
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' re');
     },
-    fillColorSpace: function (name) {
-        this.currentStream.push(name + ' cs')
-    },
-    strokeColorSpace: function (name) {
-        this.currentStream.push(name + ' CS')
-    },
     fillColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
             case 1:
+                this.currentStream.push('DeviceGray cs');
+                break;
             case 3:
+                this.currentStream.push('DeviceRGB cs');
+                break;
             case 4:
-                var args = Array.prototype.slice.call(arguments);
-                this.currentStream.push(args.join(' ') + ' sc');
+                this.currentStream.push('DeviceCMYK cs');
                 break;
             default:
                 throw ('Invalid color values');
-                break;
         }
+
+        var args = Array.prototype.slice.call(arguments);
+        this.currentStream.push(args.join(' ') + ' sc');
     },
     strokeColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
             case 1:
+                this.currentStream.push('DeviceGray CS');
+                break;
             case 3:
+                this.currentStream.push('DeviceRGB CS');
+                break;
             case 4:
-                var args = Array.prototype.slice.call(arguments);
-                this.currentStream.push(args.join(' ') + ' SC');
+                this.currentStream.push('DeviceCMYK CS');
                 break;
             default:
                 throw ('Invalid color values');
-                break;
         }
-    },
-    grayFill: function (value) {
-        this.currentStream.push(value + ' g');
-    },
-    grayStroke: function (value) {
-        this.currentStream.push(value + ' G');
-    },
-    rgbFill: function (r, g, b) {
-        if (arguments.length != 3) {
-            throw 'Invalid RGB color values';
-        }
+
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' rg');
-    },
-    rgbStroke: function () {
-        if (arguments.length != 3) {
-            throw 'Invalid RGB color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' RG');
-    },
-    cmykFill: function () {
-        if (arguments.length != 4) {
-            throw 'Invalid CMYK color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' k');
-    },
-    cmykStroke: function () {
-        if (arguments.length != 4) {
-            throw 'Invalid CMYK color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' K');
+        this.currentStream.push(args.join(' ') + ' SC');
     },
     addImage: function (imgXObj, x, y, w, h) {
         if (!w && !h) {
@@ -281,17 +188,16 @@ var graphicOperators = {
 };
 
 var textOperators = {
-    beginText: function () {
+    beginText: function (name, style, size) {
         this.currentStream.push('BT');
+        this.fontStyle(name, style, size);
     },
     endText: function () {
         this.currentStream.push('ET');
+        this.activeFont = undefined;
     },
     textPosition: function (x, y) {
         this.currentStream.push(x + ' ' + y + ' Td');
-    },
-    textPositionWithLeading: function (x, y) {
-        this.currentStream.push(x + ' ' + y + ' TD');
     },
     charSpace: function (charSpace) {
         this.currentStream.push(charSpace + ' Tc');
@@ -309,11 +215,11 @@ var textOperators = {
         this.currentStream.push(size + ' Tf');
     },
     fontStyle: function (name, style, fontSize) {
-        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.resObj.fontObjs[0].description.key,
-            len = arguments.length;
+        this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
+        var fontKey = this.activeFont.description.key;
         this.currentStream.push('/' + fontKey);
 
-        if (len >= 3) {
+        if (typeof fontSize === 'number') {
             this.fontSize(arguments[2]);
         }
     },
@@ -323,12 +229,20 @@ var textOperators = {
     rise: function (rise) {
         this.currentStream.push(rise + ' Ts');
     },
-    showText: function (textString, wordSpace, charSpace) {
+    print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.currentStream.push('(' + sanitize(textString) + ') Tj');
+            this.currentStream.push('(' +
+                this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
         }
         else {
-            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' + sanitize(textString) + ') "');
+            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' +
+                this.activeFont.charactersEncode(sanitize(textString)) + ') "');
+        }
+    },
+    println: function (textString) {
+        this.currentStream.push('T*');
+        if (textString) {
+            this.print(textString);
         }
     },
     showArrayText: function (arr) {
@@ -341,19 +255,6 @@ var textOperators = {
         }
         this.currentStream.push(arr.join(' ') + ' TJ');
 
-    },
-    showTextln: function (textString) {
-        this.currentStream.push(textString + ' \'');
-    },
-    textMatrix: function (a, b, c, d, e, f) {
-        var args = Array.prototype.slice.call(arguments);
-        if (args.length !== 6) {
-            throw 'Invalid text matrix';
-        }
-        this.currentStream.push(args.join(' ') + ' Tm');
-    },
-    nextLine: function () {
-        this.currentStream.push('T*');
     }
 };
 
@@ -389,6 +290,8 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
     this.contentStreams = contentStreams;
     this.currentStream = this.contentStreams[0];
     this.doc = document;
+
+    this.activeFont;
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
@@ -526,6 +429,15 @@ var font = function (font, objectNumber, generationNumber) {
     this.description = font;
 };
 
+font.codePages = {
+    "WinAnsiEncoding": {
+        "338": 140, "339": 156, "352": 138, "353": 154, "376": 159, "381": 142,
+        "382": 158, "402": 131, "710": 136, "732": 152, "8211": 150, "8212": 151, "8216": 145,
+        "8217": 146, "8218": 130, "8220": 147, "8221": 148, "8222": 132, "8224": 134, "8225": 135,
+        "8226": 149, "8230": 133, "8240": 137, "8249": 139, "8250": 155, "8364": 128, "8482": 153
+    }
+};
+
 font.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
@@ -533,12 +445,57 @@ font.prototype = Object.create(obj.prototype, {
             this.body.push('/Subtype /Type1');
             this.body.push('/BaseFont /' + this.description.postScriptName);
 
-            if (typeof font.encoding === 'string') {
+            if (typeof this.description.encoding === 'string') {
                 this.body.push('/Encoding /' + this.description.encoding);
             }
             this.body.push('>>');
 
             return obj.prototype.out.apply(this, arguments); 
+        }
+    },
+    charactersEncode: {
+        value: function (str) {
+            var newStr = [],
+                i, len, charCode, isUnicode, hByte, lByte,
+                outputEncoding = this.description.encoding;
+
+            if (typeof outputEncoding === 'string') {
+                outputEncoding = font.codePages[outputEncoding];
+            }
+
+            if (!outputEncoding) {
+                return str;
+            }
+
+            for (i = 0, len = str.length; i < len; i++) {
+                charCode = str.charCodeAt(i);
+                if (charCode >> 8) {
+                    isUnicode = true;
+                }
+                charCode = outputEncoding[charCode];
+                if (charCode) {
+                    newStr.push(String.fromCharCode(charCode));
+                }
+                else {
+                    newStr.push(str[i]);
+                }
+            }
+
+            if (isUnicode) {
+                var unicodeStr = [];
+                for (i = 0, len = newStr.length; i < len; i++) {
+                    charCode = text.charCodeAt(i);
+                    hByte = charCode >> 8;
+                    lByte = charCode - hByte;
+                    if (hByte >> 8) {
+                        throw 'Character exceeds 16bits: ' + text[i];
+                    }
+                    unicodeStr.push(hByte, lByte);
+                }
+                return String.fromCharCode.apply(null, unicodeStr);
+            } else {
+                return newStr.join('');
+            }
         }
     }
 });
@@ -725,9 +682,8 @@ imageXObject.prototype = Object.create(stream.prototype, {
                     ['Times-BoldItalic', TIMES, BOLD_ITALIC]
                 ];
 
-            var i, l, fontKey, parts;
-            for (i = 0, l = standardFonts.length; i < l; i++) {
-                fontKey = this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
+            for (var i = 0, l = standardFonts.length; i < l; i++) {
+                this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
             }
             return this;
         }
@@ -892,6 +848,20 @@ resources.prototype = Object.create(obj.prototype, {
 
             return obj.prototype.out.apply(this, arguments); 
         }
+    },
+    getFont: {
+        value: function (name, style) {
+            for (var i = 0, font; font = this.fontObjs[i]; i++) {
+                if (font.description.key === name) {
+                    return font;
+                }
+
+                if (font.description.fontName === name && font.description.fontStyle === style) {
+                    return font;
+                }
+            }
+            return null;
+        }
     }
 });
 
@@ -1007,77 +977,6 @@ var pageTreeOptionsConverter = function (options) {
         }
     }
     return ret.join('\n');
-};
-var to8bitStream = function (text, flags) {
-    var i, l, undef;
-
-    if (flags === undef) {
-        flags = {};
-    }
-
-    var sourceEncoding = flags.sourceEncoding ? sourceEncoding : 'Unicode', encodingBlock, outputEncoding = flags.outputEncoding, newtext, isUnicode, ch, bch;
-    if ((flags.autoencode || outputEncoding) &&
-        fonts[activeFontKey].metadata &&
-        fonts[activeFontKey].metadata[sourceEncoding] &&
-        fonts[activeFontKey].metadata[sourceEncoding].encoding) {
-        encodingBlock = fonts[activeFontKey].metadata[sourceEncoding].encoding;
-        if (!outputEncoding && fonts[activeFontKey].encoding) {
-            outputEncoding = fonts[activeFontKey].encoding;
-        }
-        if (!outputEncoding && encodingBlock.codePages) {
-            outputEncoding = encodingBlock.codePages[0]; 
-        }
-
-        if (typeof outputEncoding === 'string') {
-            outputEncoding = encodingBlock[outputEncoding];
-        }
-        if (outputEncoding) {
-            isUnicode = false;
-            newtext = [];
-            for (i = 0, l = text.length; i < l; i++) {
-                ch = outputEncoding[text.charCodeAt(i)];
-                if (ch) {
-                    newtext.push(
-                        String.fromCharCode(ch)
-                    )
-                } else {
-                    newtext.push(
-                        text[i]
-                    );
-                }
-                if (newtext[i].charCodeAt(0) >> 8 ) {
-                    isUnicode = true;
-                }
-            }
-            text = newtext.join('');
-        }
-    }
-
-    i = text.length;
-    while (isUnicode === undef && i !== 0) {
-        if (text.charCodeAt(i - 1) >> 8 ) {
-            isUnicode = true;
-        }
-        i--;
-    }
-    if (!isUnicode) {
-        return text;
-    } else {
-        newtext = flags.noBOM ? [] : [254, 255];
-        for (i = 0, l = text.length; i < l; i++) {
-            ch = text.charCodeAt(i);
-            bch = ch >> 8 
-            if (bch >> 8 ) {
-                throw new Error("Character at position " + i.toString(10) + " of string '" + text + "' exceeds 16bits. Cannot be encoded into UCS-2 BE");
-            }
-            newtext.push(bch);
-            newtext.push(ch - (bch << 8));
-        }
-        return String.fromCharCode.apply(undef, newtext);
-    }
-};
-var pdfEscape = function (text, flags) {
-    return to8bitStream(text, flags).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
 };
 var sanitizeRegex = /((\(|\)|\\))/ig;
 var sanitize = function(text) {

@@ -14,13 +14,15 @@
 
     //Origin is located at lower left corner.
     p.translate(160, 700);
-    //Render the text
     p.beginText();
     p.fontSize(50);
-    p.showText('Hello World!');
+    p.print('Hello World!');
+    p.endText();
+    
+    p.beginText();
     p.fontSize(20);
-    p.textPositionWithLeading(200, -30);
-    p.showText('pdfJS by iNeedFat :)');
+    p.textPosition(200, -30);
+    p.print('pdfJS by iNeedFat :)');
     p.endText();
                     </div>
                     <h4>Note</h4>
@@ -35,32 +37,32 @@
                     <div class="row">
                         <div class="span7">
                      <div id="editor2" >
-var doc = new pdfJS.doc('letter', 'portrait');
-var p = doc.addPage();
-
-var drawRect = function (x, y, f, s) {
-    p.rect(x, y, 100, 100);
-    p.grayFill(f);
-    p.grayStroke(s);
-    p.paintPath('B');
-};
-
-p.translate(160, 400);
-drawRect(50, 50, 1, 0.5);
-drawRect(75, 75, 0, 0.5);
-p.beginText();
-p.fontSize(22);
-p.showText('Pretty Cool Huh?');
-p.endText();
+    var doc = new pdfJS.doc('letter', 'portrait');
+    var p = doc.addPage();
+    
+    var drawRect = function (x, y, f, s) {
+        p.rect(x, y, 100, 100);
+        p.fillColor(f);
+        p.strokeColor(s);
+        p.paintPath();
+    };
+    
+    p.translate(160, 400);
+    drawRect(50, 50, 1, 0.5);
+    drawRect(75, 75, 0, 0.5);
+    p.beginText();
+    p.fontSize(22);
+    p.print('Pretty Cool Huh?');
+    p.endText();
                     </div>
                     <h4>Note</h4>
                     <p>Here shows a basic <code>rect</code> operator that draws a rectangular path by
                          specifying the x-coord, y-coord, width, and height. Drawing the path
                          alone will not actually render anything on the page. We must
-                         first specify the stroke and fill color and then finally close the path
+                         first specify the stroke and fill color and then finally paint the path
                         by using the <code>paintPath</code> operator. Also note that in this example, we
-                        are using the grayscale color space. Generally all color value ranges from 
-                        0.0 to 1.0 unless otherwise specified.
+                        are using the grayscale color space by only specifying one color value to
+                         <code>fillColor</code> and <code>strokeColor</code>.
                     </p>
                             </div>
                     <iframe class="span5" src="./views/exampleview.html"></iframe>
@@ -72,40 +74,36 @@ p.endText();
                 <div class="row">
                     <div class="span7">
                         <div id="editor3" >
-
-var doc = new pdfJS.doc('letter', 'portrait');
-
-var p = doc.addPage();
-
-var drawRect = function (x, y, f, s) {
-    p.pushState();
-    p.translate(x, y);
-    p.grayFill(f);
-    p.rect(0, 0, 90, 90);
-    p.lineWidth(3);
-    p.grayStroke(s);
-    p.paintPath('B');
-    p.popState();
-};
-
-p.translate(0, 400);
-
-drawRect(100, 100, .6, 0);
-drawRect(200, 200, .1, .5);
-drawRect(300, 100, .9, 0);
-drawRect(400, 200, .9, 0);
-
-p.translate(400, 30);
-p.beginText();
-p.fontSize(22);
-p.showText('Push and Pop :}');
-p.endText();
+    var doc = new pdfJS.doc('letter', 'portrait');
+    
+    var p = doc.addPage();
+    
+    var drawRect = function (x, y, f, s) {
+        p.pushState();
+        p.translate(x, y);
+        p.fillColor(f);
+        p.rect(0, 0, 90, 90);
+        p.lineWidth(3);
+        p.strokeColor(s);
+        p.paintPath();
+        p.popState();
+    };
+    
+    p.translate(0, 400);
+    
+    drawRect(100, 100, .6, 0);
+    drawRect(200, 200, .1, .5);
+    drawRect(300, 100, .9, 0);
+    drawRect(400, 200, .9, 0);
+    
+    p.translate(400, 30);
+    p.beginText();
+    p.fontSize(22);
+    p.print('Push and Pop :}');
+    p.endText();
                         </div>
                         <h4>Note</h4>
-                        <p>Note the amount of code required to generate a simple object like the filled
-                            square in the above example. This example explores how we can
-                            group repeated code and reduces our code footprint. Also
-                            PDF (as well as PostScript) allows graphic state to get pushed (save) on
+                        <p> PDF (as well as PostScript) allows graphic state to get pushed (save) on
                             to the stack and pop (restore) off the stack to recover to the original
                             configuration.
                         </p>
@@ -119,17 +117,17 @@ p.endText();
                     <div class="row">
                         <div class="span7">
                      <div id="editor4" >
-var doc = new pdfJS.doc('letter', 'portrait');
-var p = doc.addPage();
-
-var imgXObj = doc.newImage('./img/sample.jpg', true);
-p.addImage(imgXObj, 60, 300, 500, 200);
-
-p.translate(400, 475);
-p.beginText();
-p.fontSize(15);
-p.showText('Miyajima, Japan');
-p.endText();
+    var doc = new pdfJS.doc('letter', 'portrait');
+    var p = doc.addPage();
+    
+    var imgXObj = doc.newImage('./img/sample.jpg', true);
+    p.addImage(imgXObj, 60, 300, 500, 200);
+    
+    p.translate(400, 475);
+    p.beginText();
+    p.fontSize(15);
+    p.print('Miyajima, Japan');
+    p.endText();
                     </div>
                     <h4>Note</h4>
                             <p>PdfJS uses HTML5 canvas internally to support different kinds of image format.

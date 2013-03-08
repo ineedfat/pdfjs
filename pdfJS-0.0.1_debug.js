@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/06/2013 04:37
+* Compiled At: 03/08/2013 13:56
 ***********************************************/
 (function(_) {
 'use strict';
@@ -14,150 +14,6 @@ var PDFJS_VERSION = '0.0.1';if (!Object.create) {
         function F() { }
         F.prototype = o;
         return new F();
-    };
-}
-
-// this will run on <=IE9, possibly some niche browsers
-// new webkit-based, FireFox, IE10 already have native version of this.
-if (typeof btoa === 'undefined') {
-    window.btoa = function (data) {
-        // DO NOT ADD UTF8 ENCODING CODE HERE!!!!
-
-        // UTF8 encoding encodes bytes over char code 128
-        // and, essentially, turns an 8-bit binary streams
-        // (that base64 can deal with) into 7-bit binary streams. 
-        // (by default server does not know that and does not recode the data back to 8bit)
-        // You destroy your data.
-
-        // binary streams like jpeg image data etc, while stored in JavaScript strings,
-        // (which are 16bit arrays) are in 8bit format already.
-        // You do NOT need to char-encode that before base64 encoding.
-
-        // if you, by act of fate
-        // have string which has individual characters with code
-        // above 255 (pure unicode chars), encode that BEFORE you base64 here.
-        // you can use absolutely any approch there, as long as in the end,
-        // base64 gets an 8bit (char codes 0 - 255) stream.
-        // when you get it on the server after un-base64, you must 
-        // UNencode it too, to get back to 16, 32bit or whatever original bin stream.
-
-        // Note, Yes, JavaScript strings are, in most cases UCS-2 - 
-        // 16-bit character arrays. This does not mean, however,
-        // that you always have to UTF8 it before base64.
-        // it means that if you have actual characters anywhere in
-        // that string that have char code above 255, you need to
-        // recode *entire* string from 16-bit (or 32bit) to 8-bit array.
-        // You can do binary split to UTF16 (BE or LE)
-        // you can do utf8, you can split the thing by hand and prepend BOM to it,
-        // but whatever you do, make sure you mirror the opposite on
-        // the server. If server does not expect to post-process un-base64
-        // 8-bit binary stream, think very very hard about messing around with encoding.
-
-        // so, long story short:
-        // DO NOT ADD UTF8 ENCODING CODE HERE!!!!
-
-        /* @preserve
-        ====================================================================
-        base64 encoder
-        MIT, GPL
-    
-        version: 1109.2015
-        discuss at: http://phpjs.org/functions/base64_encode
-        +   original by: Tyler Akins (http://rumkin.com)
-        +   improved by: Bayron Guevara
-        +   improved by: Thunder.m
-        +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        +   bugfixed by: Pellentesque Malesuada
-        +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        +   improved by: Rafal Kukawski (http://kukawski.pl)
-        +   			 Daniel Dotsenko, Willow Systems Corp, willow-systems.com
-        ====================================================================
-        */
-
-        var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", b64a = b64.split(''), o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
-            ac = 0,
-            enc = "",
-            tmp_arr = [];
-
-        do { // pack three octets into four hexets
-            o1 = data.charCodeAt(i++);
-            o2 = data.charCodeAt(i++);
-            o3 = data.charCodeAt(i++);
-
-            bits = o1 << 16 | o2 << 8 | o3;
-
-            h1 = bits >> 18 & 0x3f;
-            h2 = bits >> 12 & 0x3f;
-            h3 = bits >> 6 & 0x3f;
-            h4 = bits & 0x3f;
-
-            // use hexets to index into b64, and append result to encoded string
-            tmp_arr[ac++] = b64a[h1] + b64a[h2] + b64a[h3] + b64a[h4];
-        } while (i < data.length);
-
-        enc = tmp_arr.join('');
-        var r = data.length % 3;
-        return (r ? enc.slice(0, r - 3) : enc) + '==='.slice(r || 3);
-
-        // end of base64 encoder MIT, GPL
-    };
-}
-
-if (typeof atob === 'undefined') {
-    window.atob = function (data) {
-        // http://kevin.vanzonneveld.net
-        // +   original by: Tyler Akins (http://rumkin.com)
-        // +   improved by: Thunder.m
-        // +      input by: Aman Gupta
-        // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        // +   bugfixed by: Onno Marsman
-        // +   bugfixed by: Pellentesque Malesuada
-        // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        // +      input by: Brett Zamir (http://brett-zamir.me)
-        // +   bugfixed by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-        // *     example 1: base64_decode('S2V2aW4gdmFuIFpvbm5ldmVsZA==');
-        // *     returns 1: 'Kevin van Zonneveld'
-        // mozilla has this native
-        // - but breaks in 2.0.0.12!
-        //if (typeof this.window['atob'] == 'function') {
-        //    return atob(data);
-        //}
-        var b64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
-        var o1, o2, o3, h1, h2, h3, h4, bits, i = 0,
-            ac = 0,
-            dec = "",
-            tmp_arr = [];
-
-        if (!data) {
-            return data;
-        }
-
-        data += '';
-
-        do { // unpack four hexets into three octets using index points in b64
-            h1 = b64.indexOf(data.charAt(i++));
-            h2 = b64.indexOf(data.charAt(i++));
-            h3 = b64.indexOf(data.charAt(i++));
-            h4 = b64.indexOf(data.charAt(i++));
-
-            bits = h1 << 18 | h2 << 12 | h3 << 6 | h4;
-
-            o1 = bits >> 16 & 0xff;
-            o2 = bits >> 8 & 0xff;
-            o3 = bits & 0xff;
-
-            if (h3 == 64) {
-                tmp_arr[ac++] = String.fromCharCode(o1);
-            } else if (h4 == 64) {
-                tmp_arr[ac++] = String.fromCharCode(o1, o2);
-            } else {
-                tmp_arr[ac++] = String.fromCharCode(o1, o2, o3);
-            }
-        } while (i < data.length);
-
-        dec = tmp_arr.join('');
-
-        return dec;
     };
 }
 
@@ -218,30 +74,6 @@ var graphicOperators = {
    */
     skew: function (alphaX, betaY) {
         this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
-    },
-    /**
-    TODO: Implement
-   *@inner
-   *@method
-   
-   */
-    colorSpace: function () {
-    },
-    /**
-    TODO: Implement
-   *@inner
-   *@method
-   
-   */
-    color: function () {
-    },
-    /**
-    TODO: Implement
-   *@inner
-   *@method
-   
-   */
-    textState: function () {
     },
     /**
     
@@ -350,7 +182,7 @@ path. .
     *@param {int} x
     *@param {int} y
     */
-    newSubPath: function (x, y) {
+    moveTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid new path parameters';
         }
@@ -366,7 +198,7 @@ path. .
     *@param {int} x
     *@param {int} y
     */
-    straightLine: function (x, y) {
+    lineTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid straight line  parameters';
         }
@@ -426,10 +258,44 @@ space. .
     *@inner
     *@method
     
-    *@param {int} operator See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+    *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
     */
     paintPath: function (operator) {
-        this.currentStream.push(operator);
+        if (operator) {
+            this.currentStream.push(operator);
+        } else {
+            //By default, paint both stroke and fill.
+            this.currentStream.push('B');
+        }
+    },
+    
+    /*Path Controls END*/
+    /**
+    *Append a rectangle to the current path as a complete subpath, with
+lower-left corner (x, y) and dimensions width and height in user
+space. .
+    *@inner
+    *@method
+    
+    *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+    */
+    strokePath: function () {
+        //By default, paint both stroke and fill.
+        this.currentStream.push('S');
+    },
+    /*Path Controls END*/
+    /**
+    *Append a rectangle to the current path as a complete subpath, with
+lower-left corner (x, y) and dimensions width and height in user
+space. .
+    *@inner
+    *@method
+    
+    *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+    */
+    fillPath: function () {
+        //By default, paint both stroke and fill.
+        this.currentStream.push('F');
     },
     /*Path Controls END*/
     /**
@@ -459,32 +325,6 @@ space. .
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' re');
     },
-    /*Color Controls Begin */
-    /*Path Controls END*/
-    /**
-    *Set the color space to use for nonstroking operations. The operand
-name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
-    *@inner
-    *@param {pdfJS.utils.colorSpace | string} name See [colorSpace]{@link pdfJS.utils.colorSpace} for valid values.
-    *@method
-    
-    */
-    fillColorSpace: function (name) {
-        this.currentStream.push(name + ' cs')
-    },
-    /**
-    *Set the color space to use for stroking operations. The operand
-name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
-    *@inner
-    *@param {pdfJS.utils.colorSpace | string} name See [colorSpace]{@link pdfJS.utils.colorSpace} for valid values.
-    *@method
-    
-    */
-    strokeColorSpace: function (name) {
-        this.currentStream.push(name + ' CS')
-    },
     /**
     *Set the color space to use for non-stroking operations. Depending on the color space,
     *specify the correct number of color values (e.g DeviceGray requires 1, DeviceRGB requires 2,
@@ -500,126 +340,49 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
     fillColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
             case 1:
+                this.currentStream.push('DeviceGray cs');
+                break;
             case 3:
+                this.currentStream.push('DeviceRGB cs');
+                break;
             case 4:
-                var args = Array.prototype.slice.call(arguments);
-                this.currentStream.push(args.join(' ') + ' sc');
+                this.currentStream.push('DeviceCMYK cs');
                 break;
             default:
                 throw ('Invalid color values');
-                break;
         }
+
+        var args = Array.prototype.slice.call(arguments);
+        this.currentStream.push(args.join(' ') + ' sc');
     },
     /**
     *Set the color space to use for stroking operations. The operand
 name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) .
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK).
     *@inner
     *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 
     *@param {int} colorValue4 
     *@method
-    
     */
     strokeColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
             case 1:
+                this.currentStream.push('DeviceGray CS');
+                break;
             case 3:
+                this.currentStream.push('DeviceRGB CS');
+                break;
             case 4:
-                var args = Array.prototype.slice.call(arguments);
-                this.currentStream.push(args.join(' ') + ' SC');
+                this.currentStream.push('DeviceCMYK CS');
                 break;
             default:
                 throw ('Invalid color values');
-                break;
         }
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations .
-    *@inner
-    *@param {int} value See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@method
-    
-    */
-    grayFill: function (value) {
-        this.currentStream.push(value + ' g');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
-    *@inner
-    *@param {int} value See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@method
-    
-    */
-    grayStroke: function (value) {
-        this.currentStream.push(value + ' G');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations .
-    *@inner
-    *@param {int} r set red channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@param {int} g set green channel color value.
-    *@param {int} b set blue channel color value. 
-    *@method
-    
-    */
-    rgbFill: function (r, g, b) {
-        if (arguments.length != 3) {
-            throw 'Invalid RGB color values';
-        }
+
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' rg');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
-    *@inner
-    *@param {int} r set red channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@param {int} g set green channel color value.
-    *@param {int} b set blue channel color value. 
-    *@method
-    
-    */
-    rgbStroke: function () {
-        if (arguments.length != 3) {
-            throw 'Invalid RGB color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' RG');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
-    *@inner
-    *@param {int} c set cryan channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@param {int} g set magenta channel color value.
-    *@param {int} b set yellow channel color value. 
-    *@param {int} k set black channel color value. 
-    *@method
-    
-    */
-    cmykFill: function () {
-        if (arguments.length != 4) {
-            throw 'Invalid CMYK color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' k');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
-    *@inner
-    *@param {int} c set cryan channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@param {int} g set magenta channel color value.
-    *@param {int} b set yellow channel color value. 
-    *@param {int} k set black channel color value. 
-    *@method
-    
-    */
-    cmykStroke: function () {
-        if (arguments.length != 4) {
-            throw 'Invalid CMYK color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' K');
+        this.currentStream.push(args.join(' ') + ' SC');
     },
     /*Color Controls End*/
     /**
@@ -668,9 +431,13 @@ var textOperators = {
     Begin text operator.
     *@inner
     *@method
+    *@param {string} [name=Helvetica] Font name.
+    *@param {string} [style] Font style.
+    *@param {int} [size] FontSize in pt.
     */
-    beginText: function () {
+    beginText: function (name, style, size) {
         this.currentStream.push('BT');
+        this.fontStyle(name, style, size);
     },
     /**
     End text operator.
@@ -679,6 +446,7 @@ var textOperators = {
     */
     endText: function () {
         this.currentStream.push('ET');
+        this.activeFont = undefined;
     },
     /**
     *Move from current text coordinate.
@@ -689,16 +457,6 @@ var textOperators = {
     */
     textPosition: function (x, y) {
         this.currentStream.push(x + ' ' + y + ' Td');
-    },
-    /**
-    *Move from current text coordinate without leading.
-    *@inner
-    *@method
-    *@param {int} x Translate by x pt in x direction from current text coordinate.
-    *@param {int} y Translate by y pt in y direction. from current text coordinate
-    */
-    textPositionWithLeading: function (x, y) {
-        this.currentStream.push(x + ' ' + y + ' TD');
     },
     /**
     *Character Spacing
@@ -728,7 +486,7 @@ var textOperators = {
         this.currentStream.push(scale + ' Tz');
     },
     /**
-    *Set 'leading'
+    *Vertical distance between the baselines of adjacent lines of text.
     *@inner
     *@method
     *@param {int} val
@@ -749,16 +507,16 @@ var textOperators = {
     *Set font size.
     *@inner
     *@method
-    *@param {string} [name=F1] Font internal reference name.
-    *@param {string} [style] Font style.
+    *@param {string} name=F1 Font internal reference name.
+    *@param {string} style Font style.
     *@param {int} [size] FontSize in pt.
     */
     fontStyle: function (name, style, fontSize) {
-        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.resObj.fontObjs[0].description.key,
-            len = arguments.length;
+        this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
+        var fontKey = this.activeFont.description.key;
         this.currentStream.push('/' + fontKey);
 
-        if (len >= 3) {
+        if (typeof fontSize === 'number') {
             this.fontSize(arguments[2]);
         }
     },
@@ -768,6 +526,7 @@ var textOperators = {
     *@method
     *@param {pdf.utils.textMode} mode
     */
+    //See page 284 in reference.
     renderMode: function (mode) {
         this.currentStream.push(render + ' Tr');
     },
@@ -789,12 +548,26 @@ baseline up and opposite for negative values.
     *@param {int} [wordSpace] word spacing
     *@param {int} [charSpace] character spacing
     */
-    showText: function (textString, wordSpace, charSpace) {
+    print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.currentStream.push('(' + sanitize(textString) + ') Tj');
+            this.currentStream.push('(' +
+                this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
         }
         else {
-            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' + sanitize(textString) + ') "');
+            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' +
+                this.activeFont.charactersEncode(sanitize(textString)) + ') "');
+        }
+    },
+    /**
+    *Print text on newline.
+    *@inner
+    *@method
+    *@param {string} textString
+    */
+    println: function (textString) {
+        this.currentStream.push('T*');
+        if (textString) {
+            this.print(textString);
         }
     },
     /**
@@ -820,41 +593,6 @@ the next glyph painted either to the left or down by the given amount.
         }
         this.currentStream.push(arr.join(' ') + ' TJ');
 
-    },
-    /**
-    *Print text on newline.
-    *@inner
-    *@method
-    *@param {string} textString
-    */
-    showTextln: function (textString) {
-        this.currentStream.push(textString + ' \'');
-    },
-    /**
-    *Specifying text transforming matrix.
-    *@inner
-    *@method
-    *@param {int} a
-    *@param {int} b
-    *@param {int} c
-    *@param {int} d
-    *@param {int} e
-    *@param {int} f
-    */
-    textMatrix: function (a, b, c, d, e, f) {
-        var args = Array.prototype.slice.call(arguments);
-        if (args.length !== 6) {
-            throw 'Invalid text matrix';
-        }
-        this.currentStream.push(args.join(' ') + ' Tm');
-    },
-    /**
-    *Move to the start of the next line.
-    *@inner
-    *@method
-    */
-    nextLine: function () {
-        this.currentStream.push('T*');
     }
 };
 
@@ -950,6 +688,8 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
         *@Type pdfJS.doc
         */
     this.doc = document;
+
+    this.activeFont;
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
@@ -1159,6 +899,15 @@ var font = function (font, objectNumber, generationNumber) {
     this.description = font;
 };
 
+font.codePages = {
+    "WinAnsiEncoding": {
+        "338": 140, "339": 156, "352": 138, "353": 154, "376": 159, "381": 142,
+        "382": 158, "402": 131, "710": 136, "732": 152, "8211": 150, "8212": 151, "8216": 145,
+        "8217": 146, "8218": 130, "8220": 147, "8221": 148, "8222": 132, "8224": 134, "8225": 135,
+        "8226": 149, "8230": 133, "8240": 137, "8249": 139, "8250": 155, "8364": 128, "8482": 153
+    }
+};
+
 font.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
@@ -1166,12 +915,59 @@ font.prototype = Object.create(obj.prototype, {
             this.body.push('/Subtype /Type1');
             this.body.push('/BaseFont /' + this.description.postScriptName);
 
-            if (typeof font.encoding === 'string') {
+            if (typeof this.description.encoding === 'string') {
                 this.body.push('/Encoding /' + this.description.encoding);
             }
             this.body.push('>>');
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+        }
+    },
+    charactersEncode: {
+        value: function (str) {
+            var newStr = [],
+                i, len, charCode, isUnicode, hByte, lByte,
+                outputEncoding = this.description.encoding;
+
+            if (typeof outputEncoding === 'string') {
+                outputEncoding = font.codePages[outputEncoding];
+            }
+
+            if (!outputEncoding) {
+                /*If outputEncoding isn't specified, then we assumed it to be "StandardEncoding" or
+                assume the user know what he/she is doing.*/
+                return str;
+            }
+
+            for (i = 0, len = str.length; i < len; i++) {
+                charCode = str.charCodeAt(i);
+                if (charCode >> 8) {
+                    isUnicode = true;
+                }
+                charCode = outputEncoding[charCode];
+                if (charCode) {
+                    newStr.push(String.fromCharCode(charCode));
+                }
+                else {
+                    newStr.push(str[i]);
+                }
+            }
+
+            if (isUnicode) {
+                var unicodeStr = [];
+                for (i = 0, len = newStr.length; i < len; i++) {
+                    charCode = text.charCodeAt(i);
+                    hByte = charCode >> 8;
+                    lByte = charCode - hByte;
+                    if (hByte >> 8) {
+                        throw 'Character exceeds 16bits: ' + text[i];
+                    }
+                    unicodeStr.push(hByte, lByte);
+                }
+                return String.fromCharCode.apply(null, unicodeStr);
+            } else {
+                return newStr.join('');
+            }
         }
     }
 });
@@ -1524,9 +1320,8 @@ imageXObject.prototype = Object.create(stream.prototype, {
                     ['Times-BoldItalic', TIMES, BOLD_ITALIC]
                 ];
 
-            var i, l, fontKey, parts;
-            for (i = 0, l = standardFonts.length; i < l; i++) {
-                fontKey = this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
+            for (var i = 0, l = standardFonts.length; i < l; i++) {
+                this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
             }
             return this;
         }
@@ -1710,6 +1505,20 @@ resources.prototype = Object.create(obj.prototype, {
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
         }
+    },
+    getFont: {
+        value: function (name, style) {
+            for (var i = 0, font; font = this.fontObjs[i]; i++) {
+                if (font.description.key === name) {
+                    return font;
+                }
+
+                if (font.description.fontName === name && font.description.fontStyle === style) {
+                    return font;
+                }
+            }
+            return null;
+        }
     }
 });
 
@@ -1849,155 +1658,6 @@ var pageTreeOptionsConverter = function (options) {
         }
     }
     return ret.join('\n');
-};
-var to8bitStream = function (text, flags) {
-    /* PDF 1.3 spec:
-    "For text strings encoded in Unicode, the first two bytes must be 254 followed by
-    255, representing the Unicode byte order marker, U+FEFF. (This sequence conflicts
-    with the PDFDocEncoding character sequence thorn ydieresis, which is unlikely
-    to be a meaningful beginning of a word or phrase.) The remainder of the
-    string consists of Unicode character codes, according to the UTF-16 encoding
-    specified in the Unicode standard, version 2.0. Commonly used Unicode values
-    are represented as 2 bytes per character, with the high-order byte appearing first
-    in the string."
-
-    In other words, if there are chars in a string with char code above 255, we
-    recode the string to UCS2 BE - string doubles in length and BOM is prepended.
-
-    HOWEVER!
-    Actual *content* (body) text (as opposed to strings used in document properties etc)
-    does NOT expect BOM. There, it is treated as a literal GID (Glyph ID)
-
-    Because of Adobe's focus on "you subset your fonts!" you are not supposed to have
-    a font that maps directly Unicode (UCS2 / UTF16BE) code to font GID, but you could
-    fudge it with "Identity-H" encoding and custom CIDtoGID map that mimics Unicode
-    code page. There, however, all characters in the stream are treated as GIDs,
-    including BOM, which is the reason we need to skip BOM in content text (i.e. that
-    that is tied to a font).
-
-    To signal this "special" PDFEscape / to8bitStream handling mode,
-    API.text() function sets (unless you overwrite it with manual values
-    given to API.text(.., flags) )
-        flags.autoencode = true
-        flags.noBOM = true
-
-    */
-
-    /*
-    `flags` properties relied upon:
-    .sourceEncoding = string with encoding label. 
-        "Unicode" by default. = encoding of the incoming text.
-        pass some non-existing encoding name 
-        (ex: 'Do not touch my strings! I know what I am doing.')
-        to make encoding code skip the encoding step.
-    .outputEncoding = Either valid PDF encoding name 
-        (must be supported by jsPDF font metrics, otherwise no encoding)
-        or a JS object, where key = sourceCharCode, value = outputCharCode
-        missing keys will be treated as: sourceCharCode === outputCharCode
-    .noBOM
-        See comment higher above for explanation for why this is important
-    .autoencode
-        See comment higher above for explanation for why this is important
-    */
-
-    var i, l, undef;
-
-    if (flags === undef) {
-        flags = {};
-    }
-
-    var sourceEncoding = flags.sourceEncoding ? sourceEncoding : 'Unicode', encodingBlock, outputEncoding = flags.outputEncoding, newtext, isUnicode, ch, bch;
-    // This 'encoding' section relies on font metrics format 
-    // attached to font objects by, among others, 
-    // "Willow Systems' standard_font_metrics plugin"
-    // see jspdf.plugin.standard_font_metrics.js for format
-    // of the font.metadata.encoding Object.
-    // It should be something like
-    //   .encoding = {'codePages':['WinANSI....'], 'WinANSI...':{code:code, ...}}
-    //   .widths = {0:width, code:width, ..., 'fof':divisor}
-    //   .kerning = {code:{previous_char_code:shift, ..., 'fof':-divisor},...}
-    if ((flags.autoencode || outputEncoding) &&
-        fonts[activeFontKey].metadata &&
-        fonts[activeFontKey].metadata[sourceEncoding] &&
-        fonts[activeFontKey].metadata[sourceEncoding].encoding) {
-        encodingBlock = fonts[activeFontKey].metadata[sourceEncoding].encoding;
-
-        // each font has default encoding. Some have it clearly defined.
-        if (!outputEncoding && fonts[activeFontKey].encoding) {
-            outputEncoding = fonts[activeFontKey].encoding;
-        }
-
-        // Hmmm, the above did not work? Let's try again, in different place.
-        if (!outputEncoding && encodingBlock.codePages) {
-            outputEncoding = encodingBlock.codePages[0]; // let's say, first one is the default
-        }
-
-        if (typeof outputEncoding === 'string') {
-            outputEncoding = encodingBlock[outputEncoding];
-        }
-        // we want output encoding to be a JS Object, where
-        // key = sourceEncoding's character code and 
-        // value = outputEncoding's character code.
-        if (outputEncoding) {
-            isUnicode = false;
-            newtext = [];
-            for (i = 0, l = text.length; i < l; i++) {
-                ch = outputEncoding[text.charCodeAt(i)];
-                if (ch) {
-                    newtext.push(
-                        String.fromCharCode(ch)
-                    )
-                } else {
-                    newtext.push(
-                        text[i]
-                    );
-                }
-
-                // since we are looping over chars anyway, might as well
-                // check for residual unicodeness
-                if (newtext[i].charCodeAt(0) >> 8 /* more than 255 */) {
-                    isUnicode = true;
-                }
-            }
-            text = newtext.join('');
-        }
-    }
-
-    i = text.length;
-    // isUnicode may be set to false above. Hence the triple-equal to undefined
-    while (isUnicode === undef && i !== 0) {
-        if (text.charCodeAt(i - 1) >> 8 /* more than 255 */) {
-            isUnicode = true;
-        }
-        i--;
-    }
-    if (!isUnicode) {
-        return text;
-    } else {
-        newtext = flags.noBOM ? [] : [254, 255];
-        for (i = 0, l = text.length; i < l; i++) {
-            ch = text.charCodeAt(i);
-            bch = ch >> 8 // divide by 256
-            if (bch >> 8 /* something left after dividing by 256 second time */) {
-                throw new Error("Character at position " + i.toString(10) + " of string '" + text + "' exceeds 16bits. Cannot be encoded into UCS-2 BE");
-            }
-            newtext.push(bch);
-            newtext.push(ch - (bch << 8));
-        }
-        return String.fromCharCode.apply(undef, newtext);
-    }
-};
-var pdfEscape = function (text, flags) {
-    // doing to8bitStream does NOT make this PDF display unicode text. For that
-    // we also need to reference a unicode font and embed it - royal pain in the rear.
-
-    // There is still a benefit to to8bitStream - PDF simply cannot handle 16bit chars,
-    // which JavaScript Strings are happy to provide. So, while we still cannot display
-    // 2-byte characters property, at least CONDITIONALLY converting (entire string containing) 
-    // 16bit chars to (USC-2-BE) 2-bytes per char + BOM streams we ensure that entire PDF
-    // is still parseable.
-    // This will allow immediate support for unicode in document properties strings.
-    return to8bitStream(text, flags).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
 };
 var sanitizeRegex = /((\(|\)|\\))/ig;
 var sanitize = function(text) {

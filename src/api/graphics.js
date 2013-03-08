@@ -231,10 +231,44 @@ space. .
     *@inner
     *@method
     
-    *@param {int} operator See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+    *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
     */
     paintPath: function (operator) {
-        this.currentStream.push(operator);
+        if (operator) {
+            this.currentStream.push(operator);
+        } else {
+            //By default, paint both stroke and fill.
+            this.currentStream.push('B');
+        }
+    },
+    
+    /*Path Controls END*/
+    /**
+    *Append a rectangle to the current path as a complete subpath, with
+lower-left corner (x, y) and dimensions width and height in user
+space. .
+    *@inner
+    *@method
+    
+    *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+    */
+    strokePath: function () {
+        //By default, paint both stroke and fill.
+        this.currentStream.push('S');
+    },
+    /*Path Controls END*/
+    /**
+    *Append a rectangle to the current path as a complete subpath, with
+lower-left corner (x, y) and dimensions width and height in user
+space. .
+    *@inner
+    *@method
+    
+    *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+    */
+    fillPath: function () {
+        //By default, paint both stroke and fill.
+        this.currentStream.push('F');
     },
     /*Path Controls END*/
     /**
@@ -282,14 +316,13 @@ space. .
                 this.currentStream.push('DeviceGray cs');
                 break;
             case 3:
-                this.currentStream.push('DeviceRGB, cs');
+                this.currentStream.push('DeviceRGB cs');
                 break;
             case 4:
-                this.currentStream.push('DeviceCMYK,, cs');
+                this.currentStream.push('DeviceCMYK cs');
                 break;
             default:
                 throw ('Invalid color values');
-                return;
         }
 
         var args = Array.prototype.slice.call(arguments);
@@ -312,14 +345,13 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK).
                 this.currentStream.push('DeviceGray CS');
                 break;
             case 3:
-                this.currentStream.push('DeviceRGB, CS');
+                this.currentStream.push('DeviceRGB CS');
                 break;
             case 4:
-                this.currentStream.push('DeviceCMYK,, CS');
+                this.currentStream.push('DeviceCMYK CS');
                 break;
             default:
                 throw ('Invalid color values');
-                return;
         }
 
         var args = Array.prototype.slice.call(arguments);
