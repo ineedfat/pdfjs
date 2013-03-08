@@ -7,9 +7,13 @@ var textOperators = {
     Begin text operator.
     *@inner
     *@method
+    *@param {string} [name=Helvetica] Font name.
+    *@param {string} [style] Font style.
+    *@param {int} [size] FontSize in pt.
     */
-    beginText: function () {
+    beginText: function (name, style, size) {
         this.currentStream.push('BT');
+        this.fontStyle(name, style, size);
     },
     /**
     End text operator.
@@ -28,16 +32,6 @@ var textOperators = {
     */
     textPosition: function (x, y) {
         this.currentStream.push(x + ' ' + y + ' Td');
-    },
-    /**
-    *Move from current text coordinate without leading.
-    *@inner
-    *@method
-    *@param {int} x Translate by x pt in x direction from current text coordinate.
-    *@param {int} y Translate by y pt in y direction. from current text coordinate
-    */
-    textPositionWithLeading: function (x, y) {
-        this.currentStream.push(x + ' ' + y + ' TD');
     },
     /**
     *Character Spacing
@@ -67,7 +61,7 @@ var textOperators = {
         this.currentStream.push(scale + ' Tz');
     },
     /**
-    *Set 'leading'
+    *Vertical distance between the baselines of adjacent lines of text.
     *@inner
     *@method
     *@param {int} val
@@ -88,16 +82,15 @@ var textOperators = {
     *Set font size.
     *@inner
     *@method
-    *@param {string} [name=F1] Font internal reference name.
-    *@param {string} [style] Font style.
+    *@param {string} name=F1 Font internal reference name.
+    *@param {string} style Font style.
     *@param {int} [size] FontSize in pt.
     */
     fontStyle: function (name, style, fontSize) {
-        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.resObj.fontObjs[0].description.key,
-            len = arguments.length;
+        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.resObj.fontObjs[0].description.key;
         this.currentStream.push('/' + fontKey);
 
-        if (len >= 3) {
+        if (typeof fontSize === 'number') {
             this.fontSize(arguments[2]);
         }
     },
@@ -107,6 +100,7 @@ var textOperators = {
     *@method
     *@param {pdf.utils.textMode} mode
     */
+    //See page 284 in reference.
     renderMode: function (mode) {
         this.currentStream.push(render + ' Tr');
     },
@@ -128,12 +122,24 @@ baseline up and opposite for negative values.
     *@param {int} [wordSpace] word spacing
     *@param {int} [charSpace] character spacing
     */
-    showText: function (textString, wordSpace, charSpace) {
+    print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
             this.currentStream.push('(' + sanitize(textString) + ') Tj');
         }
         else {
             this.currentStream.push(wordSpace + ' ' + charSpace + ' (' + sanitize(textString) + ') "');
+        }
+    },
+    /**
+    *Print text on newline.
+    *@inner
+    *@method
+    *@param {string} textString
+    */
+    println: function (textString) {
+        this.currentStream.push('T*');
+        if (textString) {
+            this.print(textString);
         }
     },
     /**
@@ -159,40 +165,5 @@ the next glyph painted either to the left or down by the given amount.
         }
         this.currentStream.push(arr.join(' ') + ' TJ');
 
-    },
-    /**
-    *Print text on newline.
-    *@inner
-    *@method
-    *@param {string} textString
-    */
-    showTextln: function (textString) {
-        this.currentStream.push(textString + ' \'');
-    },
-    /**
-    *Specifying text transforming matrix.
-    *@inner
-    *@method
-    *@param {int} a
-    *@param {int} b
-    *@param {int} c
-    *@param {int} d
-    *@param {int} e
-    *@param {int} f
-    */
-    textMatrix: function (a, b, c, d, e, f) {
-        var args = Array.prototype.slice.call(arguments);
-        if (args.length !== 6) {
-            throw 'Invalid text matrix';
-        }
-        this.currentStream.push(args.join(' ') + ' Tm');
-    },
-    /**
-    *Move to the start of the next line.
-    *@inner
-    *@method
-    */
-    nextLine: function () {
-        this.currentStream.push('T*');
     }
 };

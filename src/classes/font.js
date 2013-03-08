@@ -25,7 +25,7 @@ font.prototype = Object.create(obj.prototype, {
             this.body.push('/Subtype /Type1');
             this.body.push('/BaseFont /' + this.description.postScriptName);
 
-            if (typeof font.encoding === 'string') {
+            if (typeof this.description.encoding === 'string') {
                 this.body.push('/Encoding /' + this.description.encoding);
             }
             this.body.push('>>');

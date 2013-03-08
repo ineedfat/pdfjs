@@ -124,7 +124,7 @@
 
 
           //plugins 
-          'src/plugins/addImage.js',
+          'src/api/addImage.js',
 
           //Public exposure
           'src/public.js'
@@ -192,6 +192,8 @@
 
     // Default task(s).
     grunt.registerTask('debug', ['concat:debug']);
+
+    grunt.registerTask('prod', ['concat']);
 
     grunt.registerTask('default', ['concat', 'uglify', 'doc']);
 

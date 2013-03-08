@@ -49,30 +49,6 @@ var graphicOperators = {
         this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
     },
     /**
-    TODO: Implement
-   *@inner
-   *@method
-   
-   */
-    colorSpace: function () {
-    },
-    /**
-    TODO: Implement
-   *@inner
-   *@method
-   
-   */
-    color: function () {
-    },
-    /**
-    TODO: Implement
-   *@inner
-   *@method
-   
-   */
-    textState: function () {
-    },
-    /**
     
     *@inner
     *@method
@@ -179,7 +155,7 @@ path. .
     *@param {int} x
     *@param {int} y
     */
-    newSubPath: function (x, y) {
+    moveTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid new path parameters';
         }
@@ -195,7 +171,7 @@ path. .
     *@param {int} x
     *@param {int} y
     */
-    straightLine: function (x, y) {
+    lineTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid straight line  parameters';
         }
@@ -288,32 +264,6 @@ space. .
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' re');
     },
-    /*Color Controls Begin */
-    /*Path Controls END*/
-    /**
-    *Set the color space to use for nonstroking operations. The operand
-name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
-    *@inner
-    *@param {pdfJS.utils.colorSpace | string} name See [colorSpace]{@link pdfJS.utils.colorSpace} for valid values.
-    *@method
-    
-    */
-    fillColorSpace: function (name) {
-        this.currentStream.push(name + ' cs')
-    },
-    /**
-    *Set the color space to use for stroking operations. The operand
-name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
-    *@inner
-    *@param {pdfJS.utils.colorSpace | string} name See [colorSpace]{@link pdfJS.utils.colorSpace} for valid values.
-    *@method
-    
-    */
-    strokeColorSpace: function (name) {
-        this.currentStream.push(name + ' CS')
-    },
     /**
     *Set the color space to use for non-stroking operations. Depending on the color space,
     *specify the correct number of color values (e.g DeviceGray requires 1, DeviceRGB requires 2,
@@ -329,126 +279,51 @@ name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK). .
     fillColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
             case 1:
+                this.currentStream.push('DeviceGray cs');
+                break;
             case 3:
+                this.currentStream.push('DeviceRGB, cs');
+                break;
             case 4:
-                var args = Array.prototype.slice.call(arguments);
-                this.currentStream.push(args.join(' ') + ' sc');
+                this.currentStream.push('DeviceCMYK,, cs');
                 break;
             default:
                 throw ('Invalid color values');
-                break;
+                return;
         }
+
+        var args = Array.prototype.slice.call(arguments);
+        this.currentStream.push(args.join(' ') + ' sc');
     },
     /**
     *Set the color space to use for stroking operations. The operand
 name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK) .
+name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK).
     *@inner
     *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 
     *@param {int} colorValue4 
     *@method
-    
     */
     strokeColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
         switch (arguments.length) {
             case 1:
+                this.currentStream.push('DeviceGray CS');
+                break;
             case 3:
+                this.currentStream.push('DeviceRGB, CS');
+                break;
             case 4:
-                var args = Array.prototype.slice.call(arguments);
-                this.currentStream.push(args.join(' ') + ' SC');
+                this.currentStream.push('DeviceCMYK,, CS');
                 break;
             default:
                 throw ('Invalid color values');
-                break;
+                return;
         }
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations .
-    *@inner
-    *@param {int} value See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@method
-    
-    */
-    grayFill: function (value) {
-        this.currentStream.push(value + ' g');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
-    *@inner
-    *@param {int} value See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@method
-    
-    */
-    grayStroke: function (value) {
-        this.currentStream.push(value + ' G');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for non-stroking operations .
-    *@inner
-    *@param {int} r set red channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@param {int} g set green channel color value.
-    *@param {int} b set blue channel color value. 
-    *@method
-    
-    */
-    rgbFill: function (r, g, b) {
-        if (arguments.length != 3) {
-            throw 'Invalid RGB color values';
-        }
+
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' rg');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
-    *@inner
-    *@param {int} r set red channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@param {int} g set green channel color value.
-    *@param {int} b set blue channel color value. 
-    *@method
-    
-    */
-    rgbStroke: function () {
-        if (arguments.length != 3) {
-            throw 'Invalid RGB color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' RG');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
-    *@inner
-    *@param {int} c set cryan channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@param {int} g set magenta channel color value.
-    *@param {int} b set yellow channel color value. 
-    *@param {int} k set black channel color value. 
-    *@method
-    
-    */
-    cmykFill: function () {
-        if (arguments.length != 4) {
-            throw 'Invalid CMYK color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' k');
-    },
-    /**
-    *Shortcut for setting both the color space and color value(s) at the same time for stroking operations .
-    *@inner
-    *@param {int} c set cryan channel color value. See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
-    *@param {int} g set magenta channel color value.
-    *@param {int} b set yellow channel color value. 
-    *@param {int} k set black channel color value. 
-    *@method
-    
-    */
-    cmykStroke: function () {
-        if (arguments.length != 4) {
-            throw 'Invalid CMYK color values';
-        }
-        var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' K');
+        this.currentStream.push(args.join(' ') + ' SC');
     },
     /*Color Controls End*/
     /**
