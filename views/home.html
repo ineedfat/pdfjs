@@ -21,18 +21,22 @@
                     <div class="row">
                         <div class="span7">
                      <div id="editor-home" >
-var doc = new pdfJS.doc('letter', 'portrait');
+    var doc = new pdfJS.doc('letter', 'portrait');
     var p = doc.addPage();
     
-    //Title
     p.pushState();
+    
+    //Title
     p.translate(160, 700);
     p.beginText();
     p.fontSize(50);
-    p.showText('Hello World!');
+    p.print('Hello World!');
+    p.endText();
+    
+    p.beginText();
     p.fontSize(20);
-    p.textPositionWithLeading(200, -30);
-    p.showText('pdfJS by iNeedFat :)');
+    p.textPosition(200, -30);
+    p.print('pdfJS by iNeedFat :)');
     p.endText();
     
     p.popState();
@@ -40,11 +44,12 @@ var doc = new pdfJS.doc('letter', 'portrait');
     //Image
     var imgXObj = doc.newImage('./img/sample.jpg', true);
     p.addImage(imgXObj, 60, 50, 300, 100);
+
     //More Text
     p.translate(400, 175);
     p.beginText();
-    p.fontStyle(null, null, 15);
-    p.showText('It\'s just that easy :D!');
+    p.fontSize(15);
+    p.print('It\'s just that easy :D!');
     p.endText();
                     </div>
                     <h4>Note</h4>

@@ -170,4 +170,4 @@ pip-log.txt
 #############
 ## Custom
 #############
-buildDoc.cmd
+node_modules/*
