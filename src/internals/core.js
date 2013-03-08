@@ -251,7 +251,7 @@
                 BOLD = "bold",
                 ITALIC = "italic",
                 BOLD_ITALIC = "bolditalic",
-                encoding = 'StandardEncoding',
+                encoding = 'WinAnsiEncoding',
                 standardFonts = [
                     ['Helvetica', HELVETICA, NORMAL],
                     ['Helvetica-Bold', HELVETICA, BOLD],

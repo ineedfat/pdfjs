@@ -18,6 +18,15 @@ var font = function (font, objectNumber, generationNumber) {
     this.description = font;
 };
 
+font.codePages = {
+    "WinAnsiEncoding": {
+        "338": 140, "339": 156, "352": 138, "353": 154, "376": 159, "381": 142,
+        "382": 158, "402": 131, "710": 136, "732": 152, "8211": 150, "8212": 151, "8216": 145,
+        "8217": 146, "8218": 130, "8220": 147, "8221": 148, "8222": 132, "8224": 134, "8225": 135,
+        "8226": 149, "8230": 133, "8240": 137, "8249": 139, "8250": 155, "8364": 128, "8482": 153
+    }
+};
+
 font.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
@@ -31,6 +40,53 @@ font.prototype = Object.create(obj.prototype, {
             this.body.push('>>');
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+        }
+    },
+    charactersEncode: {
+        value: function (str) {
+            var newStr = [],
+                unicodeStr,
+                i, len, charCode, isUnicode, hByte, lByte,
+                outputEncoding = this.description.encoding;
+
+            if (typeof outputEncoding === 'string') {
+                outputEncoding = font.codePages[outputEncoding];
+            }
+
+            if (!outputEncoding) {
+                throw 'Invalid Encoder: ' + this.description.encoding;
+            }
+
+            for (i = 0, len = str.length; i < len; i++) {
+                charCode = str.charCodeAt(i);
+                if (charCode >> 8) {
+                    isUnicode = true;
+                }
+                charCode = outputEncoding[charCode];
+                if (charCode) {
+                    newStr.push(String.fromCharCode(charCode));
+                }
+                else {
+                    newStr.push(str[i]);
+                }
+            }
+
+            if (isUnicode) {
+                unicodeStr = [];
+                for (i = 0, len = newStr.length; i < len; i++) {
+                    charCode = text.charCodeAt(i);
+                    hByte = charCode >> 8;
+                    lByte = charCode - hByte;
+                    if (hByte >> 8) {
+                        throw 'Character exceeds 16bits: ' + text[i];
+                    }
+                    ret.push(hByte, lByte);
+                }
+                ret = String.fromCharCode.apply(null, ret);
+            } else {
+                return newStr.join('');
+            }
+            return ret;
         }
     }
 });

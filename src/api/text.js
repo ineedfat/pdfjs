@@ -22,6 +22,7 @@ var textOperators = {
     */
     endText: function () {
         this.currentStream.push('ET');
+        this.activeFont = undefined;
     },
     /**
     *Move from current text coordinate.
@@ -87,7 +88,8 @@ var textOperators = {
     *@param {int} [size] FontSize in pt.
     */
     fontStyle: function (name, style, fontSize) {
-        var fontKey = name && style ? this.doc.fontmap[name][style] : this.doc.resObj.fontObjs[0].description.key;
+        this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
+        var fontKey = this.activeFont.description.key;
         this.currentStream.push('/' + fontKey);
 
         if (typeof fontSize === 'number') {
@@ -124,10 +126,12 @@ baseline up and opposite for negative values.
     */
     print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.currentStream.push('(' + sanitize(textString) + ') Tj');
+            this.currentStream.push('(' +
+                this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
         }
         else {
-            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' + sanitize(textString) + ') "');
+            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' +
+                this.activeFont.charactersEncode(sanitize(textString)) + ') "');
         }
     },
     /**

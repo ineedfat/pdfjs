@@ -40,6 +40,8 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
         *@Type pdfJS.doc
         */
     this.doc = document;
+
+    this.activeFont;
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {

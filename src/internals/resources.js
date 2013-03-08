@@ -35,5 +35,19 @@ resources.prototype = Object.create(obj.prototype, {
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
         }
+    },
+    getFont: {
+        value: function (name, style) {
+            for (var i = 0, font; font = this.fontObjs[i]; i++) {
+                if (font.description.key === name) {
+                    return font;
+                }
+
+                if (font.description.fontName === name && font.description.fontStyle === style) {
+                    return font;
+                }
+            }
+            return null;
+        }
     }
 });
