@@ -101,8 +101,8 @@
           'src/internals/pollyfills.js',
 
             //API calls
-          'src/api/graphics.js',
-          'src/api/text.js',
+          'src/internals/graphics.js',
+          'src/internals/text.js',
 
           //Classes
           'src/classes/obj.js',
@@ -124,7 +124,7 @@
 
 
           //plugins 
-          'src/api/addImage.js',
+          'src/internals/addImage.js',
 
           //Public exposure
           'src/public.js'

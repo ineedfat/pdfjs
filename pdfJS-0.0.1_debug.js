@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/08/2013 13:56
+* Compiled At: 03/08/2013 16:19
 ***********************************************/
 (function(_) {
 'use strict';
@@ -232,7 +232,6 @@ from the current point to the point (x3, y3), using the other pairs of points as
                 break;
             default:
                 throw 'Invalid bezier curve parameters';
-                break;
         }
     },
     /**
@@ -333,50 +332,52 @@ space. .
     *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 
-    *@param {int} colorValue4 
     *@method
     
     */
-    fillColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
+    fillColor: function (colorValue1, colorValue2, colorValue3) {
         switch (arguments.length) {
             case 1:
-                this.currentStream.push('DeviceGray cs');
+                if (this.activeFillCS !== 'DeviceGray') {
+                    this.currentStream.push('/DeviceGray cs');
+                    this.activeFillCS = 'DeviceGray';
+                }
                 break;
             case 3:
-                this.currentStream.push('DeviceRGB cs');
-                break;
-            case 4:
-                this.currentStream.push('DeviceCMYK cs');
+                if (this.activeFillCS !== 'DeviceRGB') {
+                    this.currentStream.push('/DeviceRGB cs');
+                    this.activeFillCS = 'DeviceRGB';
+                }
                 break;
             default:
                 throw ('Invalid color values');
         }
-
         var args = Array.prototype.slice.call(arguments);
         this.currentStream.push(args.join(' ') + ' sc');
     },
     /**
     *Set the color space to use for stroking operations. The operand
 name must be a name object. If the color space is one that can be specified by a
-name and no additional parameters (DeviceGray, DeviceRGB, and DeviceCMYK).
+name and no additional parameters (DeviceGray and DeviceRGB).
     *@inner
     *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 
-    *@param {int} colorValue4 
     *@method
     */
-    strokeColor: function (colorValue1, colorValue2, colorValue3, colorValue4) {
+    strokeColor: function (colorValue1, colorValue2, colorValue3) {
         switch (arguments.length) {
             case 1:
-                this.currentStream.push('DeviceGray CS');
+                if (this.activeStrokeCS !== 'DeviceGray') {
+                    this.currentStream.push('/DeviceGray CS');
+                    this.activeStrokeCS = 'DeviceGray';
+                }
                 break;
             case 3:
-                this.currentStream.push('DeviceRGB CS');
-                break;
-            case 4:
-                this.currentStream.push('DeviceCMYK CS');
-                break;
+                if (this.activeStrokeCS !== 'DeviceRGB') {
+                    this.currentStream.push('/DeviceRGB CS');
+                    this.activeStrokeCS = 'DeviceRGB';
+                }
             default:
                 throw ('Invalid color values');
         }
@@ -501,7 +502,7 @@ var textOperators = {
     *@param {int} size FontSize in pt.
     */
     fontSize: function (size) {
-        this.currentStream.push(size + ' Tf');
+        this.currentStream.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
     },
     /**
     *Set font size.
@@ -689,7 +690,11 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
         */
     this.doc = document;
 
-    this.activeFont;
+    this.activeFont = undefined;
+
+    this.activeFillCS = undefined;
+    this.activeStrokeCS = undefined;
+
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {

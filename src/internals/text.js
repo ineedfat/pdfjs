@@ -77,7 +77,7 @@ var textOperators = {
     *@param {int} size FontSize in pt.
     */
     fontSize: function (size) {
-        this.currentStream.push(size + ' Tf');
+        this.currentStream.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
     },
     /**
     *Set font size.

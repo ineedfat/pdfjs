@@ -41,7 +41,11 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
         */
     this.doc = document;
 
-    this.activeFont;
+    this.activeFont = undefined;
+
+    this.activeFillCS = undefined;
+    this.activeStrokeCS = undefined;
+
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
