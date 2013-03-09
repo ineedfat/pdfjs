@@ -170,6 +170,6 @@ pip-log.txt
 #############
 ## Custom
 #############
-buildDoc.cmd
-
+examples/js/pdfJS*.js
 node_modules/*
+

@@ -179,6 +179,13 @@
             buildDoc: {
                 src: ["doc", "examples/views/doc"]
             }
+        },
+        copy: {
+            main: {
+                files: [
+                  { src: ['<%= pkg.name %>-<%= pkg.version %>.js'], dest: 'examples/js/' }
+                ]
+            }
         }
     });
 
@@ -189,13 +196,15 @@
     grunt.loadNpmTasks('grunt-jsdoc');
     //grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+
 
     // Default task(s).
     grunt.registerTask('debug', ['concat:debug']);
 
-    grunt.registerTask('prod', ['concat']);
+    grunt.registerTask('prod', ['concat', 'copy']);
 
-    grunt.registerTask('default', ['concat', 'uglify', 'doc']);
+    grunt.registerTask('default', ['concat', 'uglify','copy', 'doc']);
 
     grunt.registerTask('doc', ['clean', 'jsdoc', 'createDocViews']);
 
