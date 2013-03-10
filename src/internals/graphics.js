@@ -12,7 +12,7 @@ var graphicOperators = {
     
     */
     translate: function (tx, ty) {
-        this.currentStream.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
+        this.content.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
     },
     /**
     
@@ -23,7 +23,7 @@ var graphicOperators = {
     
     */
     scale: function (sx, sy) {
-        this.currentStream.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
+        this.content.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
     },
     /**
     
@@ -35,7 +35,7 @@ var graphicOperators = {
     rotate: function (theta) {
         var cos = Math.cos(theta),
             sin = Math.sin(theta);
-        this.currentStream.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
+        this.content.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
     },
     /**
    
@@ -46,7 +46,7 @@ var graphicOperators = {
    
    */
     skew: function (alphaX, betaY) {
-        this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
+        this.content.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
     },
     /**
     
@@ -58,7 +58,7 @@ var graphicOperators = {
     
     */
     lineWidth: function (width) {
-        this.currentStream.push(width + ' w');
+        this.content.push(width + ' w');
     },
     /**
     
@@ -68,7 +68,7 @@ var graphicOperators = {
     
     */
     lineCap: function (capStyle) {
-        this.currentStream.push(capStyle + ' J');
+        this.content.push(capStyle + ' J');
     },
     /**
     
@@ -78,7 +78,7 @@ var graphicOperators = {
     
     */
     lineJoin: function (joinStyle) {
-        this.currentStream.push(joinStyle + ' j');
+        this.content.push(joinStyle + ' j');
     },
     /**
     
@@ -92,7 +92,7 @@ exceeded, the join is converted from a miter to a bevel.
     
     */
     miterLimit: function (limit) {
-        this.currentStream.push(limit + ' M');
+        this.content.push(limit + ' M');
     },
     /**
     The line dash pattern controls the pattern of dashes and gaps used to stroke paths .
@@ -103,7 +103,7 @@ exceeded, the join is converted from a miter to a bevel.
     
     */
     dashPattern: function (dashArray, dashPhase) {
-        this.currentStream.push(dashArray + ' ' + dashPhase + ' d');
+        this.content.push(dashArray + ' ' + dashPhase + ' d');
     },
     /**
     Set the color rendering intent in the graphics state .
@@ -113,7 +113,7 @@ exceeded, the join is converted from a miter to a bevel.
     
     */
     renderingIntent: function (intent) {
-        this.currentStream.push(intent + ' ri');
+        this.content.push(intent + ' ri');
     },
     /**
     TODO: Implement
@@ -130,7 +130,7 @@ exceeded, the join is converted from a miter to a bevel.
     
     */
     pushState: function () {
-        this.currentStream.push('q');
+        this.content.push('q');
     },
     /**
     *Restore the graphics state by removing the most recently saved state from
@@ -140,7 +140,7 @@ the stack and making it the current state .
     
     */
     popState: function () {
-        this.currentStream.push('Q');
+        this.content.push('Q');
     },
     /*Path Controls Begin*/
     /**
@@ -160,7 +160,7 @@ path. .
             throw 'Invalid new path parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' m');
+        this.content.push(args.join(' ') + ' m');
     },
     /**
     *Append a straight line segment from the current point to the point
@@ -176,7 +176,7 @@ path. .
             throw 'Invalid straight line  parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' l');
+        this.content.push(args.join(' ') + ' l');
     },
     /**
     *Append a cubic Bézier curve to the current path. The curve extends
@@ -195,13 +195,13 @@ from the current point to the point (x3, y3), using the other pairs of points as
         var args = Array.prototype.slice.call(arguments);
         switch (arguments.length) {
             case 4:
-                this.currentStream.push(args.join(' ') + ' v');
+                this.content.push(args.join(' ') + ' v');
                 break;
             case 5:
-                this.currentStream.push(args.slice(0, 4).join(' ') + ' y');
+                this.content.push(args.slice(0, 4).join(' ') + ' y');
                 break;
             case 6:
-                this.currentStream.push(args.join(' ') + ' c');
+                this.content.push(args.join(' ') + ' c');
                 break;
             default:
                 throw 'Invalid bezier curve parameters';
@@ -220,7 +220,7 @@ does nothing. .
     
     */
     close: function () {
-        this.currentStream.push('h');
+        this.content.push('h');
     },
     /*Path Controls END*/
     /**
@@ -234,10 +234,10 @@ space. .
     */
     paintPath: function (operator) {
         if (operator) {
-            this.currentStream.push(operator);
+            this.content.push(operator);
         } else {
             //By default, paint both stroke and fill.
-            this.currentStream.push('B');
+            this.content.push('B');
         }
     },
     
@@ -253,7 +253,7 @@ space. .
     */
     strokePath: function () {
         //By default, paint both stroke and fill.
-        this.currentStream.push('S');
+        this.content.push('S');
     },
     /*Path Controls END*/
     /**
@@ -267,7 +267,7 @@ space. .
     */
     fillPath: function () {
         //By default, paint both stroke and fill.
-        this.currentStream.push('F');
+        this.content.push('F');
     },
     /*Path Controls END*/
     /**
@@ -280,7 +280,7 @@ space. .
     *@param {bool} asterisk if true, then set clipping path using even-odd rule.
     */
     clip: function (asterisk) {
-        this.currentStream.push('W' + (asterisk ? ' *' : ''));
+        this.content.push('W' + (asterisk ? ' *' : ''));
     },
     /*Path Controls END*/
     /**
@@ -295,7 +295,7 @@ space. .
             throw 'Invalid rectangle parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' re');
+        this.content.push(args.join(' ') + ' re');
     },
     /**
     *Set the color space to use for non-stroking operations. Depending on the color space,
@@ -312,13 +312,13 @@ space. .
         switch (arguments.length) {
             case 1:
                 if (this.activeFillCS !== 'DeviceGray') {
-                    this.currentStream.push('/DeviceGray cs');
+                    this.content.push('/DeviceGray cs');
                     this.activeFillCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeFillCS !== 'DeviceRGB') {
-                    this.currentStream.push('/DeviceRGB cs');
+                    this.content.push('/DeviceRGB cs');
                     this.activeFillCS = 'DeviceRGB';
                 }
                 break;
@@ -326,7 +326,7 @@ space. .
                 throw ('Invalid color values');
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' sc');
+        this.content.push(args.join(' ') + ' sc');
     },
     /**
     *Set the color space to use for stroking operations. The operand
@@ -342,13 +342,13 @@ name and no additional parameters (DeviceGray and DeviceRGB).
         switch (arguments.length) {
             case 1:
                 if (this.activeStrokeCS !== 'DeviceGray') {
-                    this.currentStream.push('/DeviceGray CS');
+                    this.content.push('/DeviceGray CS');
                     this.activeStrokeCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeStrokeCS !== 'DeviceRGB') {
-                    this.currentStream.push('/DeviceRGB CS');
+                    this.content.push('/DeviceRGB CS');
                     this.activeStrokeCS = 'DeviceRGB';
                 }
             default:
@@ -356,7 +356,7 @@ name and no additional parameters (DeviceGray and DeviceRGB).
         }
 
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' SC');
+        this.content.push(args.join(' ') + ' SC');
     },
     /*Color Controls End*/
     /**
@@ -388,10 +388,10 @@ name and no additional parameters (DeviceGray and DeviceRGB).
             h = w * imgXObj.height / imgXObj.width;
         }
 
-        this.currentStream.push('q');
-        this.currentStream.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
-        this.currentStream.push('/' + imgXObj.name + ' Do');
-        this.currentStream.push('Q');
+        this.content.push('q');
+        this.content.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+        this.content.push('/' + imgXObj.name + ' Do');
+        this.content.push('Q');
 
         return this;
     }

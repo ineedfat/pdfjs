@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/10/2013 13:11
+* Compiled At: 03/10/2013 15:28
 ***********************************************/
 (function(_) {
 'use strict';
@@ -28,112 +28,112 @@ var mixin = function(inherting, iObj) {
 
 var graphicOperators = {
     translate: function (tx, ty) {
-        this.currentStream.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
+        this.content.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
     },
     scale: function (sx, sy) {
-        this.currentStream.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
+        this.content.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
     },
     rotate: function (theta) {
         var cos = Math.cos(theta),
             sin = Math.sin(theta);
-        this.currentStream.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
+        this.content.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
     },
     skew: function (alphaX, betaY) {
-        this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
+        this.content.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
     },
     lineWidth: function (width) {
-        this.currentStream.push(width + ' w');
+        this.content.push(width + ' w');
     },
     lineCap: function (capStyle) {
-        this.currentStream.push(capStyle + ' J');
+        this.content.push(capStyle + ' J');
     },
     lineJoin: function (joinStyle) {
-        this.currentStream.push(joinStyle + ' j');
+        this.content.push(joinStyle + ' j');
     },
     miterLimit: function (limit) {
-        this.currentStream.push(limit + ' M');
+        this.content.push(limit + ' M');
     },
     dashPattern: function (dashArray, dashPhase) {
-        this.currentStream.push(dashArray + ' ' + dashPhase + ' d');
+        this.content.push(dashArray + ' ' + dashPhase + ' d');
     },
     renderingIntent: function (intent) {
-        this.currentStream.push(intent + ' ri');
+        this.content.push(intent + ' ri');
     },
     strokeAdjustment: function () {
     },
     pushState: function () {
-        this.currentStream.push('q');
+        this.content.push('q');
     },
     popState: function () {
-        this.currentStream.push('Q');
+        this.content.push('Q');
     },
     moveTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid new path parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' m');
+        this.content.push(args.join(' ') + ' m');
     },
     lineTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid straight line  parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' l');
+        this.content.push(args.join(' ') + ' l');
     },
     bezierCurve: function (x1, y1, x2, y2, x3, y3) {
         var args = Array.prototype.slice.call(arguments);
         switch (arguments.length) {
             case 4:
-                this.currentStream.push(args.join(' ') + ' v');
+                this.content.push(args.join(' ') + ' v');
                 break;
             case 5:
-                this.currentStream.push(args.slice(0, 4).join(' ') + ' y');
+                this.content.push(args.slice(0, 4).join(' ') + ' y');
                 break;
             case 6:
-                this.currentStream.push(args.join(' ') + ' c');
+                this.content.push(args.join(' ') + ' c');
                 break;
             default:
                 throw 'Invalid bezier curve parameters';
         }
     },
     close: function () {
-        this.currentStream.push('h');
+        this.content.push('h');
     },
     paintPath: function (operator) {
         if (operator) {
-            this.currentStream.push(operator);
+            this.content.push(operator);
         } else {
-            this.currentStream.push('B');
+            this.content.push('B');
         }
     },
     strokePath: function () {
-        this.currentStream.push('S');
+        this.content.push('S');
     },
     fillPath: function () {
-        this.currentStream.push('F');
+        this.content.push('F');
     },
     clip: function (asterisk) {
-        this.currentStream.push('W' + (asterisk ? ' *' : ''));
+        this.content.push('W' + (asterisk ? ' *' : ''));
     },
     rect: function (x, y, width, height) {
         if (arguments.length != 4) {
             throw 'Invalid rectangle parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' re');
+        this.content.push(args.join(' ') + ' re');
     },
     fillColor: function (colorValue1, colorValue2, colorValue3) {
         switch (arguments.length) {
             case 1:
                 if (this.activeFillCS !== 'DeviceGray') {
-                    this.currentStream.push('/DeviceGray cs');
+                    this.content.push('/DeviceGray cs');
                     this.activeFillCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeFillCS !== 'DeviceRGB') {
-                    this.currentStream.push('/DeviceRGB cs');
+                    this.content.push('/DeviceRGB cs');
                     this.activeFillCS = 'DeviceRGB';
                 }
                 break;
@@ -141,19 +141,19 @@ var graphicOperators = {
                 throw ('Invalid color values');
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' sc');
+        this.content.push(args.join(' ') + ' sc');
     },
     strokeColor: function (colorValue1, colorValue2, colorValue3) {
         switch (arguments.length) {
             case 1:
                 if (this.activeStrokeCS !== 'DeviceGray') {
-                    this.currentStream.push('/DeviceGray CS');
+                    this.content.push('/DeviceGray CS');
                     this.activeStrokeCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeStrokeCS !== 'DeviceRGB') {
-                    this.currentStream.push('/DeviceRGB CS');
+                    this.content.push('/DeviceRGB CS');
                     this.activeStrokeCS = 'DeviceRGB';
                 }
             default:
@@ -161,7 +161,7 @@ var graphicOperators = {
         }
 
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' SC');
+        this.content.push(args.join(' ') + ' SC');
     },
     addImage: function (imgXObj, x, y, w, h) {
         if (!w && !h) {
@@ -181,10 +181,10 @@ var graphicOperators = {
             h = w * imgXObj.height / imgXObj.width;
         }
 
-        this.currentStream.push('q');
-        this.currentStream.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
-        this.currentStream.push('/' + imgXObj.name + ' Do');
-        this.currentStream.push('Q');
+        this.content.push('q');
+        this.content.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+        this.content.push('/' + imgXObj.name + ' Do');
+        this.content.push('Q');
 
         return this;
     }
@@ -192,58 +192,58 @@ var graphicOperators = {
 
 var textOperators = {
     beginText: function (name, style, size) {
-        this.currentStream.push('BT');
+        this.content.push('BT');
         this.fontStyle(name, style, size);
     },
     endText: function () {
-        this.currentStream.push('ET');
+        this.content.push('ET');
         this.activeFont = undefined;
     },
     textPosition: function (x, y) {
-        this.currentStream.push(x + ' ' + y + ' Td');
+        this.content.push(x + ' ' + y + ' Td');
     },
     charSpace: function (charSpace) {
-        this.currentStream.push(charSpace + ' Tc');
+        this.content.push(charSpace + ' Tc');
     },
     wordSpace: function (wordSpace) {
-        this.currentStream.push(wordSpace + ' Tw');
+        this.content.push(wordSpace + ' Tw');
     },
     scaleText: function (scale) {
-        this.currentStream.push(scale + ' Tz');
+        this.content.push(scale + ' Tz');
     },
     leading: function (val) {
-        this.currentStream.push(val + ' TL');
+        this.content.push(val + ' TL');
     },
     fontSize: function (size) {
-        this.currentStream.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
+        this.content.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
         this.activeFontSize = size;
     },
     fontStyle: function (name, style, fontSize) {
         this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
         var fontKey = this.activeFont.description.key;
-        this.currentStream.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
+        this.content.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
         if (fontSize) {
             this.activeFontSize = fontSize;
         }
     },
     renderMode: function (mode) {
-        this.currentStream.push(render + ' Tr');
+        this.content.push(render + ' Tr');
     },
     rise: function (rise) {
-        this.currentStream.push(rise + ' Ts');
+        this.content.push(rise + ' Ts');
     },
     print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.currentStream.push('(' +
+            this.content.push('(' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
         }
         else {
-            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' +
+            this.content.push(wordSpace + ' ' + charSpace + ' (' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') "');
         }
     },
     println: function (textString) {
-        this.currentStream.push('T*');
+        this.content.push('T*');
         if (textString) {
             this.print(textString);
         }
@@ -256,7 +256,7 @@ var textOperators = {
                 arr[i] = '(' + temp + ')';
             }
         }
-        this.currentStream.push(arr.join(' ') + ' TJ');
+        this.content.push(arr.join(' ') + ' TJ');
 
     }
 };
@@ -284,7 +284,8 @@ obj.prototype = {
     generationNumber: 0
 };
 
-var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams, document) {
+var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams,
+    repeatableStreams) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -292,14 +293,8 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
     this.parent = parent;
     this.contentStreams = contentStreams;
     this.currentStream = this.contentStreams[0];
-    this.doc = document;
 
-    this.activeFont = undefined;
-    this.activeFontSize = 14;
-
-    this.activeFillCS = undefined;
-    this.activeStrokeCS = undefined;
-
+    this.repeatableStreams = repeatableStreams;
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
@@ -314,6 +309,9 @@ pageNode.prototype = Object.create(obj.prototype, {
             if (this.contentStreams.length) {
                 this.body.push('[');
                 for (i = 0; item = this.contentStreams[i]; i++) {
+                    this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
+                }
+                for (i = 0; item = this.repeatableStreams[i]; i++) {
                     this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
                 }
                 this.body.push(']');
@@ -339,8 +337,6 @@ pageNode.prototype = Object.create(obj.prototype, {
         }
     }
 });
-mixin(pageNode, textOperators);
-mixin(pageNode, graphicOperators);
 
 var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
     var self = this;
@@ -391,12 +387,19 @@ var walkPageTree = function (pageTree) {
 };
 
 
-var stream = function (objectNumber, generationNumber) {
+var stream = function (objectNumber, generationNumber, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
     this.content = [];
     this.dictionary = {};
+    this.doc = document;
+
+    this.activeFont = undefined;
+    this.activeFontSize = 14;
+
+    this.activeFillCS = undefined;
+    this.activeStrokeCS = undefined;
 };
 var printDictionary = function (dict) {
     var ret = [],
@@ -419,7 +422,9 @@ stream.prototype = Object.create(obj.prototype, {
             }
             this.body.push('>>');
             this.body.push('stream');
+            this.body.push('q')
             this.body = this.body.concat(this.content);
+            this.body.push('Q')
             this.body.push('endstream');
 
             return obj.prototype.out.apply(this, arguments); 
@@ -432,7 +437,8 @@ stream.prototype = Object.create(obj.prototype, {
         }
     }
 });
-
+mixin(stream, textOperators);
+mixin(stream, graphicOperators);
 
 var font = function (font, objectNumber, generationNumber) {
     var self = this;
@@ -546,6 +552,9 @@ imageXObject.prototype = Object.create(stream.prototype, {
     var PDF_VERSION = '1.3';
     var doc = function (format, orientation, margin) {
         var self = this;
+        this.pageCount = 0;
+
+        this.repeatableElements = [];
         this.activeAsync = 0;
         this.objectNumber = 0;
         this.currentPage = null;
@@ -591,16 +600,17 @@ imageXObject.prototype = Object.create(stream.prototype, {
             return new obj(++this.objectNumber, 0);
         },
         newStream: function() {
-            return new stream(++this.objectNumber, 0);
+            return new stream(++this.objectNumber, 0, this);
         },
-        addPage: function(height, width, options) {
+        addPage: function (height, width, options) {
+            this.pageCount++;
             this.currentPage = new pageNode(
                 this.currentNode,
                 options || { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
-                this
+                this.repeatableElements
             );
             this.currentNode.kids.push(this.currentPage);
 
@@ -612,6 +622,7 @@ imageXObject.prototype = Object.create(stream.prototype, {
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
+                buildObjs(this.repeatableElements),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
@@ -690,6 +701,13 @@ imageXObject.prototype = Object.create(stream.prototype, {
                 this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
             }
             return this;
+        },
+        addRepeatableElement: function () {
+            var element = this.newStream();
+            this.repeatableElements.push(element);
+            return element;
+        },
+        addRepeatableTemplate: function () {
         }
     };
 
@@ -1224,6 +1242,9 @@ var pdfJS = {
             createObj: function () { return pdf.newObj.apply(pdf, arguments); },
             createStream: function () { return pdf.newStream.apply(pdf, arguments); },
             addPage: function () { return pdf.addPage.apply(pdf, arguments); },
+            addRepeatableElement: function () {
+                return pdf.addRepeatableElement.apply(pdf, arguments);
+            },
             root: function () { return pdf.rootNode.apply(pdf, arguments); },
             output: function () { return pdf.output.apply(pdf, arguments); },
             outputAsync: function () { return pdf.outputAsync.apply(pdf, arguments); },

@@ -13,6 +13,9 @@
 */
     var doc = function (format, orientation, margin) {
         var self = this;
+        this.pageCount = 0;
+
+        this.repeatableElements = [];
         /**
         *Number of active async calls such as adding a new image. TODO: make this field private.
         *@Type int
@@ -61,9 +64,6 @@
             self.settings.dimension[0] = self.settings.dimension[1];
             self.settings.dimension[1] = temp;
         }
-
-        
-
        
         this.resObj = new resources(++this.objectNumber, 0);
         
@@ -124,7 +124,7 @@
         *@return {[stream]{@link pdfJS.stream}} a newly created pdf stream for this document.
         */
         newStream: function() {
-            return new stream(++this.objectNumber, 0);
+            return new stream(++this.objectNumber, 0, this);
         },
         /**
         *Add a new page to the document.
@@ -136,14 +136,15 @@
         *@return {[pageNode]{@link pdfJS.pageNode}}
         */
         //TODO: Add options/margin/etc
-        addPage: function(height, width, options) {
+        addPage: function (height, width, options) {
+            this.pageCount++;
             this.currentPage = new pageNode(
                 this.currentNode,
                 options || { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
-                this
+                this.repeatableElements
             );
             this.currentNode.kids.push(this.currentPage);
 
@@ -161,6 +162,7 @@
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
+                buildObjs(this.repeatableElements),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
@@ -259,6 +261,13 @@
                 this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
             }
             return this;
+        },
+        addRepeatableElement: function () {
+            var element = this.newStream();
+            this.repeatableElements.push(element);
+            return element;
+        },
+        addRepeatableTemplate: function () {
         }
     };
 

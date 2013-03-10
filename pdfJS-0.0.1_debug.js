@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/10/2013 13:11
+* Compiled At: 03/10/2013 15:28
 ***********************************************/
 (function(_) {
 'use strict';
@@ -39,7 +39,7 @@ var graphicOperators = {
     
     */
     translate: function (tx, ty) {
-        this.currentStream.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
+        this.content.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
     },
     /**
     
@@ -50,7 +50,7 @@ var graphicOperators = {
     
     */
     scale: function (sx, sy) {
-        this.currentStream.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
+        this.content.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
     },
     /**
     
@@ -62,7 +62,7 @@ var graphicOperators = {
     rotate: function (theta) {
         var cos = Math.cos(theta),
             sin = Math.sin(theta);
-        this.currentStream.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
+        this.content.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
     },
     /**
    
@@ -73,7 +73,7 @@ var graphicOperators = {
    
    */
     skew: function (alphaX, betaY) {
-        this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
+        this.content.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
     },
     /**
     
@@ -85,7 +85,7 @@ var graphicOperators = {
     
     */
     lineWidth: function (width) {
-        this.currentStream.push(width + ' w');
+        this.content.push(width + ' w');
     },
     /**
     
@@ -95,7 +95,7 @@ var graphicOperators = {
     
     */
     lineCap: function (capStyle) {
-        this.currentStream.push(capStyle + ' J');
+        this.content.push(capStyle + ' J');
     },
     /**
     
@@ -105,7 +105,7 @@ var graphicOperators = {
     
     */
     lineJoin: function (joinStyle) {
-        this.currentStream.push(joinStyle + ' j');
+        this.content.push(joinStyle + ' j');
     },
     /**
     
@@ -119,7 +119,7 @@ exceeded, the join is converted from a miter to a bevel.
     
     */
     miterLimit: function (limit) {
-        this.currentStream.push(limit + ' M');
+        this.content.push(limit + ' M');
     },
     /**
     The line dash pattern controls the pattern of dashes and gaps used to stroke paths .
@@ -130,7 +130,7 @@ exceeded, the join is converted from a miter to a bevel.
     
     */
     dashPattern: function (dashArray, dashPhase) {
-        this.currentStream.push(dashArray + ' ' + dashPhase + ' d');
+        this.content.push(dashArray + ' ' + dashPhase + ' d');
     },
     /**
     Set the color rendering intent in the graphics state .
@@ -140,7 +140,7 @@ exceeded, the join is converted from a miter to a bevel.
     
     */
     renderingIntent: function (intent) {
-        this.currentStream.push(intent + ' ri');
+        this.content.push(intent + ' ri');
     },
     /**
     TODO: Implement
@@ -157,7 +157,7 @@ exceeded, the join is converted from a miter to a bevel.
     
     */
     pushState: function () {
-        this.currentStream.push('q');
+        this.content.push('q');
     },
     /**
     *Restore the graphics state by removing the most recently saved state from
@@ -167,7 +167,7 @@ the stack and making it the current state .
     
     */
     popState: function () {
-        this.currentStream.push('Q');
+        this.content.push('Q');
     },
     /*Path Controls Begin*/
     /**
@@ -187,7 +187,7 @@ path. .
             throw 'Invalid new path parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' m');
+        this.content.push(args.join(' ') + ' m');
     },
     /**
     *Append a straight line segment from the current point to the point
@@ -203,7 +203,7 @@ path. .
             throw 'Invalid straight line  parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' l');
+        this.content.push(args.join(' ') + ' l');
     },
     /**
     *Append a cubic Bézier curve to the current path. The curve extends
@@ -222,13 +222,13 @@ from the current point to the point (x3, y3), using the other pairs of points as
         var args = Array.prototype.slice.call(arguments);
         switch (arguments.length) {
             case 4:
-                this.currentStream.push(args.join(' ') + ' v');
+                this.content.push(args.join(' ') + ' v');
                 break;
             case 5:
-                this.currentStream.push(args.slice(0, 4).join(' ') + ' y');
+                this.content.push(args.slice(0, 4).join(' ') + ' y');
                 break;
             case 6:
-                this.currentStream.push(args.join(' ') + ' c');
+                this.content.push(args.join(' ') + ' c');
                 break;
             default:
                 throw 'Invalid bezier curve parameters';
@@ -247,7 +247,7 @@ does nothing. .
     
     */
     close: function () {
-        this.currentStream.push('h');
+        this.content.push('h');
     },
     /*Path Controls END*/
     /**
@@ -261,10 +261,10 @@ space. .
     */
     paintPath: function (operator) {
         if (operator) {
-            this.currentStream.push(operator);
+            this.content.push(operator);
         } else {
             //By default, paint both stroke and fill.
-            this.currentStream.push('B');
+            this.content.push('B');
         }
     },
     
@@ -280,7 +280,7 @@ space. .
     */
     strokePath: function () {
         //By default, paint both stroke and fill.
-        this.currentStream.push('S');
+        this.content.push('S');
     },
     /*Path Controls END*/
     /**
@@ -294,7 +294,7 @@ space. .
     */
     fillPath: function () {
         //By default, paint both stroke and fill.
-        this.currentStream.push('F');
+        this.content.push('F');
     },
     /*Path Controls END*/
     /**
@@ -307,7 +307,7 @@ space. .
     *@param {bool} asterisk if true, then set clipping path using even-odd rule.
     */
     clip: function (asterisk) {
-        this.currentStream.push('W' + (asterisk ? ' *' : ''));
+        this.content.push('W' + (asterisk ? ' *' : ''));
     },
     /*Path Controls END*/
     /**
@@ -322,7 +322,7 @@ space. .
             throw 'Invalid rectangle parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' re');
+        this.content.push(args.join(' ') + ' re');
     },
     /**
     *Set the color space to use for non-stroking operations. Depending on the color space,
@@ -339,13 +339,13 @@ space. .
         switch (arguments.length) {
             case 1:
                 if (this.activeFillCS !== 'DeviceGray') {
-                    this.currentStream.push('/DeviceGray cs');
+                    this.content.push('/DeviceGray cs');
                     this.activeFillCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeFillCS !== 'DeviceRGB') {
-                    this.currentStream.push('/DeviceRGB cs');
+                    this.content.push('/DeviceRGB cs');
                     this.activeFillCS = 'DeviceRGB';
                 }
                 break;
@@ -353,7 +353,7 @@ space. .
                 throw ('Invalid color values');
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' sc');
+        this.content.push(args.join(' ') + ' sc');
     },
     /**
     *Set the color space to use for stroking operations. The operand
@@ -369,13 +369,13 @@ name and no additional parameters (DeviceGray and DeviceRGB).
         switch (arguments.length) {
             case 1:
                 if (this.activeStrokeCS !== 'DeviceGray') {
-                    this.currentStream.push('/DeviceGray CS');
+                    this.content.push('/DeviceGray CS');
                     this.activeStrokeCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeStrokeCS !== 'DeviceRGB') {
-                    this.currentStream.push('/DeviceRGB CS');
+                    this.content.push('/DeviceRGB CS');
                     this.activeStrokeCS = 'DeviceRGB';
                 }
             default:
@@ -383,7 +383,7 @@ name and no additional parameters (DeviceGray and DeviceRGB).
         }
 
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' SC');
+        this.content.push(args.join(' ') + ' SC');
     },
     /*Color Controls End*/
     /**
@@ -415,10 +415,10 @@ name and no additional parameters (DeviceGray and DeviceRGB).
             h = w * imgXObj.height / imgXObj.width;
         }
 
-        this.currentStream.push('q');
-        this.currentStream.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
-        this.currentStream.push('/' + imgXObj.name + ' Do');
-        this.currentStream.push('Q');
+        this.content.push('q');
+        this.content.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+        this.content.push('/' + imgXObj.name + ' Do');
+        this.content.push('Q');
 
         return this;
     }
@@ -437,7 +437,7 @@ var textOperators = {
     *@param {int} [size] FontSize in pt.
     */
     beginText: function (name, style, size) {
-        this.currentStream.push('BT');
+        this.content.push('BT');
         this.fontStyle(name, style, size);
     },
     /**
@@ -446,7 +446,7 @@ var textOperators = {
     *@method
     */
     endText: function () {
-        this.currentStream.push('ET');
+        this.content.push('ET');
         this.activeFont = undefined;
     },
     /**
@@ -457,7 +457,7 @@ var textOperators = {
     *@param {int} y Translate by y pt in y direction. from current text coordinate
     */
     textPosition: function (x, y) {
-        this.currentStream.push(x + ' ' + y + ' Td');
+        this.content.push(x + ' ' + y + ' Td');
     },
     /**
     *Character Spacing
@@ -466,7 +466,7 @@ var textOperators = {
     *@param {int} charSpace Space between characters.
     */
     charSpace: function (charSpace) {
-        this.currentStream.push(charSpace + ' Tc');
+        this.content.push(charSpace + ' Tc');
     },
     /**
     *Word Spacing
@@ -475,7 +475,7 @@ var textOperators = {
     *@param {int} wordSpace Space between words.
     */
     wordSpace: function (wordSpace) {
-        this.currentStream.push(wordSpace + ' Tw');
+        this.content.push(wordSpace + ' Tw');
     },
     /**
     *Scale text by value.
@@ -484,7 +484,7 @@ var textOperators = {
     *@param {int} scale Scaling factor.
     */
     scaleText: function (scale) {
-        this.currentStream.push(scale + ' Tz');
+        this.content.push(scale + ' Tz');
     },
     /**
     *Vertical distance between the baselines of adjacent lines of text.
@@ -493,7 +493,7 @@ var textOperators = {
     *@param {int} val
     */
     leading: function (val) {
-        this.currentStream.push(val + ' TL');
+        this.content.push(val + ' TL');
     },
     /**
     *Set font size.
@@ -502,7 +502,7 @@ var textOperators = {
     *@param {int} size FontSize in pt.
     */
     fontSize: function (size) {
-        this.currentStream.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
+        this.content.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
         this.activeFontSize = size;
     },
     /**
@@ -516,7 +516,7 @@ var textOperators = {
     fontStyle: function (name, style, fontSize) {
         this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
         var fontKey = this.activeFont.description.key;
-        this.currentStream.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
+        this.content.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
         if (fontSize) {
             this.activeFontSize = fontSize;
         }
@@ -529,7 +529,7 @@ var textOperators = {
     */
     //See page 284 in reference.
     renderMode: function (mode) {
-        this.currentStream.push(render + ' Tr');
+        this.content.push(render + ' Tr');
     },
     /**
     *Set text rise.
@@ -539,7 +539,7 @@ var textOperators = {
 baseline up and opposite for negative values.
     */
     rise: function (rise) {
-        this.currentStream.push(rise + ' Ts');
+        this.content.push(rise + ' Ts');
     },
     /**
     *Print text
@@ -551,11 +551,11 @@ baseline up and opposite for negative values.
     */
     print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.currentStream.push('(' +
+            this.content.push('(' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
         }
         else {
-            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' +
+            this.content.push(wordSpace + ' ' + charSpace + ' (' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') "');
         }
     },
@@ -566,7 +566,7 @@ baseline up and opposite for negative values.
     *@param {string} textString
     */
     println: function (textString) {
-        this.currentStream.push('T*');
+        this.content.push('T*');
         if (textString) {
             this.print(textString);
         }
@@ -592,7 +592,7 @@ the next glyph painted either to the left or down by the given amount.
                 arr[i] = '(' + temp + ')';
             }
         }
-        this.currentStream.push(arr.join(' ') + ' TJ');
+        this.content.push(arr.join(' ') + ' TJ');
 
     }
 };
@@ -660,7 +660,8 @@ obj.prototype = {
 *@param {array[pdfJS.stream]} contentStreams Array of stream object that populate the page.
 *@param {pdf.doc} document The document that own this page.
 */
-var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams, document) {
+var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams,
+    repeatableStreams) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -684,18 +685,8 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
         *@Type pdfJS.stream
         */
     this.currentStream = this.contentStreams[0];
-    /**
-        *The document that this page belongs to.
-        *@Type pdfJS.doc
-        */
-    this.doc = document;
 
-    this.activeFont = undefined;
-    this.activeFontSize = 14;
-
-    this.activeFillCS = undefined;
-    this.activeStrokeCS = undefined;
-
+    this.repeatableStreams = repeatableStreams;
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
@@ -711,6 +702,9 @@ pageNode.prototype = Object.create(obj.prototype, {
             if (this.contentStreams.length) {
                 this.body.push('[');
                 for (i = 0; item = this.contentStreams[i]; i++) {
+                    this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
+                }
+                for (i = 0; item = this.repeatableStreams[i]; i++) {
                     this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
                 }
                 this.body.push(']');
@@ -746,8 +740,7 @@ pageNode.prototype = Object.create(obj.prototype, {
 });
 
 
-mixin(pageNode, textOperators);
-mixin(pageNode, graphicOperators);
+
 
 
 /**
@@ -829,7 +822,7 @@ var walkPageTree = function (pageTree) {
 *@param {int} objectNumber Unique number to define this object.
 *@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
 */
-var stream = function (objectNumber, generationNumber) {
+var stream = function (objectNumber, generationNumber, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -845,6 +838,17 @@ var stream = function (objectNumber, generationNumber) {
         *@default {}
         */
     this.dictionary = {};
+    /**
+        *The document that this page belongs to.
+        *@Type pdfJS.doc
+        */
+    this.doc = document;
+
+    this.activeFont = undefined;
+    this.activeFontSize = 14;
+
+    this.activeFillCS = undefined;
+    this.activeStrokeCS = undefined;
 };
 var printDictionary = function (dict) {
     var ret = [],
@@ -867,7 +871,9 @@ stream.prototype = Object.create(obj.prototype, {
             }
             this.body.push('>>');
             this.body.push('stream');
+            this.body.push('q')
             this.body = this.body.concat(this.content);
+            this.body.push('Q')
             this.body.push('endstream');
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
@@ -887,7 +893,8 @@ stream.prototype = Object.create(obj.prototype, {
         }
     }
 });
-
+mixin(stream, textOperators);
+mixin(stream, graphicOperators);
 /**
 *Initialize new font object.
 *@classdesc Representing font type in a PDF document.
@@ -1075,6 +1082,9 @@ imageXObject.prototype = Object.create(stream.prototype, {
 */
     var doc = function (format, orientation, margin) {
         var self = this;
+        this.pageCount = 0;
+
+        this.repeatableElements = [];
         /**
         *Number of active async calls such as adding a new image. TODO: make this field private.
         *@Type int
@@ -1123,9 +1133,6 @@ imageXObject.prototype = Object.create(stream.prototype, {
             self.settings.dimension[0] = self.settings.dimension[1];
             self.settings.dimension[1] = temp;
         }
-
-        
-
        
         this.resObj = new resources(++this.objectNumber, 0);
         
@@ -1186,7 +1193,7 @@ imageXObject.prototype = Object.create(stream.prototype, {
         *@return {[stream]{@link pdfJS.stream}} a newly created pdf stream for this document.
         */
         newStream: function() {
-            return new stream(++this.objectNumber, 0);
+            return new stream(++this.objectNumber, 0, this);
         },
         /**
         *Add a new page to the document.
@@ -1198,14 +1205,15 @@ imageXObject.prototype = Object.create(stream.prototype, {
         *@return {[pageNode]{@link pdfJS.pageNode}}
         */
         //TODO: Add options/margin/etc
-        addPage: function(height, width, options) {
+        addPage: function (height, width, options) {
+            this.pageCount++;
             this.currentPage = new pageNode(
                 this.currentNode,
                 options || { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
-                this
+                this.repeatableElements
             );
             this.currentNode.kids.push(this.currentPage);
 
@@ -1223,6 +1231,7 @@ imageXObject.prototype = Object.create(stream.prototype, {
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
+                buildObjs(this.repeatableElements),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
@@ -1321,6 +1330,13 @@ imageXObject.prototype = Object.create(stream.prototype, {
                 this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
             }
             return this;
+        },
+        addRepeatableElement: function () {
+            var element = this.newStream();
+            this.repeatableElements.push(element);
+            return element;
+        },
+        addRepeatableTemplate: function () {
         }
     };
 
@@ -2038,6 +2054,9 @@ var pdfJS = {
             createObj: function () { return pdf.newObj.apply(pdf, arguments); },
             createStream: function () { return pdf.newStream.apply(pdf, arguments); },
             addPage: function () { return pdf.addPage.apply(pdf, arguments); },
+            addRepeatableElement: function () {
+                return pdf.addRepeatableElement.apply(pdf, arguments);
+            },
             root: function () { return pdf.rootNode.apply(pdf, arguments); },
             output: function () { return pdf.output.apply(pdf, arguments); },
             outputAsync: function () { return pdf.outputAsync.apply(pdf, arguments); },

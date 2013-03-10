@@ -13,6 +13,9 @@ var pdfJS = {
             createObj: function () { return pdf.newObj.apply(pdf, arguments); },
             createStream: function () { return pdf.newStream.apply(pdf, arguments); },
             addPage: function () { return pdf.addPage.apply(pdf, arguments); },
+            addRepeatableElement: function () {
+                return pdf.addRepeatableElement.apply(pdf, arguments);
+            },
             root: function () { return pdf.rootNode.apply(pdf, arguments); },
             output: function () { return pdf.output.apply(pdf, arguments); },
             outputAsync: function () { return pdf.outputAsync.apply(pdf, arguments); },

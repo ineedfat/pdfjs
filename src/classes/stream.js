@@ -7,7 +7,7 @@
 *@param {int} objectNumber Unique number to define this object.
 *@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
 */
-var stream = function (objectNumber, generationNumber) {
+var stream = function (objectNumber, generationNumber, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -23,6 +23,17 @@ var stream = function (objectNumber, generationNumber) {
         *@default {}
         */
     this.dictionary = {};
+    /**
+        *The document that this page belongs to.
+        *@Type pdfJS.doc
+        */
+    this.doc = document;
+
+    this.activeFont = undefined;
+    this.activeFontSize = 14;
+
+    this.activeFillCS = undefined;
+    this.activeStrokeCS = undefined;
 };
 var printDictionary = function (dict) {
     var ret = [],
@@ -45,7 +56,9 @@ stream.prototype = Object.create(obj.prototype, {
             }
             this.body.push('>>');
             this.body.push('stream');
+            this.body.push('q')
             this.body = this.body.concat(this.content);
+            this.body.push('Q')
             this.body.push('endstream');
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
@@ -65,3 +78,5 @@ stream.prototype = Object.create(obj.prototype, {
         }
     }
 });
+mixin(stream, textOperators);
+mixin(stream, graphicOperators);

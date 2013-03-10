@@ -22,8 +22,20 @@
                         <div class="span7">
                      <div id="editor-home" >
     var doc = new pdfJS.doc('letter', 'portrait');
-    var p = doc.addPage();
+    var header = doc.addRepeatableElement();
+    header.beginText();
+    header.textPosition(400, 760)
+    header.print('This is a repeating header.');
+    header.endText();
     
+    var footer = doc.addRepeatableElement();
+    footer.beginText();
+    footer.textPosition(15, 16)
+    footer.print('This is a repeating footer.');
+    footer.endText();
+    
+    var p = doc.addPage().currentStream;
+    doc.addPage();
     p.pushState();
     
     //Title
@@ -40,14 +52,15 @@
     
     //Image
     var imgXObj = doc.newImage('./img/sample.jpg', true);
-    p.addImage(imgXObj, 60, 50, 300, 100);
+    p.addImage(imgXObj, 60, 50, 300, 100); 
 
     //More Text
     p.translate(400, 175);
-    p.beginText();
+    p.beginText(); 
     p.fontSize(15);
     p.print('It\'s just that easy :D!');
     p.endText();
+                    
                     </div>
                     <h4>Note</h4>
                             <p>It is good to understand the internal structure of a PDF file by

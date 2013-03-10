@@ -11,7 +11,8 @@
 *@param {array[pdfJS.stream]} contentStreams Array of stream object that populate the page.
 *@param {pdf.doc} document The document that own this page.
 */
-var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams, document) {
+var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams,
+    repeatableStreams) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -35,18 +36,8 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
         *@Type pdfJS.stream
         */
     this.currentStream = this.contentStreams[0];
-    /**
-        *The document that this page belongs to.
-        *@Type pdfJS.doc
-        */
-    this.doc = document;
 
-    this.activeFont = undefined;
-    this.activeFontSize = 14;
-
-    this.activeFillCS = undefined;
-    this.activeStrokeCS = undefined;
-
+    this.repeatableStreams = repeatableStreams;
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
@@ -62,6 +53,9 @@ pageNode.prototype = Object.create(obj.prototype, {
             if (this.contentStreams.length) {
                 this.body.push('[');
                 for (i = 0; item = this.contentStreams[i]; i++) {
+                    this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
+                }
+                for (i = 0; item = this.repeatableStreams[i]; i++) {
                     this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
                 }
                 this.body.push(']');
@@ -97,6 +91,5 @@ pageNode.prototype = Object.create(obj.prototype, {
 });
 
 
-mixin(pageNode, textOperators);
-mixin(pageNode, graphicOperators);
+
 

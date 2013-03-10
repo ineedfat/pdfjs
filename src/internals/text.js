@@ -12,7 +12,7 @@ var textOperators = {
     *@param {int} [size] FontSize in pt.
     */
     beginText: function (name, style, size) {
-        this.currentStream.push('BT');
+        this.content.push('BT');
         this.fontStyle(name, style, size);
     },
     /**
@@ -21,7 +21,7 @@ var textOperators = {
     *@method
     */
     endText: function () {
-        this.currentStream.push('ET');
+        this.content.push('ET');
         this.activeFont = undefined;
     },
     /**
@@ -32,7 +32,7 @@ var textOperators = {
     *@param {int} y Translate by y pt in y direction. from current text coordinate
     */
     textPosition: function (x, y) {
-        this.currentStream.push(x + ' ' + y + ' Td');
+        this.content.push(x + ' ' + y + ' Td');
     },
     /**
     *Character Spacing
@@ -41,7 +41,7 @@ var textOperators = {
     *@param {int} charSpace Space between characters.
     */
     charSpace: function (charSpace) {
-        this.currentStream.push(charSpace + ' Tc');
+        this.content.push(charSpace + ' Tc');
     },
     /**
     *Word Spacing
@@ -50,7 +50,7 @@ var textOperators = {
     *@param {int} wordSpace Space between words.
     */
     wordSpace: function (wordSpace) {
-        this.currentStream.push(wordSpace + ' Tw');
+        this.content.push(wordSpace + ' Tw');
     },
     /**
     *Scale text by value.
@@ -59,7 +59,7 @@ var textOperators = {
     *@param {int} scale Scaling factor.
     */
     scaleText: function (scale) {
-        this.currentStream.push(scale + ' Tz');
+        this.content.push(scale + ' Tz');
     },
     /**
     *Vertical distance between the baselines of adjacent lines of text.
@@ -68,7 +68,7 @@ var textOperators = {
     *@param {int} val
     */
     leading: function (val) {
-        this.currentStream.push(val + ' TL');
+        this.content.push(val + ' TL');
     },
     /**
     *Set font size.
@@ -77,7 +77,7 @@ var textOperators = {
     *@param {int} size FontSize in pt.
     */
     fontSize: function (size) {
-        this.currentStream.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
+        this.content.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
         this.activeFontSize = size;
     },
     /**
@@ -91,7 +91,7 @@ var textOperators = {
     fontStyle: function (name, style, fontSize) {
         this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
         var fontKey = this.activeFont.description.key;
-        this.currentStream.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
+        this.content.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
         if (fontSize) {
             this.activeFontSize = fontSize;
         }
@@ -104,7 +104,7 @@ var textOperators = {
     */
     //See page 284 in reference.
     renderMode: function (mode) {
-        this.currentStream.push(render + ' Tr');
+        this.content.push(render + ' Tr');
     },
     /**
     *Set text rise.
@@ -114,7 +114,7 @@ var textOperators = {
 baseline up and opposite for negative values.
     */
     rise: function (rise) {
-        this.currentStream.push(rise + ' Ts');
+        this.content.push(rise + ' Ts');
     },
     /**
     *Print text
@@ -126,11 +126,11 @@ baseline up and opposite for negative values.
     */
     print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.currentStream.push('(' +
+            this.content.push('(' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
         }
         else {
-            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' +
+            this.content.push(wordSpace + ' ' + charSpace + ' (' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') "');
         }
     },
@@ -141,7 +141,7 @@ baseline up and opposite for negative values.
     *@param {string} textString
     */
     println: function (textString) {
-        this.currentStream.push('T*');
+        this.content.push('T*');
         if (textString) {
             this.print(textString);
         }
@@ -167,7 +167,7 @@ the next glyph painted either to the left or down by the given amount.
                 arr[i] = '(' + temp + ')';
             }
         }
-        this.currentStream.push(arr.join(' ') + ' TJ');
+        this.content.push(arr.join(' ') + ' TJ');
 
     }
 };

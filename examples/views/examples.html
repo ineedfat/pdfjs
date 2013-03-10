@@ -10,7 +10,7 @@
     var doc = new pdfJS.doc('letter', 'portrait');
     
     //Add New Page
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
 
     //Origin is located at lower left corner.
     p.translate(160, 700);
@@ -35,7 +35,7 @@
                         <div class="span7">
                      <div id="editor2" >
     var doc = new pdfJS.doc('letter', 'portrait');
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
     
     var drawRect = function (x, y, f, s) {
         p.rect(x, y, 100, 100);
@@ -73,7 +73,7 @@
                         <div id="editor3" >
     var doc = new pdfJS.doc('letter', 'portrait');
     
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
     
     var drawRect = function (x, y, f, s) {
         p.pushState();
@@ -115,7 +115,7 @@
                         <div class="span7">
                      <div id="editor4" >
     var doc = new pdfJS.doc('letter', 'portrait');
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
     
     var imgXObj = doc.newImage('./img/sample.jpg', true);
     p.addImage(imgXObj, 60, 300, 500, 200);
@@ -141,7 +141,7 @@
                         <div class="span7">
                      <div id="editor5" >
 var doc = new pdfJS.doc('letter', 'portrait');
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
     
     var customPrint = function(name, style) {
         p.fontStyle(name, style);
@@ -199,7 +199,7 @@ var doc = new pdfJS.doc('letter', 'portrait');
                         <div class="span7">
                      <div id="editor6" >
     var doc = new pdfJS.doc('letter', 'portrait');
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
     
 
     var crazyPrint2 = function(str) {
