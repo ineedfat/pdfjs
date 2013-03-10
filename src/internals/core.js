@@ -269,16 +269,18 @@
 
         var ret = [],
             genRegex = /\d+(?=\sobj)/,
-            objRegex = /^(\n|\s)+\d+/,
-            matches, i, match;
+            objRegex = /^\d+/,
+            matches, i, match,
+            searchRegex;
         //let's search the string for all object declaration in data. 
         matches = data.match(/\d+\s\d+\sobj/gim)
 
         for (i = 0; match = matches[i]; i++) {
+            searchRegex = new RegExp('[^\\d]' + match.replace(/\s+/g, '\\s+'));
             ret.push({
                 objNum: parseInt(objRegex.exec(match)),
                 genNum: parseInt(genRegex.exec(match)),
-                offset: data.indexOf(match)
+                offset: data.search(searchRegex)
             });
         }
 

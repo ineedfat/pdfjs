@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/09/2013 21:18
+* Compiled At: 03/10/2013 13:11
 ***********************************************/
 (function(_) {
 'use strict';
@@ -682,8 +682,8 @@ imageXObject.prototype = Object.create(stream.prototype, {
                     ['Times-Bold', TIMES, BOLD],
                     ['Times-Italic', TIMES, ITALIC],
                     ['Times-BoldItalic', TIMES, BOLD_ITALIC],
-                    ['Symbol', 'SYMOBL', NORMAL],
-                    ['ZapfDingbats', 'ZAPFDINGBATS', NORMAL],
+                    ['Symbol', 'symbol', NORMAL],
+                    ['ZapfDingbats', 'zapfdingbats', NORMAL],
                 ];
 
             for (var i = 0, l = standardFonts.length; i < l; i++) {
@@ -700,15 +700,17 @@ imageXObject.prototype = Object.create(stream.prototype, {
 
         var ret = [],
             genRegex = /\d+(?=\sobj)/,
-            objRegex = /^(\n|\s)+\d+/,
-            matches, i, match;
+            objRegex = /^\d+/,
+            matches, i, match,
+            searchRegex;
         matches = data.match(/\d+\s\d+\sobj/gim)
 
         for (i = 0; match = matches[i]; i++) {
+            searchRegex = new RegExp('[^\\d]' + match.replace(/\s+/g, '\\s+'));
             ret.push({
                 objNum: parseInt(objRegex.exec(match)),
                 genNum: parseInt(genRegex.exec(match)),
-                offset: data.indexOf(match)
+                offset: data.search(searchRegex)
             });
         }
 
@@ -832,7 +834,8 @@ var printDictionaryElements = function (arr, prefix) {
     var ret = [],
         i, len;
     for (i = 0, len = arr.length; i < len; i++) {
-        ret.push('/' + prefix + (i +1).toString(10) + ' ' + arr[i].objectNumber + ' ' + arr[i].generationNumber + ' R');
+        ret.push('/' + prefix + (i + 1).toString(10) + ' ' + arr[i].objectNumber + ' ' +
+            arr[i].generationNumber + ' R');
     }
 
     return ret.join('\n');
@@ -859,16 +862,20 @@ resources.prototype = Object.create(obj.prototype, {
     },
     getFont: {
         value: function (name, style) {
-            for (var i = 0, font; font = this.fontObjs[i]; i++) {
-                if (font.description.key === name) {
-                    return font;
-                }
-
-                if (font.description.fontName === name && font.description.fontStyle === style) {
-                    return font;
+            if (typeof name === 'string') {
+                for (var i = 0, font; font = this.fontObjs[i]; i++) {
+                    if (font.description.key.toLowerCase() === name.toLowerCase()) {
+                        return font;
+                    }
+                    if (typeof style === 'string') {
+                        if (font.description.fontName.toLowerCase() === name.toLowerCase() &&
+                            font.description.fontStyle.toLowerCase() === style.toLowerCase()) {
+                            return font;
+                        }
+                    }
                 }
             }
-            return null;
+            return undefined;
         }
     }
 });
