@@ -3,6 +3,22 @@ var sanitize = function(text) {
     return text.replace(sanitizeRegex, '\\$1');
 };
 
+var removeEmptyElement = function (arr) {
+    var i, l, index, removed = [];
+    for (i = 0, l = arr.length; i < l; i++) {
+        if (!arr[i]) {
+            removed.push(i);
+        }
+    }
+
+    for (i = 0, l = removed.length; i < l; i++) {
+        index = removed[i];
+        arr.splice(index, 1);
+    }
+
+    return arr;
+}
+
 var checkValidRect = function (rect) {
     if (!rect || typeof rect !== 'object' || rect.length !== 4) {
         console.warn('Invalid Rect');

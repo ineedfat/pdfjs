@@ -28,9 +28,13 @@ resources.prototype = Object.create(obj.prototype, {
             // Do this for each font, the '1' bit is the index of the font
             this.body.push(printDictionaryElements(this.fontObjs, 'F'));
             this.body.push('>>');
-            this.body.push('/XObject <<');
-            this.body.push(printDictionaryElements(this.imageXObjects, 'Im'));
-            this.body.push('>>');
+
+            var xImgObjs = printDictionaryElements(this.imageXObjects, 'Im')
+            if (xImgObjs) {
+                this.body.push('/XObject <<');
+                this.body.push(xImgObjs);
+                this.body.push('>>');
+            }
             this.body.push('>>');
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.

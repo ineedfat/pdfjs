@@ -38,9 +38,12 @@ var printDictionary = function (dict) {
 stream.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            var temp = printDictionary(this.dictionary);
             this.body.push('<< /Length ' + this.content.join('\n').length);
-            this.body.push(printDictionary(this.dictionary));
-            this.body.push(' >>');
+            if (temp) {
+                this.body.push(temp);
+            }
+            this.body.push('>>');
             this.body.push('stream');
             this.body = this.body.concat(this.content);
             this.body.push('endstream');

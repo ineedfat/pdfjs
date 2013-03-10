@@ -34,12 +34,6 @@
         this.currentPage = null;
         
         /**
-        *Font name map. (fontName > fontStyle > pdf internal font reference name)
-        *@Type {object}  
-        */
-        this.fontmap = {}; 
-
-        /**
         *General document settings
         *@property {Object} settings - Document settings
         *@property {Array}  settings.dimension - Document dimension
@@ -163,14 +157,14 @@
         */
         output: function(type) {
 
-            var content = [
+            var content = removeEmptyElement([
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
-            ].join('\n');
+            ]).join('\n');
 
             var pdf = buildDocument(content, this.catalogObj, this.infoObj);
             switch (type) {
@@ -228,14 +222,6 @@
 
             this.resObj.fontObjs.push(new font(fontDescription, ++this.objectNumber, 0));
 
-            fontName = fontName.toLowerCase();
-            fontStyle = fontStyle.toLowerCase();
-
-            if (!(this.fontmap[fontName])) {
-                this.fontmap[fontName] = {}; // fontStyle is a var interpreted and converted to appropriate string. don't wrap in quotes.
-            }
-            this.fontmap[fontName][fontStyle] = fontKey;
-
             return fontKey;
         },
         /**
@@ -264,7 +250,9 @@
                     ['Times-Roman', TIMES, NORMAL],
                     ['Times-Bold', TIMES, BOLD],
                     ['Times-Italic', TIMES, ITALIC],
-                    ['Times-BoldItalic', TIMES, BOLD_ITALIC]
+                    ['Times-BoldItalic', TIMES, BOLD_ITALIC],
+                    ['Symbol', 'SYMOBL', NORMAL],
+                    ['ZapfDingbats', 'ZAPFDINGBATS', NORMAL],
                 ];
 
             for (var i = 0, l = standardFonts.length; i < l; i++) {
@@ -281,7 +269,7 @@
 
         var ret = [],
             genRegex = /\d+(?=\sobj)/,
-            objRegex = /^\d+/,
+            objRegex = /^(\n|\s)+\d+/,
             matches, i, match;
         //let's search the string for all object declaration in data. 
         matches = data.match(/\d+\s\d+\sobj/gim)
@@ -334,7 +322,7 @@
 
         //sorting from low to high object numbers
         offsets = offsets.sort(function (a, b) {
-            return a.objectNumber - b.objectNumber;
+            return a.objNum - b.objNum;
         });
 
         // Cross-ref

@@ -78,6 +78,7 @@ var textOperators = {
     */
     fontSize: function (size) {
         this.currentStream.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
+        this.activeFontSize = size;
     },
     /**
     *Set font size.
@@ -90,10 +91,9 @@ var textOperators = {
     fontStyle: function (name, style, fontSize) {
         this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
         var fontKey = this.activeFont.description.key;
-        this.currentStream.push('/' + fontKey);
-
-        if (typeof fontSize === 'number') {
-            this.fontSize(arguments[2]);
+        this.currentStream.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
+        if (fontSize) {
+            this.activeFontSize = fontSize;
         }
     },
     /**

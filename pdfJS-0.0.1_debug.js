@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/08/2013 16:19
+* Compiled At: 03/09/2013 21:18
 ***********************************************/
 (function(_) {
 'use strict';
@@ -503,6 +503,7 @@ var textOperators = {
     */
     fontSize: function (size) {
         this.currentStream.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
+        this.activeFontSize = size;
     },
     /**
     *Set font size.
@@ -515,10 +516,9 @@ var textOperators = {
     fontStyle: function (name, style, fontSize) {
         this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
         var fontKey = this.activeFont.description.key;
-        this.currentStream.push('/' + fontKey);
-
-        if (typeof fontSize === 'number') {
-            this.fontSize(arguments[2]);
+        this.currentStream.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
+        if (fontSize) {
+            this.activeFontSize = fontSize;
         }
     },
     /**
@@ -691,6 +691,7 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
     this.doc = document;
 
     this.activeFont = undefined;
+    this.activeFontSize = 14;
 
     this.activeFillCS = undefined;
     this.activeStrokeCS = undefined;
@@ -859,9 +860,12 @@ var printDictionary = function (dict) {
 stream.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            var temp = printDictionary(this.dictionary);
             this.body.push('<< /Length ' + this.content.join('\n').length);
-            this.body.push(printDictionary(this.dictionary));
-            this.body.push(' >>');
+            if (temp) {
+                this.body.push(temp);
+            }
+            this.body.push('>>');
             this.body.push('stream');
             this.body = this.body.concat(this.content);
             this.body.push('endstream');
@@ -1092,12 +1096,6 @@ imageXObject.prototype = Object.create(stream.prototype, {
         this.currentPage = null;
         
         /**
-        *Font name map. (fontName > fontStyle > pdf internal font reference name)
-        *@Type {object}  
-        */
-        this.fontmap = {}; 
-
-        /**
         *General document settings
         *@property {Object} settings - Document settings
         *@property {Array}  settings.dimension - Document dimension
@@ -1221,14 +1219,14 @@ imageXObject.prototype = Object.create(stream.prototype, {
         */
         output: function(type) {
 
-            var content = [
+            var content = removeEmptyElement([
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
-            ].join('\n');
+            ]).join('\n');
 
             var pdf = buildDocument(content, this.catalogObj, this.infoObj);
             switch (type) {
@@ -1286,14 +1284,6 @@ imageXObject.prototype = Object.create(stream.prototype, {
 
             this.resObj.fontObjs.push(new font(fontDescription, ++this.objectNumber, 0));
 
-            fontName = fontName.toLowerCase();
-            fontStyle = fontStyle.toLowerCase();
-
-            if (!(this.fontmap[fontName])) {
-                this.fontmap[fontName] = {}; // fontStyle is a var interpreted and converted to appropriate string. don't wrap in quotes.
-            }
-            this.fontmap[fontName][fontStyle] = fontKey;
-
             return fontKey;
         },
         /**
@@ -1322,7 +1312,9 @@ imageXObject.prototype = Object.create(stream.prototype, {
                     ['Times-Roman', TIMES, NORMAL],
                     ['Times-Bold', TIMES, BOLD],
                     ['Times-Italic', TIMES, ITALIC],
-                    ['Times-BoldItalic', TIMES, BOLD_ITALIC]
+                    ['Times-BoldItalic', TIMES, BOLD_ITALIC],
+                    ['Symbol', 'SYMOBL', NORMAL],
+                    ['ZapfDingbats', 'ZAPFDINGBATS', NORMAL],
                 ];
 
             for (var i = 0, l = standardFonts.length; i < l; i++) {
@@ -1339,7 +1331,7 @@ imageXObject.prototype = Object.create(stream.prototype, {
 
         var ret = [],
             genRegex = /\d+(?=\sobj)/,
-            objRegex = /^\d+/,
+            objRegex = /^(\n|\s)+\d+/,
             matches, i, match;
         //let's search the string for all object declaration in data. 
         matches = data.match(/\d+\s\d+\sobj/gim)
@@ -1392,7 +1384,7 @@ imageXObject.prototype = Object.create(stream.prototype, {
 
         //sorting from low to high object numbers
         offsets = offsets.sort(function (a, b) {
-            return a.objectNumber - b.objectNumber;
+            return a.objNum - b.objNum;
         });
 
         // Cross-ref
@@ -1503,9 +1495,13 @@ resources.prototype = Object.create(obj.prototype, {
             // Do this for each font, the '1' bit is the index of the font
             this.body.push(printDictionaryElements(this.fontObjs, 'F'));
             this.body.push('>>');
-            this.body.push('/XObject <<');
-            this.body.push(printDictionaryElements(this.imageXObjects, 'Im'));
-            this.body.push('>>');
+
+            var xImgObjs = printDictionaryElements(this.imageXObjects, 'Im')
+            if (xImgObjs) {
+                this.body.push('/XObject <<');
+                this.body.push(xImgObjs);
+                this.body.push('>>');
+            }
             this.body.push('>>');
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
@@ -1668,6 +1664,22 @@ var sanitizeRegex = /((\(|\)|\\))/ig;
 var sanitize = function(text) {
     return text.replace(sanitizeRegex, '\\$1');
 };
+
+var removeEmptyElement = function (arr) {
+    var i, l, index, removed = [];
+    for (i = 0, l = arr.length; i < l; i++) {
+        if (!arr[i]) {
+            removed.push(i);
+        }
+    }
+
+    for (i = 0, l = removed.length; i < l; i++) {
+        index = removed[i];
+        arr.splice(index, 1);
+    }
+
+    return arr;
+}
 
 var checkValidRect = function (rect) {
     if (!rect || typeof rect !== 'object' || rect.length !== 4) {

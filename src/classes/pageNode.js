@@ -42,6 +42,7 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
     this.doc = document;
 
     this.activeFont = undefined;
+    this.activeFontSize = 14;
 
     this.activeFillCS = undefined;
     this.activeStrokeCS = undefined;
