@@ -135,6 +135,105 @@
                     <iframe class="span5"></iframe>
                         </div>
                 </example>
+            <example id="Example4" editor-wrap="true" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Different Font Styles"
+                editor-id="'editor5'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor5" >
+var doc = new pdfJS.doc('letter', 'portrait');
+    var p = doc.addPage();
+    
+    var customPrint = function(name, style) {
+        p.fontStyle(name, style);
+        p.println('Hello World!');
+    };
+    var crazyPrint = function(str) {
+        p.println();
+        for(var i = 0; i < str.length; i++) {
+            p.fontStyle('F' + i%15);
+            p.print(str[i]);
+        }
+    };
+    
+    p.translate(16, 760);
+    p.beginText();
+    p.leading(30);
+    p.fontSize(30);
+    p.print('Fourteen ways to display "Hello World!"');
+    
+    customPrint('helvetica', "normal");
+    customPrint('helvetica', "bold");
+    customPrint('helvetica', "italic");
+    customPrint('helvetica', "bolditalic");
+    customPrint('courier', "normal");
+    customPrint('courier', "bold");
+    customPrint('courier', "italic");
+    customPrint('courier', "bolditalic");
+    customPrint('times', "normal");
+    customPrint('times', "bold");
+    customPrint('times', "italic");
+    customPrint('times', "bolditalic");
+    customPrint('symbol', 'normal');
+    customPrint('zapfdingbats', 'normal');
+    
+    p.leading(17);
+    p.fontSize(17);
+
+    crazyPrint("**If you were to type like this at work,");
+    crazyPrint("you ought to get fired :). This is just to show you how you");
+    crazyPrint("can use the internal names to type out long obnoxious sentences.")
+    p.textPosition(400, -30);
+    p.println('- iNeedFat')
+    p.endText();
+                    </div>
+                    <h4>Note</h4>
+                            <p>PdfJS supports the 14 standard Postscript fonts (Type1).
+                    </p>
+                            </div>
+                    <iframe class="span5"></iframe>
+                        </div>
+                </example>
+            <example id="Example5" editor-wrap="true" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Font Colors"
+                editor-id="'editor6'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor6" >
+    var doc = new pdfJS.doc('letter', 'portrait');
+    var p = doc.addPage();
+    
+
+    var crazyPrint2 = function(str) {
+        var strArr = str;
+        for(var i = 0; i < strArr.length; i++) {
+            p.fillColor(((i+6)%10)/10.0, ((i+1)%10)/10.0, ((i+3)%10)/10.0);
+            p.print(strArr[i]);
+        }
+        p.println('');
+    };
+    
+    p.translate(16, 760);
+    p.beginText('courier', 'normal', 20);
+    p.leading(20);
+    crazyPrint2('It\'s cool to type in different color like this.');
+    
+    p.fontSize(24)
+    p.fillColor(.3);
+    p.println('This is rendered in gray color space.')
+    p.fillColor(.4, .4, .7);
+    p.println('This is rendered in RGB color space.')
+    
+    p.textPosition(300, -70);
+    p.fillColor(1, .3, .1);
+    p.println('HELLO WORLD!')
+    p.endText();
+                    </div>
+                    <h4>Note</h4>
+                            <p>PdfJS supports <code>gray</code> and <code>RGB</code> color space.
+                    </p>
+                            </div>
+                    <iframe class="span5"></iframe>
+                        </div>
+                </example>
         </div>
     </div>
 </div>

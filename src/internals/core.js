@@ -251,8 +251,8 @@
                     ['Times-Bold', TIMES, BOLD],
                     ['Times-Italic', TIMES, ITALIC],
                     ['Times-BoldItalic', TIMES, BOLD_ITALIC],
-                    ['Symbol', 'SYMOBL', NORMAL],
-                    ['ZapfDingbats', 'ZAPFDINGBATS', NORMAL],
+                    ['Symbol', 'symbol', NORMAL],
+                    ['ZapfDingbats', 'zapfdingbats', NORMAL],
                 ];
 
             for (var i = 0, l = standardFonts.length; i < l; i++) {

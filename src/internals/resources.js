@@ -10,7 +10,8 @@ var printDictionaryElements = function (arr, prefix) {
     var ret = [],
         i, len;
     for (i = 0, len = arr.length; i < len; i++) {
-        ret.push('/' + prefix + (i +1).toString(10) + ' ' + arr[i].objectNumber + ' ' + arr[i].generationNumber + ' R');
+        ret.push('/' + prefix + (i + 1).toString(10) + ' ' + arr[i].objectNumber + ' ' +
+            arr[i].generationNumber + ' R');
     }
 
     return ret.join('\n');
@@ -42,16 +43,20 @@ resources.prototype = Object.create(obj.prototype, {
     },
     getFont: {
         value: function (name, style) {
-            for (var i = 0, font; font = this.fontObjs[i]; i++) {
-                if (font.description.key === name) {
-                    return font;
-                }
-
-                if (font.description.fontName === name && font.description.fontStyle === style) {
-                    return font;
+            if (typeof name === 'string') {
+                for (var i = 0, font; font = this.fontObjs[i]; i++) {
+                    if (font.description.key.toLowerCase() === name.toLowerCase()) {
+                        return font;
+                    }
+                    if (typeof style === 'string') {
+                        if (font.description.fontName.toLowerCase() === name.toLowerCase() &&
+                            font.description.fontStyle.toLowerCase() === style.toLowerCase()) {
+                            return font;
+                        }
+                    }
                 }
             }
-            return null;
+            return undefined;
         }
     }
 });
