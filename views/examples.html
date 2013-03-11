@@ -10,7 +10,7 @@
     var doc = new pdfJS.doc('letter', 'portrait');
     
     //Add New Page
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
 
     //Origin is located at lower left corner.
     p.translate(160, 700);
@@ -35,7 +35,7 @@
                         <div class="span7">
                      <div id="editor2" >
     var doc = new pdfJS.doc('letter', 'portrait');
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
     
     var drawRect = function (x, y, f, s) {
         p.rect(x, y, 100, 100);
@@ -73,7 +73,7 @@
                         <div id="editor3" >
     var doc = new pdfJS.doc('letter', 'portrait');
     
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
     
     var drawRect = function (x, y, f, s) {
         p.pushState();
@@ -115,7 +115,7 @@
                         <div class="span7">
                      <div id="editor4" >
     var doc = new pdfJS.doc('letter', 'portrait');
-    var p = doc.addPage();
+    var p = doc.addPage().currentStream;
     
     var imgXObj = doc.newImage('./img/sample.jpg', true);
     p.addImage(imgXObj, 60, 300, 500, 200);
@@ -130,6 +130,172 @@
                             <p>PdfJS uses HTML5 canvas internally to support different kinds of image format.
                                 The <code>newImage</code> function accepts a <code>string</code> url to an image,
                                  <code>HTMLImageElement</code>, or <code>HTMLCavasElement</code> as graphics to render. 
+                    </p>
+                            </div>
+                    <iframe class="span5"></iframe>
+                        </div>
+                </example>
+            <example id="Example4" editor-wrap="true" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Different Font Styles"
+                editor-id="'editor5'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor5" >
+var doc = new pdfJS.doc('letter', 'portrait');
+    var p = doc.addPage().currentStream;
+    
+    var customPrint = function(name, style) {
+        p.fontStyle(name, style);
+        p.println('Hello World!');
+    };
+    var crazyPrint = function(str) {
+        p.println();
+        for(var i = 0; i < str.length; i++) {
+            p.fontStyle('F' + i%15);
+            p.print(str[i]);
+        }
+    };
+    
+    p.translate(16, 760);
+    p.beginText();
+    p.leading(30);
+    p.fontSize(30);
+    p.print('Fourteen ways to display "Hello World!"');
+    
+    customPrint('helvetica', "normal");
+    customPrint('helvetica', "bold");
+    customPrint('helvetica', "italic");
+    customPrint('helvetica', "bolditalic");
+    customPrint('courier', "normal");
+    customPrint('courier', "bold");
+    customPrint('courier', "italic");
+    customPrint('courier', "bolditalic");
+    customPrint('times', "normal");
+    customPrint('times', "bold");
+    customPrint('times', "italic");
+    customPrint('times', "bolditalic");
+    customPrint('symbol', 'normal');
+    customPrint('zapfdingbats', 'normal');
+    
+    p.leading(17);
+    p.fontSize(17);
+
+    crazyPrint("**If you were to type like this at work,");
+    crazyPrint("you ought to get fired :). This is just to show you how you");
+    crazyPrint("can use the internal names to type out long obnoxious sentences.")
+    p.textPosition(400, -30);
+    p.println('- iNeedFat')
+    p.endText();
+                    </div>
+                    <h4>Note</h4>
+                            <p>PdfJS supports the 14 standard Postscript fonts (Type1).
+                    </p>
+                            </div>
+                    <iframe class="span5"></iframe>
+                        </div>
+                </example>
+            <example id="Example5" editor-wrap="true" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Font Colors"
+                editor-id="'editor6'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor6" >
+    var doc = new pdfJS.doc('letter', 'portrait');
+    var p = doc.addPage().currentStream;
+    
+
+    var crazyPrint2 = function(str) {
+        var strArr = str;
+        for(var i = 0; i < strArr.length; i++) {
+            p.fillColor(((i+6)%10)/10.0, ((i+1)%10)/10.0, ((i+3)%10)/10.0);
+            p.print(strArr[i]);
+        }
+        p.println('');
+    };
+    
+    p.translate(16, 760);
+    p.beginText('courier', 'normal', 20);
+    p.leading(20);
+    crazyPrint2('It\'s cool to type in different color like this.');
+    
+    p.fontSize(24)
+    p.fillColor(.3);
+    p.println('This is rendered in gray color space.')
+    p.fillColor(.4, .4, .7);
+    p.println('This is rendered in RGB color space.')
+    
+    p.textPosition(300, -70);
+    p.fillColor(1, .3, .1);
+    p.println('HELLO WORLD!')
+    p.endText();
+                    </div>
+                    <h4>Note</h4>
+                            <p>PdfJS supports <code>gray</code> and <code>RGB</code> color space.
+                    </p>
+                            </div>
+                    <iframe class="span5"></iframe>
+                        </div>
+                </example>
+            <example id="Example6" editor-wrap="true" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Repeatable Element"
+                editor-id="'editor7'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor7" >
+    var doc = new pdfJS.doc('letter', 'portrait');
+    var header = doc.addRepeatableElement();
+    header.beginText();
+    header.textPosition(400, 760);
+    header.print('This is a repeating header.');
+    header.endText();
+    
+    var footer = doc.addRepeatableElement();
+    footer.beginText();
+    footer.textPosition(15, 16);
+    footer.print('This is a repeating footer.');
+    footer.endText();
+
+    doc.addPage();
+    doc.addPage();
+                    </div>
+                    <h4>Note</h4>
+                            <p>Repeatable element can be treated similar to a PDF page, but it gets
+                                repeated on every page that is initalized <b>AFTER</b> a repeatable
+                                element had been created. Calling 
+                                <code>addRepeatableElement</code> returns a new repeatable element.
+                    </p>
+                            </div>
+                    <iframe class="span5"></iframe>
+                        </div>
+                </example>
+            <example id="Example7" editor-wrap="true" editor-theme="'ace/theme/xcode'" editor-mode="'ace/mode/javascript'" title="Repeatable Template"
+                editor-id="'editor8'">
+                    <div class="row">
+                        <div class="span7">
+                     <div id="editor8" >
+    var doc = new pdfJS.doc('letter', 'portrait');
+
+    var paging = doc.addRepeatableTemplate();
+    paging.beginText("F5", null, 20);
+    paging.textPosition(280, 760);
+    paging.print('Page {{pageNum}}');     
+    paging.endText();  
+
+    var title = doc.addRepeatableTemplate();
+    title.beginText("F5", null, 20);
+    title.textPosition(16, 700);
+    title.print('{{title}}');     
+    title.endText();  
+    
+    var p1 = doc.addPage();
+    p1.data['title'] = 'This is page 1 title';
+    var p2 = doc.addPage();
+    p2.data['title'] = 'This the title for page 2';
+                    </div>
+                    <h4>Note</h4>
+                            <p><b>Repeatable template</b> is similar to <b>repeatable element</b> 
+                                except that it evaluates every variable (e.g <code>{{'\{\{VariableName\}\}'}}</code>) 
+                                specified inside the template string to properties of the 
+                                <code>data</code> object which is a property of the PDF page.
+                                Internally, repeatable template creates a new object for each page
+                                while repeatable element shares the same object on all pages.
                     </p>
                             </div>
                     <iframe class="span5"></iframe>

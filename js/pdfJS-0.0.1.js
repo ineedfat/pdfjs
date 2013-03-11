@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/08/2013 17:16
+* Compiled At: 03/10/2013 21:34
 ***********************************************/
 (function(_) {
 'use strict';
@@ -28,112 +28,112 @@ var mixin = function(inherting, iObj) {
 
 var graphicOperators = {
     translate: function (tx, ty) {
-        this.currentStream.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
+        this.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
     },
     scale: function (sx, sy) {
-        this.currentStream.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
+        this.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
     },
     rotate: function (theta) {
         var cos = Math.cos(theta),
             sin = Math.sin(theta);
-        this.currentStream.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
+        this.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
     },
     skew: function (alphaX, betaY) {
-        this.currentStream.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
+        this.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
     },
     lineWidth: function (width) {
-        this.currentStream.push(width + ' w');
+        this.push(width + ' w');
     },
     lineCap: function (capStyle) {
-        this.currentStream.push(capStyle + ' J');
+        this.push(capStyle + ' J');
     },
     lineJoin: function (joinStyle) {
-        this.currentStream.push(joinStyle + ' j');
+        this.push(joinStyle + ' j');
     },
     miterLimit: function (limit) {
-        this.currentStream.push(limit + ' M');
+        this.push(limit + ' M');
     },
     dashPattern: function (dashArray, dashPhase) {
-        this.currentStream.push(dashArray + ' ' + dashPhase + ' d');
+        this.push(dashArray + ' ' + dashPhase + ' d');
     },
     renderingIntent: function (intent) {
-        this.currentStream.push(intent + ' ri');
+        this.push(intent + ' ri');
     },
     strokeAdjustment: function () {
     },
     pushState: function () {
-        this.currentStream.push('q');
+        this.push('q');
     },
     popState: function () {
-        this.currentStream.push('Q');
+        this.push('Q');
     },
     moveTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid new path parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' m');
+        this.push(args.join(' ') + ' m');
     },
     lineTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid straight line  parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' l');
+        this.push(args.join(' ') + ' l');
     },
     bezierCurve: function (x1, y1, x2, y2, x3, y3) {
         var args = Array.prototype.slice.call(arguments);
         switch (arguments.length) {
             case 4:
-                this.currentStream.push(args.join(' ') + ' v');
+                this.push(args.join(' ') + ' v');
                 break;
             case 5:
-                this.currentStream.push(args.slice(0, 4).join(' ') + ' y');
+                this.push(args.slice(0, 4).join(' ') + ' y');
                 break;
             case 6:
-                this.currentStream.push(args.join(' ') + ' c');
+                this.push(args.join(' ') + ' c');
                 break;
             default:
                 throw 'Invalid bezier curve parameters';
         }
     },
     close: function () {
-        this.currentStream.push('h');
+        this.push('h');
     },
     paintPath: function (operator) {
         if (operator) {
-            this.currentStream.push(operator);
+            this.push(operator);
         } else {
-            this.currentStream.push('B');
+            this.push('B');
         }
     },
     strokePath: function () {
-        this.currentStream.push('S');
+        this.push('S');
     },
     fillPath: function () {
-        this.currentStream.push('F');
+        this.push('F');
     },
     clip: function (asterisk) {
-        this.currentStream.push('W' + (asterisk ? ' *' : ''));
+        this.push('W' + (asterisk ? ' *' : ''));
     },
     rect: function (x, y, width, height) {
         if (arguments.length != 4) {
             throw 'Invalid rectangle parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' re');
+        this.push(args.join(' ') + ' re');
     },
     fillColor: function (colorValue1, colorValue2, colorValue3) {
         switch (arguments.length) {
             case 1:
                 if (this.activeFillCS !== 'DeviceGray') {
-                    this.currentStream.push('/DeviceGray cs');
+                    this.push('/DeviceGray cs');
                     this.activeFillCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeFillCS !== 'DeviceRGB') {
-                    this.currentStream.push('/DeviceRGB cs');
+                    this.push('/DeviceRGB cs');
                     this.activeFillCS = 'DeviceRGB';
                 }
                 break;
@@ -141,19 +141,19 @@ var graphicOperators = {
                 throw ('Invalid color values');
         }
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' sc');
+        this.push(args.join(' ') + ' sc');
     },
     strokeColor: function (colorValue1, colorValue2, colorValue3) {
         switch (arguments.length) {
             case 1:
                 if (this.activeStrokeCS !== 'DeviceGray') {
-                    this.currentStream.push('/DeviceGray CS');
+                    this.push('/DeviceGray CS');
                     this.activeStrokeCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeStrokeCS !== 'DeviceRGB') {
-                    this.currentStream.push('/DeviceRGB CS');
+                    this.push('/DeviceRGB CS');
                     this.activeStrokeCS = 'DeviceRGB';
                 }
             default:
@@ -161,7 +161,7 @@ var graphicOperators = {
         }
 
         var args = Array.prototype.slice.call(arguments);
-        this.currentStream.push(args.join(' ') + ' SC');
+        this.push(args.join(' ') + ' SC');
     },
     addImage: function (imgXObj, x, y, w, h) {
         if (!w && !h) {
@@ -181,10 +181,10 @@ var graphicOperators = {
             h = w * imgXObj.height / imgXObj.width;
         }
 
-        this.currentStream.push('q');
-        this.currentStream.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
-        this.currentStream.push('/' + imgXObj.name + ' Do');
-        this.currentStream.push('Q');
+        this.push('q');
+        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+        this.push('/' + imgXObj.name + ' Do');
+        this.push('Q');
 
         return this;
     }
@@ -192,58 +192,58 @@ var graphicOperators = {
 
 var textOperators = {
     beginText: function (name, style, size) {
-        this.currentStream.push('BT');
+        this.push('BT');
         this.fontStyle(name, style, size);
     },
     endText: function () {
-        this.currentStream.push('ET');
+        this.push('ET');
         this.activeFont = undefined;
     },
     textPosition: function (x, y) {
-        this.currentStream.push(x + ' ' + y + ' Td');
+        this.push(x + ' ' + y + ' Td');
     },
     charSpace: function (charSpace) {
-        this.currentStream.push(charSpace + ' Tc');
+        this.push(charSpace + ' Tc');
     },
     wordSpace: function (wordSpace) {
-        this.currentStream.push(wordSpace + ' Tw');
+        this.push(wordSpace + ' Tw');
     },
     scaleText: function (scale) {
-        this.currentStream.push(scale + ' Tz');
+        this.push(scale + ' Tz');
     },
     leading: function (val) {
-        this.currentStream.push(val + ' TL');
+        this.push(val + ' TL');
     },
     fontSize: function (size) {
-        this.currentStream.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
+        this.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
+        this.activeFontSize = size;
     },
     fontStyle: function (name, style, fontSize) {
         this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
         var fontKey = this.activeFont.description.key;
-        this.currentStream.push('/' + fontKey);
-
-        if (typeof fontSize === 'number') {
-            this.fontSize(arguments[2]);
+        this.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
+        if (fontSize) {
+            this.activeFontSize = fontSize;
         }
     },
     renderMode: function (mode) {
-        this.currentStream.push(render + ' Tr');
+        this.push(render + ' Tr');
     },
     rise: function (rise) {
-        this.currentStream.push(rise + ' Ts');
+        this.push(rise + ' Ts');
     },
     print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.currentStream.push('(' +
+            this.push('(' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
         }
         else {
-            this.currentStream.push(wordSpace + ' ' + charSpace + ' (' +
+            this.push(wordSpace + ' ' + charSpace + ' (' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') "');
         }
     },
     println: function (textString) {
-        this.currentStream.push('T*');
+        this.push('T*');
         if (textString) {
             this.print(textString);
         }
@@ -256,7 +256,7 @@ var textOperators = {
                 arr[i] = '(' + temp + ')';
             }
         }
-        this.currentStream.push(arr.join(' ') + ' TJ');
+        this.push(arr.join(' ') + ' TJ');
 
     }
 };
@@ -284,7 +284,8 @@ obj.prototype = {
     generationNumber: 0
 };
 
-var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams, document) {
+var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams,
+    repeatableStreams, templateStreams, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -292,20 +293,30 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
     this.parent = parent;
     this.contentStreams = contentStreams;
     this.currentStream = this.contentStreams[0];
+
+    this.repeatableStreams = repeatableStreams;
+
+    this.templateStreams = templateStreams;
+
+    this.reservedObjectNums = [];
+
     this.doc = document;
 
-    this.activeFont = undefined;
-
-    this.activeFillCS = undefined;
-    this.activeStrokeCS = undefined;
-
+    this.data = {pageNum: 0};
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
-            var i, item,
+            this.body = [];
+            var i, l, item,
                 ret = [];
 
+            for (i = 0, l = this.templateStreams.length; i < l; i++) {
+                if (!this.reservedObjectNums[i]) {
+                    this.reservedObjectNums[i] = ++this.doc.objectNumber;
+                }
+                ret.push(this.templateStreams[i].out(this.reservedObjectNums[i], 0, this));
+            }
             this.body.push('<< /Type /Page');
             this.body.push(pageOptionsConverter(this.pageOptions));
             this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
@@ -314,6 +325,12 @@ pageNode.prototype = Object.create(obj.prototype, {
                 this.body.push('[');
                 for (i = 0; item = this.contentStreams[i]; i++) {
                     this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
+                }
+                for (i = 0; item = this.repeatableStreams[i]; i++) {
+                    this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
+                }
+                for (i = 0; item = this.reservedObjectNums[i]; i++) {
+                    this.body.push(item + ' ' + 0 + ' R');
                 }
                 this.body.push(']');
             }
@@ -338,8 +355,6 @@ pageNode.prototype = Object.create(obj.prototype, {
         }
     }
 });
-mixin(pageNode, textOperators);
-mixin(pageNode, graphicOperators);
 
 var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
     var self = this;
@@ -352,6 +367,7 @@ var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
 pageTreeNode.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             var i, item;
             this.body.push(
                 '<< /Type /Pages',
@@ -390,12 +406,19 @@ var walkPageTree = function (pageTree) {
 };
 
 
-var stream = function (objectNumber, generationNumber) {
+var stream = function (objectNumber, generationNumber, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
     this.content = [];
     this.dictionary = {};
+    this.doc = document;
+
+    this.activeFont = undefined;
+    this.activeFontSize = 14;
+
+    this.activeFillCS = undefined;
+    this.activeStrokeCS = undefined;
 };
 var printDictionary = function (dict) {
     var ret = [],
@@ -411,11 +434,21 @@ var printDictionary = function (dict) {
 stream.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
-            this.body.push('<< /Length ' + this.content.join('\n').length);
-            this.body.push(printDictionary(this.dictionary));
-            this.body.push(' >>');
+            this.body = [];
+            var temp = printDictionary(this.dictionary);
+            var tempContent = this.content;
+
+            if (!(this instanceof imageXObject)) {
+                tempContent = (['q']).concat(this.content);
+                tempContent.push('Q');
+            }
+            this.body.push('<< /Length ' + (tempContent.join('\n').length));
+            if (temp) {
+                this.body.push(temp);
+            }
+            this.body.push('>>');
             this.body.push('stream');
-            this.body = this.body.concat(this.content);
+            this.body = this.body.concat(tempContent);
             this.body.push('endstream');
 
             return obj.prototype.out.apply(this, arguments); 
@@ -428,7 +461,8 @@ stream.prototype = Object.create(obj.prototype, {
         }
     }
 });
-
+mixin(stream, textOperators);
+mixin(stream, graphicOperators);
 
 var font = function (font, objectNumber, generationNumber) {
     var self = this;
@@ -448,6 +482,7 @@ font.codePages = {
 font.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             this.body.push('<< /Type /Font');
             this.body.push('/Subtype /Type1');
             this.body.push('/BaseFont /' + this.description.postScriptName);
@@ -539,13 +574,52 @@ imageXObject.prototype = Object.create(stream.prototype, {
 });
 
 
+var docTemplate = function (document) {
+    var self = this;
+
+    this.templateContent = [];
+    stream.call(this, 0, 0, document);
+};
+
+docTemplate.prototype = Object.create(stream.prototype, {
+    out: {
+        value: function (objectNumber, generationNumber, page) {
+            var i, l, replaceRegex, value,
+                    templateString = this.templateContent.join('\n');
+
+            this.objectNumber = objectNumber;
+            this.generationNumber = generationNumber;
+            if (page.data) {
+                for (var name in page.data) {
+                    if (page.data.hasOwnProperty(name)) {
+                        replaceRegex = new RegExp('\{\{' + name + '\}\}', 'g');
+                        value = page.data[name];
+                        templateString = templateString.replace(replaceRegex, value);
+                    }
+                }
+            }
+            this.content = [templateString];
+            return stream.prototype.out.apply(this, arguments); 
+        }
+    },
+    push: {
+        value: function (args) {
+            Array.prototype.push.apply(this.templateContent, arguments);
+            return this;
+        }
+    }
+});
+
     var PDF_VERSION = '1.3';
     var doc = function (format, orientation, margin) {
         var self = this;
+        this.pageCount = 0;
+
+        this.repeatableElements = [];
+        this.templateStreams = [];
         this.activeAsync = 0;
         this.objectNumber = 0;
         this.currentPage = null;
-        this.fontmap = {};
         this.settings = {
             dimension: utils.paperFormat['letter'],
             documentProperties: { 'title': '', 'subject': '', 'author': '', 'keywords': '', 'creator': '' }
@@ -588,31 +662,36 @@ imageXObject.prototype = Object.create(stream.prototype, {
             return new obj(++this.objectNumber, 0);
         },
         newStream: function() {
-            return new stream(++this.objectNumber, 0);
+            return new stream(++this.objectNumber, 0, this);
         },
-        addPage: function(height, width, options) {
+        addPage: function (height, width, options) {
+            this.pageCount++;
             this.currentPage = new pageNode(
                 this.currentNode,
                 options || { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
+                this.repeatableElements,
+                this.templateStreams,
                 this
             );
+            this.currentPage.data.pageNum = this.pageCount;
             this.currentNode.kids.push(this.currentPage);
 
             return this.currentPage;
         },
         output: function(type) {
 
-            var content = [
+            var content = removeEmptyElement([
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
+                buildObjs(this.repeatableElements),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
-            ].join('\n');
+            ]).join('\n');
 
             var pdf = buildDocument(content, this.catalogObj, this.infoObj);
             switch (type) {
@@ -654,14 +733,6 @@ imageXObject.prototype = Object.create(stream.prototype, {
 
             this.resObj.fontObjs.push(new font(fontDescription, ++this.objectNumber, 0));
 
-            fontName = fontName.toLowerCase();
-            fontStyle = fontStyle.toLowerCase();
-
-            if (!(this.fontmap[fontName])) {
-                this.fontmap[fontName] = {}; 
-            }
-            this.fontmap[fontName][fontStyle] = fontKey;
-
             return fontKey;
         },
         addStandardFonts: function() {
@@ -686,13 +757,25 @@ imageXObject.prototype = Object.create(stream.prototype, {
                     ['Times-Roman', TIMES, NORMAL],
                     ['Times-Bold', TIMES, BOLD],
                     ['Times-Italic', TIMES, ITALIC],
-                    ['Times-BoldItalic', TIMES, BOLD_ITALIC]
+                    ['Times-BoldItalic', TIMES, BOLD_ITALIC],
+                    ['Symbol', 'symbol', NORMAL],
+                    ['ZapfDingbats', 'zapfdingbats', NORMAL],
                 ];
 
             for (var i = 0, l = standardFonts.length; i < l; i++) {
                 this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
             }
             return this;
+        },
+        addRepeatableElement: function () {
+            var element = this.newStream();
+            this.repeatableElements.push(element);
+            return element;
+        },
+        addRepeatableTemplate: function () {
+            var template = new docTemplate(this);
+            this.templateStreams.push(template);
+            return template;
         }
     };
 
@@ -704,14 +787,16 @@ imageXObject.prototype = Object.create(stream.prototype, {
         var ret = [],
             genRegex = /\d+(?=\sobj)/,
             objRegex = /^\d+/,
-            matches, i, match;
+            matches, i, match,
+            searchRegex;
         matches = data.match(/\d+\s\d+\sobj/gim)
 
         for (i = 0; match = matches[i]; i++) {
+            searchRegex = new RegExp('[^\\d]' + match.replace(/\s+/g, '\\s+'));
             ret.push({
                 objNum: parseInt(objRegex.exec(match)),
                 genNum: parseInt(genRegex.exec(match)),
-                offset: data.indexOf(match)
+                offset: data.search(searchRegex)
             });
         }
 
@@ -751,7 +836,7 @@ imageXObject.prototype = Object.create(stream.prototype, {
         var offsets = getOffsets(body);
         var objectCount = offsets.length;
         offsets = offsets.sort(function (a, b) {
-            return a.objectNumber - b.objectNumber;
+            return a.objNum - b.objNum;
         });
         contentBuilder.push('xref');
         contentBuilder.push('0 ' + (objectCount + 1));
@@ -835,7 +920,8 @@ var printDictionaryElements = function (arr, prefix) {
     var ret = [],
         i, len;
     for (i = 0, len = arr.length; i < len; i++) {
-        ret.push('/' + prefix + (i +1).toString(10) + ' ' + arr[i].objectNumber + ' ' + arr[i].generationNumber + ' R');
+        ret.push('/' + prefix + (i + 1).toString(10) + ' ' + arr[i].objectNumber + ' ' +
+            arr[i].generationNumber + ' R');
     }
 
     return ret.join('\n');
@@ -843,14 +929,19 @@ var printDictionaryElements = function (arr, prefix) {
 resources.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             this.body.push('<<');
             this.body.push('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
             this.body.push('/Font <<');
             this.body.push(printDictionaryElements(this.fontObjs, 'F'));
             this.body.push('>>');
-            this.body.push('/XObject <<');
-            this.body.push(printDictionaryElements(this.imageXObjects, 'Im'));
-            this.body.push('>>');
+
+            var xImgObjs = printDictionaryElements(this.imageXObjects, 'Im')
+            if (xImgObjs) {
+                this.body.push('/XObject <<');
+                this.body.push(xImgObjs);
+                this.body.push('>>');
+            }
             this.body.push('>>');
 
             return obj.prototype.out.apply(this, arguments); 
@@ -858,16 +949,20 @@ resources.prototype = Object.create(obj.prototype, {
     },
     getFont: {
         value: function (name, style) {
-            for (var i = 0, font; font = this.fontObjs[i]; i++) {
-                if (font.description.key === name) {
-                    return font;
-                }
-
-                if (font.description.fontName === name && font.description.fontStyle === style) {
-                    return font;
+            if (typeof name === 'string') {
+                for (var i = 0, font; font = this.fontObjs[i]; i++) {
+                    if (font.description.key.toLowerCase() === name.toLowerCase()) {
+                        return font;
+                    }
+                    if (typeof style === 'string') {
+                        if (font.description.fontName.toLowerCase() === name.toLowerCase() &&
+                            font.description.fontStyle.toLowerCase() === style.toLowerCase()) {
+                            return font;
+                        }
+                    }
                 }
             }
-            return null;
+            return undefined;
         }
     }
 });
@@ -989,6 +1084,17 @@ var sanitizeRegex = /((\(|\)|\\))/ig;
 var sanitize = function(text) {
     return text.replace(sanitizeRegex, '\\$1');
 };
+
+var removeEmptyElement = function (arr) {
+    var i, l, value, ret = [];
+    for (i = 0, l = arr.length; i < l; i++) {
+        value = arr[i];
+        if (value) {
+            ret.push(value);
+        }
+    }
+    return ret;
+}
 
 var checkValidRect = function (rect) {
     if (!rect || typeof rect !== 'object' || rect.length !== 4) {
@@ -1200,6 +1306,12 @@ var pdfJS = {
             createObj: function () { return pdf.newObj.apply(pdf, arguments); },
             createStream: function () { return pdf.newStream.apply(pdf, arguments); },
             addPage: function () { return pdf.addPage.apply(pdf, arguments); },
+            addRepeatableElement: function () {
+                return pdf.addRepeatableElement.apply(pdf, arguments);
+            },
+            addRepeatableTemplate: function () {
+                return pdf.addRepeatableTemplate.apply(pdf, arguments);
+            },
             root: function () { return pdf.rootNode.apply(pdf, arguments); },
             output: function () { return pdf.output.apply(pdf, arguments); },
             outputAsync: function () { return pdf.outputAsync.apply(pdf, arguments); },

@@ -66,7 +66,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 5
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 5
     </li></ul></dd>
     
     
@@ -100,7 +100,7 @@
         <dl>
             
 <dt>
-    <h4 class="name" id="beginText"><span class="type-signature">&lt;inner> </span>beginText<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="beginText"><span class="type-signature">&lt;inner> </span>beginText<span class="signature">(<span class="optional">name</span>, <span class="optional">style</span>, <span class="optional">size</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -116,6 +116,142 @@
     
     
     
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		<th>Argument</th>
+		
+		
+		
+		<th>Default</th>
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                    Helvetica
+                
+                </td>
+            
+            
+            <td class="description last">Font name.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>style</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">Font style.</td>
+        </tr>
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>size</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+                    
+                
+                </td>
+            
+            
+            
+                <td class="default">
+                
+                </td>
+            
+            
+            <td class="description last">FontSize in pt.</td>
+        </tr>
+	
+	
+	
+</table>
     
     
     
@@ -141,7 +277,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 11
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 14
     </li></ul></dd>
     
     
@@ -254,7 +390,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 48
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 43
     </li></ul></dd>
     
     
@@ -319,7 +455,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 19
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 23
     </li></ul></dd>
     
     
@@ -432,7 +568,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 84
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 79
     </li></ul></dd>
     
     
@@ -456,7 +592,7 @@
         
             
 <dt>
-    <h4 class="name" id="fontStyle"><span class="type-signature">&lt;inner> </span>fontStyle<span class="signature">(<span class="optional">name</span>, <span class="optional">style</span>, <span class="optional">size</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="fontStyle"><span class="type-signature">&lt;inner> </span>fontStyle<span class="signature">(name=F1, style, <span class="optional">size</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -490,8 +626,6 @@
 		
 		
 		
-		<th>Default</th>
-		
 		
 		<th class="last">Description</th>
 	</tr>
@@ -502,7 +636,7 @@
 	
         <tr>
             
-                <td class="name"><code>name</code></td>
+                <td class="name"><code>name=F1</code></td>
             
             
             <td class="type">
@@ -517,19 +651,11 @@
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
-                
                     
                 
                 </td>
             
             
-            
-                <td class="default">
-                
-                    F1
-                
-                </td>
             
             
             <td class="description last">Font internal reference name.</td>
@@ -554,17 +680,11 @@
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
-                
                     
                 
                 </td>
             
             
-            
-                <td class="default">
-                
-                </td>
             
             
             <td class="description last">Font style.</td>
@@ -596,10 +716,6 @@
                 </td>
             
             
-            
-                <td class="default">
-                
-                </td>
             
             
             <td class="description last">FontSize in pt.</td>
@@ -633,7 +749,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 95
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 91
     </li></ul></dd>
     
     
@@ -665,7 +781,7 @@
     
     
     <div class="description">
-        Set 'leading'
+        Vertical distance between the baselines of adjacent lines of text.
     </div>
     
 
@@ -746,7 +862,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 75
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 70
     </li></ul></dd>
     
     
@@ -770,532 +886,7 @@
         
             
 <dt>
-    <h4 class="name" id="nextLine"><span class="type-signature">&lt;inner> </span>nextLine<span class="signature">()</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Move to the start of the next line.
-    </div>
-    
-
-    
-    
-    
-    
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 195
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="renderMode"><span class="type-signature">&lt;inner> </span>renderMode<span class="signature">(mode)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Set text rendering mode.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	
-	
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>mode</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">pdf.utils.textMode</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 110
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="rise"><span class="type-signature">&lt;inner> </span>rise<span class="signature">(rise)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Set text rise.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	
-	
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>rise</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Positive values of text rise move the
-baseline up and opposite for negative values.</td>
-        </tr>
-	
-	
-	
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 120
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="scaleText"><span class="type-signature">&lt;inner> </span>scaleText<span class="signature">(scale)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Scale text by value.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	
-	
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>scale</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Scaling factor.</td>
-        </tr>
-	
-	
-	
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 66
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="showArrayText"><span class="type-signature">&lt;inner> </span>showArrayText<span class="signature">(arr)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Print text
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	
-	
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>arr</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">array[string]</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Show one or more text strings, allowing individual glyph positioning. Each element of array can be a string or a
-number. If the element is a string, this operator shows the string. If it is a number,
-the operator adjusts the text position by that amount; that is, it translates
-the text matrix. The number is expressed in thousandths of a unit of text
-space. This amount is subtracted from the current x coordinate in horizontal
-writing mode or from the current y coordinate in vertical writing mode.
-In the default coordinate system, a positive adjustment has the effect of moving
-the next glyph painted either to the left or down by the given amount.</td>
-        </tr>
-	
-	
-	
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 152
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="showText"><span class="type-signature">&lt;inner> </span>showText<span class="signature">(textString, <span class="optional">wordSpace</span>, <span class="optional">charSpace</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="print"><span class="type-signature">&lt;inner> </span>print<span class="signature">(textString, <span class="optional">wordSpace</span>, <span class="optional">charSpace</span>)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1454,7 +1045,7 @@ the next glyph painted either to the left or down by the given amount.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 131
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 127
     </li></ul></dd>
     
     
@@ -1478,7 +1069,7 @@ the next glyph painted either to the left or down by the given amount.</td>
         
             
 <dt>
-    <h4 class="name" id="showTextln"><span class="type-signature">&lt;inner> </span>showTextln<span class="signature">(textString)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="println"><span class="type-signature">&lt;inner> </span>println<span class="signature">(textString)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1567,7 +1158,7 @@ the next glyph painted either to the left or down by the given amount.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 169
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 143
     </li></ul></dd>
     
     
@@ -1591,7 +1182,7 @@ the next glyph painted either to the left or down by the given amount.</td>
         
             
 <dt>
-    <h4 class="name" id="textMatrix"><span class="type-signature">&lt;inner> </span>textMatrix<span class="signature">(a, b, c, d, e, f)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="renderMode"><span class="type-signature">&lt;inner> </span>renderMode<span class="signature">(mode)</span><span class="type-signature"></span></h4>
     
     
 </dt>
@@ -1599,7 +1190,7 @@ the next glyph painted either to the left or down by the given amount.</td>
     
     
     <div class="description">
-        Specifying text transforming matrix.
+        Set text rendering mode.
     </div>
     
 
@@ -1633,128 +1224,13 @@ the next glyph painted either to the left or down by the given amount.</td>
 	
         <tr>
             
-                <td class="name"><code>a</code></td>
+                <td class="name"><code>mode</code></td>
             
             
             <td class="type">
             
                 
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>b</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>c</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>d</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>e</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last"></td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>f</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
+<span class="param-type">pdf.utils.textMode</span>
 
 
             
@@ -1795,7 +1271,354 @@ the next glyph painted either to the left or down by the given amount.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 183
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 106
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="rise"><span class="type-signature">&lt;inner> </span>rise<span class="signature">(rise)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Set text rise.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>rise</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Positive values of text rise move the
+baseline up and opposite for negative values.</td>
+        </tr>
+	
+	
+	
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 116
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="scaleText"><span class="type-signature">&lt;inner> </span>scaleText<span class="signature">(scale)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Scale text by value.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>scale</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">int</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Scaling factor.</td>
+        </tr>
+	
+	
+	
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 61
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="showArrayText"><span class="type-signature">&lt;inner> </span>showArrayText<span class="signature">(arr)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Print text
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	
+	
+	
+	
+	
+        <tr>
+            
+                <td class="name"><code>arr</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">array[string]</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">Show one or more text strings, allowing individual glyph positioning. Each element of array can be a string or a
+number. If the element is a string, this operator shows the string. If it is a number,
+the operator adjusts the text position by that amount; that is, it translates
+the text matrix. The number is expressed in thousandths of a unit of text
+space. This amount is subtracted from the current x coordinate in horizontal
+writing mode or from the current y coordinate in vertical writing mode.
+In the default coordinate system, a positive adjustment has the effect of moving
+the next glyph painted either to the left or down by the given amount.</td>
+        </tr>
+	
+	
+	
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 162
     </li></ul></dd>
     
     
@@ -1931,143 +1754,7 @@ the next glyph painted either to the left or down by the given amount.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 29
-    </li></ul></dd>
-    
-    
-    
-    
-    
-    
-    
-</dl>
-
-    
-    
-    
-    
-    
-    
-    
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="textPositionWithLeading"><span class="type-signature">&lt;inner> </span>textPositionWithLeading<span class="signature">(x, y)</span><span class="type-signature"></span></h4>
-    
-    
-</dt>
-<dd>
-    
-    
-    <div class="description">
-        Move from current text coordinate without leading.
-    </div>
-    
-
-    
-    
-    
-    
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    
-	<tr>
-		
-		<th>Name</th>
-		
-		
-		<th>Type</th>
-		
-		
-		
-		
-		
-		<th class="last">Description</th>
-	</tr>
-	
-	
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>x</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Translate by x pt in x direction from current text coordinate.</td>
-        </tr>
-	
-	
-	
-        <tr>
-            
-                <td class="name"><code>y</code></td>
-            
-            
-            <td class="type">
-            
-                
-<span class="param-type">int</span>
-
-
-            
-            </td>
-            
-            
-            
-            
-            
-            <td class="description last">Translate by y pt in y direction. from current text coordinate</td>
-        </tr>
-	
-	
-	
-</table>
-    
-    
-    
-<dl class="details">
-    
-        
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 39
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 34
     </li></ul></dd>
     
     
@@ -2180,7 +1867,7 @@ the next glyph painted either to the left or down by the given amount.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="#/docs?link=dbadfccbd6.html">api/text.js</a>, line 57
+        <a href="#/docs?link=893533b1bf.html">internals/text.js</a>, line 52
     </li></ul></dd>
     
     
@@ -2217,13 +1904,13 @@ the next glyph painted either to the left or down by the given amount.</td>
 </div>
 
 <nav>
-    <h2><a href="#/docs?link=index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="#/docs?link=pdfJS.doc.html">doc</a></li><li><a href="#/docs?link=pdfJS.font.html">font</a></li><li><a href="#/docs?link=pdfJS.imageXObject.html">imageXObject</a></li><li><a href="#/docs?link=pdfJS.obj.html">obj</a></li><li><a href="#/docs?link=pdfJS.pageNode.html">pageNode</a></li><li><a href="#/docs?link=pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="#/docs?link=pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="#/docs?link=pdfJS.html">pdfJS</a></li><li><a href="#/docs?link=pdfJS.graphicOperators.html">graphicOperators</a></li><li><a href="#/docs?link=pdfJS.textOperators.html">textOperators</a></li><li><a href="#/docs?link=pdfJS.utils.html">utils</a></li></ul>
+    <h2><a href="#/docs?link=index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="#/docs?link=pdfJS.doc.html">doc</a></li><li><a href="#/docs?link=pdfJS.docTemplate.html">docTemplate</a></li><li><a href="#/docs?link=pdfJS.font.html">font</a></li><li><a href="#/docs?link=pdfJS.imageXObject.html">imageXObject</a></li><li><a href="#/docs?link=pdfJS.obj.html">obj</a></li><li><a href="#/docs?link=pdfJS.pageNode.html">pageNode</a></li><li><a href="#/docs?link=pdfJS.pageTreeNode.html">pageTreeNode</a></li><li><a href="#/docs?link=pdfJS.stream.html">stream</a></li></ul><h3>Namespaces</h3><ul><li><a href="#/docs?link=pdfJS.html">pdfJS</a></li><li><a href="#/docs?link=pdfJS.graphicOperators.html">graphicOperators</a></li><li><a href="#/docs?link=pdfJS.textOperators.html">textOperators</a></li><li><a href="#/docs?link=pdfJS.utils.html">utils</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="#/docs?link=https://github.com/jsdoc3/jsdoc">JSDoc 3.1.1</a> on Wed Mar 06 2013 04:37:41 GMT-0800 (PST)
+    Documentation generated by <a href="#/docs?link=https://github.com/jsdoc3/jsdoc">JSDoc 3.1.1</a> on Sun Mar 10 2013 21:34:14 GMT-0700 (PDT)
 </footer>
 
 
