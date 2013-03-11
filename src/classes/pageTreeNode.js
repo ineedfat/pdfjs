@@ -30,6 +30,7 @@ var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
 pageTreeNode.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             var i, item;
             this.body.push(
                 '<< /Type /Pages',

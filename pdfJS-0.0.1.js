@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/10/2013 15:28
+* Compiled At: 03/10/2013 20:36
 ***********************************************/
 (function(_) {
 'use strict';
@@ -28,112 +28,112 @@ var mixin = function(inherting, iObj) {
 
 var graphicOperators = {
     translate: function (tx, ty) {
-        this.content.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
+        this.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
     },
     scale: function (sx, sy) {
-        this.content.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
+        this.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
     },
     rotate: function (theta) {
         var cos = Math.cos(theta),
             sin = Math.sin(theta);
-        this.content.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
+        this.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
     },
     skew: function (alphaX, betaY) {
-        this.content.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
+        this.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
     },
     lineWidth: function (width) {
-        this.content.push(width + ' w');
+        this.push(width + ' w');
     },
     lineCap: function (capStyle) {
-        this.content.push(capStyle + ' J');
+        this.push(capStyle + ' J');
     },
     lineJoin: function (joinStyle) {
-        this.content.push(joinStyle + ' j');
+        this.push(joinStyle + ' j');
     },
     miterLimit: function (limit) {
-        this.content.push(limit + ' M');
+        this.push(limit + ' M');
     },
     dashPattern: function (dashArray, dashPhase) {
-        this.content.push(dashArray + ' ' + dashPhase + ' d');
+        this.push(dashArray + ' ' + dashPhase + ' d');
     },
     renderingIntent: function (intent) {
-        this.content.push(intent + ' ri');
+        this.push(intent + ' ri');
     },
     strokeAdjustment: function () {
     },
     pushState: function () {
-        this.content.push('q');
+        this.push('q');
     },
     popState: function () {
-        this.content.push('Q');
+        this.push('Q');
     },
     moveTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid new path parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.content.push(args.join(' ') + ' m');
+        this.push(args.join(' ') + ' m');
     },
     lineTo: function (x, y) {
         if (arguments.length != 4) {
             throw 'Invalid straight line  parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.content.push(args.join(' ') + ' l');
+        this.push(args.join(' ') + ' l');
     },
     bezierCurve: function (x1, y1, x2, y2, x3, y3) {
         var args = Array.prototype.slice.call(arguments);
         switch (arguments.length) {
             case 4:
-                this.content.push(args.join(' ') + ' v');
+                this.push(args.join(' ') + ' v');
                 break;
             case 5:
-                this.content.push(args.slice(0, 4).join(' ') + ' y');
+                this.push(args.slice(0, 4).join(' ') + ' y');
                 break;
             case 6:
-                this.content.push(args.join(' ') + ' c');
+                this.push(args.join(' ') + ' c');
                 break;
             default:
                 throw 'Invalid bezier curve parameters';
         }
     },
     close: function () {
-        this.content.push('h');
+        this.push('h');
     },
     paintPath: function (operator) {
         if (operator) {
-            this.content.push(operator);
+            this.push(operator);
         } else {
-            this.content.push('B');
+            this.push('B');
         }
     },
     strokePath: function () {
-        this.content.push('S');
+        this.push('S');
     },
     fillPath: function () {
-        this.content.push('F');
+        this.push('F');
     },
     clip: function (asterisk) {
-        this.content.push('W' + (asterisk ? ' *' : ''));
+        this.push('W' + (asterisk ? ' *' : ''));
     },
     rect: function (x, y, width, height) {
         if (arguments.length != 4) {
             throw 'Invalid rectangle parameters';
         }
         var args = Array.prototype.slice.call(arguments);
-        this.content.push(args.join(' ') + ' re');
+        this.push(args.join(' ') + ' re');
     },
     fillColor: function (colorValue1, colorValue2, colorValue3) {
         switch (arguments.length) {
             case 1:
                 if (this.activeFillCS !== 'DeviceGray') {
-                    this.content.push('/DeviceGray cs');
+                    this.push('/DeviceGray cs');
                     this.activeFillCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeFillCS !== 'DeviceRGB') {
-                    this.content.push('/DeviceRGB cs');
+                    this.push('/DeviceRGB cs');
                     this.activeFillCS = 'DeviceRGB';
                 }
                 break;
@@ -141,19 +141,19 @@ var graphicOperators = {
                 throw ('Invalid color values');
         }
         var args = Array.prototype.slice.call(arguments);
-        this.content.push(args.join(' ') + ' sc');
+        this.push(args.join(' ') + ' sc');
     },
     strokeColor: function (colorValue1, colorValue2, colorValue3) {
         switch (arguments.length) {
             case 1:
                 if (this.activeStrokeCS !== 'DeviceGray') {
-                    this.content.push('/DeviceGray CS');
+                    this.push('/DeviceGray CS');
                     this.activeStrokeCS = 'DeviceGray';
                 }
                 break;
             case 3:
                 if (this.activeStrokeCS !== 'DeviceRGB') {
-                    this.content.push('/DeviceRGB CS');
+                    this.push('/DeviceRGB CS');
                     this.activeStrokeCS = 'DeviceRGB';
                 }
             default:
@@ -161,7 +161,7 @@ var graphicOperators = {
         }
 
         var args = Array.prototype.slice.call(arguments);
-        this.content.push(args.join(' ') + ' SC');
+        this.push(args.join(' ') + ' SC');
     },
     addImage: function (imgXObj, x, y, w, h) {
         if (!w && !h) {
@@ -181,10 +181,10 @@ var graphicOperators = {
             h = w * imgXObj.height / imgXObj.width;
         }
 
-        this.content.push('q');
-        this.content.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
-        this.content.push('/' + imgXObj.name + ' Do');
-        this.content.push('Q');
+        this.push('q');
+        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+        this.push('/' + imgXObj.name + ' Do');
+        this.push('Q');
 
         return this;
     }
@@ -192,58 +192,58 @@ var graphicOperators = {
 
 var textOperators = {
     beginText: function (name, style, size) {
-        this.content.push('BT');
+        this.push('BT');
         this.fontStyle(name, style, size);
     },
     endText: function () {
-        this.content.push('ET');
+        this.push('ET');
         this.activeFont = undefined;
     },
     textPosition: function (x, y) {
-        this.content.push(x + ' ' + y + ' Td');
+        this.push(x + ' ' + y + ' Td');
     },
     charSpace: function (charSpace) {
-        this.content.push(charSpace + ' Tc');
+        this.push(charSpace + ' Tc');
     },
     wordSpace: function (wordSpace) {
-        this.content.push(wordSpace + ' Tw');
+        this.push(wordSpace + ' Tw');
     },
     scaleText: function (scale) {
-        this.content.push(scale + ' Tz');
+        this.push(scale + ' Tz');
     },
     leading: function (val) {
-        this.content.push(val + ' TL');
+        this.push(val + ' TL');
     },
     fontSize: function (size) {
-        this.content.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
+        this.push('/' + this.activeFont.description.key + ' ' + size + ' Tf');
         this.activeFontSize = size;
     },
     fontStyle: function (name, style, fontSize) {
         this.activeFont = this.doc.resObj.getFont(name, style) || this.doc.resObj.fontObjs[0];
         var fontKey = this.activeFont.description.key;
-        this.content.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
+        this.push('/' + fontKey + ' ' + (fontSize || this.activeFontSize) + ' Tf');
         if (fontSize) {
             this.activeFontSize = fontSize;
         }
     },
     renderMode: function (mode) {
-        this.content.push(render + ' Tr');
+        this.push(render + ' Tr');
     },
     rise: function (rise) {
-        this.content.push(rise + ' Ts');
+        this.push(rise + ' Ts');
     },
     print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
-            this.content.push('(' +
+            this.push('(' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
         }
         else {
-            this.content.push(wordSpace + ' ' + charSpace + ' (' +
+            this.push(wordSpace + ' ' + charSpace + ' (' +
                 this.activeFont.charactersEncode(sanitize(textString)) + ') "');
         }
     },
     println: function (textString) {
-        this.content.push('T*');
+        this.push('T*');
         if (textString) {
             this.print(textString);
         }
@@ -256,7 +256,7 @@ var textOperators = {
                 arr[i] = '(' + temp + ')';
             }
         }
-        this.content.push(arr.join(' ') + ' TJ');
+        this.push(arr.join(' ') + ' TJ');
 
     }
 };
@@ -285,7 +285,7 @@ obj.prototype = {
 };
 
 var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams,
-    repeatableStreams) {
+    repeatableStreams, templateStreams, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -295,13 +295,28 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
     this.currentStream = this.contentStreams[0];
 
     this.repeatableStreams = repeatableStreams;
+
+    this.templateStreams = templateStreams;
+
+    this.reservedObjectNums = [];
+
+    this.doc = document;
+
+    this.data = {pageNum: 0};
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
-            var i, item,
+            this.body = [];
+            var i, l, item,
                 ret = [];
 
+            for (i = 0, l = this.templateStreams.length; i < l; i++) {
+                if (!this.reservedObjectNums[i]) {
+                    this.reservedObjectNums[i] = ++this.doc.objectNumber;
+                }
+                ret.push(this.templateStreams[i].out(this.reservedObjectNums[i], 0, this));
+            }
             this.body.push('<< /Type /Page');
             this.body.push(pageOptionsConverter(this.pageOptions));
             this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
@@ -313,6 +328,9 @@ pageNode.prototype = Object.create(obj.prototype, {
                 }
                 for (i = 0; item = this.repeatableStreams[i]; i++) {
                     this.body.push(item.objectNumber + ' ' + item.generationNumber + ' R');
+                }
+                for (i = 0; item = this.reservedObjectNums[i]; i++) {
+                    this.body.push(item + ' ' + 0 + ' R');
                 }
                 this.body.push(']');
             }
@@ -349,6 +367,7 @@ var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
 pageTreeNode.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             var i, item;
             this.body.push(
                 '<< /Type /Pages',
@@ -415,16 +434,21 @@ var printDictionary = function (dict) {
 stream.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             var temp = printDictionary(this.dictionary);
-            this.body.push('<< /Length ' + this.content.join('\n').length);
+            var tempContent = this.content;
+
+            if (!(this instanceof imageXObject)) {
+                tempContent = (['q']).concat(this.content);
+                tempContent.push('Q');
+            }
+            this.body.push('<< /Length ' + (tempContent.join('\n').length));
             if (temp) {
                 this.body.push(temp);
             }
             this.body.push('>>');
             this.body.push('stream');
-            this.body.push('q')
-            this.body = this.body.concat(this.content);
-            this.body.push('Q')
+            this.body = this.body.concat(tempContent);
             this.body.push('endstream');
 
             return obj.prototype.out.apply(this, arguments); 
@@ -458,6 +482,7 @@ font.codePages = {
 font.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             this.body.push('<< /Type /Font');
             this.body.push('/Subtype /Type1');
             this.body.push('/BaseFont /' + this.description.postScriptName);
@@ -549,12 +574,49 @@ imageXObject.prototype = Object.create(stream.prototype, {
 });
 
 
+var docTemplate = function (document) {
+    var self = this;
+
+    this.templateContent = [];
+    stream.call(this, 0, 0, document);
+};
+
+docTemplate.prototype = Object.create(stream.prototype, {
+    out: {
+        value: function (objectNumber, generationNumber, page) {
+            var i, l, replaceRegex, value,
+                    templateString = this.templateContent.join('\n');
+
+            this.objectNumber = objectNumber;
+            this.generationNumber = generationNumber;
+            if (page.data) {
+                for (var name in page.data) {
+                    if (page.data.hasOwnProperty(name)) {
+                        replaceRegex = new RegExp('\{\{' + name + '\}\}', 'g');
+                        value = page.data[name];
+                        templateString = templateString.replace(replaceRegex, value);
+                    }
+                }
+            }
+            this.content = [templateString];
+            return stream.prototype.out.apply(this, arguments); 
+        }
+    },
+    push: {
+        value: function (args) {
+            Array.prototype.push.apply(this.templateContent, arguments);
+            return this;
+        }
+    }
+});
+
     var PDF_VERSION = '1.3';
     var doc = function (format, orientation, margin) {
         var self = this;
         this.pageCount = 0;
 
         this.repeatableElements = [];
+        this.templateStreams = [];
         this.activeAsync = 0;
         this.objectNumber = 0;
         this.currentPage = null;
@@ -610,8 +672,11 @@ imageXObject.prototype = Object.create(stream.prototype, {
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
-                this.repeatableElements
+                this.repeatableElements,
+                this.templateStreams,
+                this
             );
+            this.currentPage.data.pageNum = this.pageCount;
             this.currentNode.kids.push(this.currentPage);
 
             return this.currentPage;
@@ -708,6 +773,9 @@ imageXObject.prototype = Object.create(stream.prototype, {
             return element;
         },
         addRepeatableTemplate: function () {
+            var template = new docTemplate(this);
+            this.templateStreams.push(template);
+            return template;
         }
     };
 
@@ -861,6 +929,7 @@ var printDictionaryElements = function (arr, prefix) {
 resources.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             this.body.push('<<');
             this.body.push('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]');
             this.body.push('/Font <<');
@@ -1017,19 +1086,14 @@ var sanitize = function(text) {
 };
 
 var removeEmptyElement = function (arr) {
-    var i, l, index, removed = [];
+    var i, l, value, ret = [];
     for (i = 0, l = arr.length; i < l; i++) {
-        if (!arr[i]) {
-            removed.push(i);
+        value = arr[i];
+        if (value) {
+            ret.push(value);
         }
     }
-
-    for (i = 0, l = removed.length; i < l; i++) {
-        index = removed[i];
-        arr.splice(index, 1);
-    }
-
-    return arr;
+    return ret;
 }
 
 var checkValidRect = function (rect) {
@@ -1244,6 +1308,9 @@ var pdfJS = {
             addPage: function () { return pdf.addPage.apply(pdf, arguments); },
             addRepeatableElement: function () {
                 return pdf.addRepeatableElement.apply(pdf, arguments);
+            },
+            addRepeatableTemplate: function () {
+                return pdf.addRepeatableTemplate.apply(pdf, arguments);
             },
             root: function () { return pdf.rootNode.apply(pdf, arguments); },
             output: function () { return pdf.output.apply(pdf, arguments); },

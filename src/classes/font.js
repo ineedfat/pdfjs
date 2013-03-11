@@ -30,6 +30,7 @@ font.codePages = {
 font.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             this.body.push('<< /Type /Font');
             this.body.push('/Subtype /Type1');
             this.body.push('/BaseFont /' + this.description.postScriptName);

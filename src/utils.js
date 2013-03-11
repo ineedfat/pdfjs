@@ -4,19 +4,14 @@ var sanitize = function(text) {
 };
 
 var removeEmptyElement = function (arr) {
-    var i, l, index, removed = [];
+    var i, l, value, ret = [];
     for (i = 0, l = arr.length; i < l; i++) {
-        if (!arr[i]) {
-            removed.push(i);
+        value = arr[i];
+        if (value) {
+            ret.push(value);
         }
     }
-
-    for (i = 0, l = removed.length; i < l; i++) {
-        index = removed[i];
-        arr.splice(index, 1);
-    }
-
-    return arr;
+    return ret;
 }
 
 var checkValidRect = function (rect) {

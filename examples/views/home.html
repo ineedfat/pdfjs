@@ -24,16 +24,21 @@
     var doc = new pdfJS.doc('letter', 'portrait');
     var header = doc.addRepeatableElement();
     header.beginText();
-    header.textPosition(400, 760)
+    header.textPosition(400, 760);
     header.print('This is a repeating header.');
     header.endText();
     
     var footer = doc.addRepeatableElement();
     footer.beginText();
-    footer.textPosition(15, 16)
+    footer.textPosition(15, 16);
     footer.print('This is a repeating footer.');
     footer.endText();
     
+    var template = doc.addRepeatableTemplate();
+    template.beginText();
+    template.textPosition(280, 16);
+    template.print('Page {{pageNum}}');     
+    template.endText();  
     var p = doc.addPage().currentStream;
     doc.addPage();
     p.pushState();
@@ -60,6 +65,7 @@
     p.fontSize(15);
     p.print('It\'s just that easy :D!');
     p.endText();
+                    
                     
                     </div>
                     <h4>Note</h4>

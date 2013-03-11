@@ -21,6 +21,7 @@ var printDictionaryElements = function (arr, prefix) {
 resources.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             // Resource dictionary
             this.body.push('<<');
             //For compatibility only.

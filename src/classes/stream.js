@@ -49,16 +49,25 @@ var printDictionary = function (dict) {
 stream.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
+            this.body = [];
             var temp = printDictionary(this.dictionary);
-            this.body.push('<< /Length ' + this.content.join('\n').length);
+            var tempContent = this.content;
+
+            if (!(this instanceof imageXObject)) {
+                tempContent = (['q']).concat(this.content);
+                tempContent.push('Q');
+            }
+
+            //Add 4 because of the extra q and Q operator with two '\n' by joining the character.
+            this.body.push('<< /Length ' + (tempContent.join('\n').length));
             if (temp) {
                 this.body.push(temp);
             }
             this.body.push('>>');
             this.body.push('stream');
-            this.body.push('q')
-            this.body = this.body.concat(this.content);
-            this.body.push('Q')
+            //this.body.push('q')
+            this.body = this.body.concat(tempContent);
+            //this.body.push('Q')
             this.body.push('endstream');
 
             return obj.prototype.out.apply(this, arguments); //calling obj super class out method.

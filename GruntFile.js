@@ -111,6 +111,7 @@
           'src/classes/stream.js',
           'src/classes/font.js',
           'src/classes/imageXObject.js',
+          'src/classes/docTemplate.js',
 
           //PDF core parts
           'src/internals/core.js',

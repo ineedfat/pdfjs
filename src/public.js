@@ -16,6 +16,9 @@ var pdfJS = {
             addRepeatableElement: function () {
                 return pdf.addRepeatableElement.apply(pdf, arguments);
             },
+            addRepeatableTemplate: function () {
+                return pdf.addRepeatableTemplate.apply(pdf, arguments);
+            },
             root: function () { return pdf.rootNode.apply(pdf, arguments); },
             output: function () { return pdf.output.apply(pdf, arguments); },
             outputAsync: function () { return pdf.outputAsync.apply(pdf, arguments); },

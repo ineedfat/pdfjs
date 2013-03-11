@@ -16,6 +16,7 @@
         this.pageCount = 0;
 
         this.repeatableElements = [];
+        this.templateStreams = [];
         /**
         *Number of active async calls such as adding a new image. TODO: make this field private.
         *@Type int
@@ -144,8 +145,11 @@
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
-                this.repeatableElements
+                this.repeatableElements,
+                this.templateStreams,
+                this
             );
+            this.currentPage.data.pageNum = this.pageCount;
             this.currentNode.kids.push(this.currentPage);
 
             return this.currentPage;
@@ -268,6 +272,9 @@
             return element;
         },
         addRepeatableTemplate: function () {
+            var template = new docTemplate(this);
+            this.templateStreams.push(template);
+            return template;
         }
     };
 
