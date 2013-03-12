@@ -45,7 +45,10 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
 
     this.doc = document;
 
-    this.data = {pageNum: 0};
+    this.data = {
+        pageNum: 0,
+        pageTotal: function () { return self.doc.pageCount; }
+    };
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {

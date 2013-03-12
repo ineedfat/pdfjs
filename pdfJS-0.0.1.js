@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/10/2013 20:36
+* Compiled At: 03/11/2013 19:06
 ***********************************************/
 (function(_) {
 'use strict';
@@ -113,6 +113,9 @@ var graphicOperators = {
     fillPath: function () {
         this.push('F');
     },
+    endPath: function () {
+        this.push('n');
+    },
     clip: function (asterisk) {
         this.push('W' + (asterisk ? ' *' : ''));
     },
@@ -164,25 +167,15 @@ var graphicOperators = {
         this.push(args.join(' ') + ' SC');
     },
     addImage: function (imgXObj, x, y, w, h) {
-        if (!w && !h) {
-            w = -96;
-            h = -96;
-        }
-        if (w < 0) {
-            w = (-1) * imgXObj.width * 72 / w;
-        }
-        if (h < 0) {
-            h = (-1) * imgXObj.height * 72 / h;
-        }
-        if (w === 0) {
+        if (w == 0) {
             w = h * imgXObj.width / imgXObj.height;
         }
-        if (h === 0) {
+        if (h == 0) {
             h = w * imgXObj.height / imgXObj.width;
         }
 
         this.push('q');
-        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y).toFixed(2) + ' cm');
         this.push('/' + imgXObj.name + ' Do');
         this.push('Q');
 
@@ -302,7 +295,10 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
 
     this.doc = document;
 
-    this.data = {pageNum: 0};
+    this.data = {
+        pageNum: 0,
+        pageTotal: function () { return self.doc.pageCount; }
+    };
 };
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
@@ -625,7 +621,7 @@ docTemplate.prototype = Object.create(stream.prototype, {
             documentProperties: { 'title': '', 'subject': '', 'author': '', 'keywords': '', 'creator': '' }
         };
         if (typeof format === 'string') {
-            self.settings.dimension = utils.paperFormat[format.toLowerCase()];
+            self.settings.dimension = utils.paperFormat[format.toLowerCase()].slice();
         } else {
             self.settings.dimension = format.slice().splice(0, 2);
         }
@@ -672,8 +668,8 @@ docTemplate.prototype = Object.create(stream.prototype, {
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
-                this.repeatableElements,
-                this.templateStreams,
+                this.repeatableElements.slice(),
+                this.templateStreams.slice(),
                 this
             );
             this.currentPage.data.pageNum = this.pageCount;

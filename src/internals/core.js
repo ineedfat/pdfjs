@@ -55,7 +55,7 @@
         
         //Determine page dimensions.
         if (typeof format === 'string') {
-            self.settings.dimension = utils.paperFormat[format.toLowerCase()];
+            self.settings.dimension = utils.paperFormat[format.toLowerCase()].slice();
         } else {
             self.settings.dimension = format.slice().splice(0, 2);
         }
@@ -145,8 +145,8 @@
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
-                this.repeatableElements,
-                this.templateStreams,
+                this.repeatableElements.slice(),
+                this.templateStreams.slice(),
                 this
             );
             this.currentPage.data.pageNum = this.pageCount;

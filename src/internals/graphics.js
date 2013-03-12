@@ -255,7 +255,6 @@ space. .
         //By default, paint both stroke and fill.
         this.push('S');
     },
-    /*Path Controls END*/
     /**
     *Append a rectangle to the current path as a complete subpath, with
 lower-left corner (x, y) and dimensions width and height in user
@@ -268,6 +267,19 @@ space. .
     fillPath: function () {
         //By default, paint both stroke and fill.
         this.push('F');
+    },
+    /**
+   *Append a rectangle to the current path as a complete subpath, with
+lower-left corner (x, y) and dimensions width and height in user
+space. .
+   *@inner
+   *@method
+   
+   *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
+   */
+    endPath: function () {
+        //By default, paint both stroke and fill.
+        this.push('n');
     },
     /*Path Controls END*/
     /**
@@ -371,25 +383,15 @@ name and no additional parameters (DeviceGray and DeviceRGB).
     *@method
     */
     addImage: function (imgXObj, x, y, w, h) {
-        if (!w && !h) {
-            w = -96;
-            h = -96;
-        }
-        if (w < 0) {
-            w = (-1) * imgXObj.width * 72 / w;
-        }
-        if (h < 0) {
-            h = (-1) * imgXObj.height * 72 / h;
-        }
-        if (w === 0) {
+        if (w == 0) {
             w = h * imgXObj.width / imgXObj.height;
         }
-        if (h === 0) {
+        if (h == 0) {
             h = w * imgXObj.height / imgXObj.width;
         }
 
         this.push('q');
-        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y + h).toFixed(2) + ' cm');
+        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y).toFixed(2) + ' cm');
         this.push('/' + imgXObj.name + ' Do');
         this.push('Q');
 
