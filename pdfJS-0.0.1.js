@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/15/2013 20:38
+* Compiled At: 03/16/2013 15:53
 ***********************************************/
 (function(_) {
 'use strict';
@@ -285,7 +285,6 @@ obj.prototype = {
     objectNumber: 0,
     generationNumber: 0
 };
-
 
 var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams,
     repeatableStreams, templateStreams, document) {
@@ -623,7 +622,6 @@ docTemplate.prototype = Object.create(stream.prototype, {
 
         this.repeatableElements = [];
         this.templateStreams = [];
-        this.svgs = [];
         this.activeAsync = 0;
         this.objectNumber = 0;
         this.currentPage = null;
@@ -695,7 +693,6 @@ docTemplate.prototype = Object.create(stream.prototype, {
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
                 buildObjs(this.repeatableElements),
-                buildObjs(this.svgs),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
@@ -862,7 +859,6 @@ docTemplate.prototype = Object.create(stream.prototype, {
         contentBuilder.push(o);
 
         contentBuilder.push('%%EOF');
-        console.log(contentBuilder.join('\n'));
         return contentBuilder.join('\n');
     };
 
@@ -1324,39 +1320,93 @@ svg.helpers = {
         ret = ret.replace(/([A-Za-z])(?=\d)/gm, '$1 '); 
         return ret;
     },
-    drawPath: function(path) {
+    drawPath: function (path) {
+        var self = this;
         var pArr = svg.helpers.sanitizePath(path).split(' '),
-            val, i, l;
+            val, i, l,
+            currentPoint = {},
+            lastCP = {};
+
+        var quadraticToCubicBezier = function (q0x, q0y, q1x, q1y, q2x, q2y) {
+            q0x = parseFloat(q0x);
+            q0y = parseFloat(q0y);
+            q1x = parseFloat(q1x);
+            q1y = parseFloat(q1y);
+            q2x = parseFloat(q2x).toFixed(2);
+            q2y = parseFloat(q2y).toFixed(2);
+            var xq1, yq1, xq2, yq2;
+            xq1 = (q1x * 2 / 3 + q0x / 3).toFixed(2);
+            yq1 = (q1y * 2 / 3 + q0y / 3).toFixed(2);
+            xq2 = (q1x * 2 / 3 + q2x / 3).toFixed(2);
+            yq2 = (q1y * 2 / 3 + q2y / 3).toFixed(2);
+
+            self.bezierCurve(xq1, yq1, xq2, yq2, q2x, q2y);
+            currentPoint = { x: q2x, y: q2y };
+            lastCP = { x: q1x, y: q1y };
+        };
+
+        var computePointReflection = function(pt, relativePt) {
+            return { x: 2 * (relativePt.x) - pt.x, y: 2 * (relativePt.y) - pt.y };
+        };
         for (i = 0, l = pArr.length; i < l; i++) {
             val = pArr[i];
-            switch(val.toUpperCase()) {
+            if (val !== 'T' && val !== 'Q' && val !== 't' && val !== 'q') {
+                lastCP = {};
+            }
+            switch(val) {
                 case 'M':
-                    this.moveTo(pArr[++i], pArr[++i]);
+                    while (parseFloat(pArr[i + 1])) {
+                        currentPoint.x = pArr[++i];
+                        currentPoint.y = pArr[++i];
+                        this.moveTo(currentPoint.x, currentPoint.y);
+                    }
                     break;
                 case 'L':
-                    this.lineTo(pArr[++i], pArr[++i]);
+                    while (parseFloat(pArr[i + 1])) {
+                        currentPoint.x = pArr[++i];
+                        currentPoint.y = pArr[++i];
+                        this.lineTo(currentPoint.x, currentPoint.y);
+                    }
                     break;
                 case 'H':
-                    this.lineTo(pArr[++i], 0);
+                    while (parseFloat(pArr[i + 1])) {
+                        currentPoint.x = pArr[++i];
+                        this.lineTo(currentPoint.x, 0);
+                    }
                     break;
                 case 'V':
-                    this.lineTo(0, pArr[++i]);
+                    while (parseFloat(pArr[i + 1])) {
+                        currentPoint.y = pArr[++i];
+                        this.lineTo(0, currentPoint.y);
+                    }
                     break;
                 case 'C':
-                    this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
-                    console.error('Path Not Supported');
+                    while (parseFloat(pArr[i + 1])) {
+                        this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i], currentPoint.x = pArr[++i], currentPoint.y = pArr[++i]);
+                    }
                     break;
                 case 'S':
-                    this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
-                    console.error('Path Not Supported');
+                    while (parseFloat(pArr[i + 1])) {
+                        this.bezierCurve(pArr[++i], pArr[++i], currentPoint.x = pArr[++i], currentPoint.y = pArr[++i]);
+                    }
                     break;
                 case 'Q':
-                    this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
-                    console.error('Path Not Supported');
+                    while (parseFloat(pArr[i + 1])) {
+                        quadraticToCubicBezier(currentPoint.x, currentPoint.y, pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
+                    }
                     break;
                 case 'T':
-                    this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
-                    console.error('Path Not Supported');
+                    var newCP;
+                    while (parseFloat(pArr[i + 1])) {
+                        if (lastCP.x || lastCP.y) {
+                            newCP = computePointReflection(lastCP, currentPoint);
+                        } else {
+                            newCP = {};
+                            newCP.x = currentPoint.x;
+                            newCP.y = currentPoint.y;
+                        }
+                        quadraticToCubicBezier(currentPoint.x, currentPoint.y, newCP.x, newCP.y, pArr[++i], pArr[++i]);
+                    }
                     break;
                 case 'A':
                     i += 4;
@@ -1376,23 +1426,29 @@ svg.helpers = {
                 this.lineWidth(value);
                 break;
             case 'stroke':
-                this.strokeColor(0);
+                if (value.toLowerCase() !== 'none') {
+                    this.strokeColor(0);
+                }
                 break;
             case 'fill':
-                this.fillColor(0);
+                if (value.toLowerCase() !== 'none') {
+                    this.fillColor(0);
+                }
                 break;
         }
     },
     paintSvg: function (attrs, paintIfEmpty) {
         var fill = attrs['fill'],
             stroke = attrs['stroke'];
-        if (fill && stroke) {
+        var isFillNone = fill ? fill.value.toLowerCase() === 'none' : false;
+        var isStrokeNone = stroke ? stroke.value.toLowerCase() === 'none' : false;
+        if (fill && stroke && !isFillNone && !isStrokeNone) {
             this.paintPath();
-        } else if (fill) {
+        } else if (fill && !isFillNone) {
             this.paintPath('f');
-        } else if (stroke) {
-            this.paintPath('f');
-        } else if (paintIfEmpty) {
+        } else if (stroke && !isStrokeNone) {
+            this.paintPath('s');
+        } else if (paintIfEmpty && !fill && !stroke) {
             this.paintPath();
         }
     }
@@ -1427,9 +1483,6 @@ var svgOperators = {
             switch(name) {
                 case 'd':
                     svg.helpers.drawPath.call(this, item.value);
-                    break;
-                default:
-                    console.error(item.name + ' not supported');
                     break;
             }
             console.log(item.name + ' = ' + item.value);
