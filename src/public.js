@@ -26,6 +26,7 @@ var pdfJS = {
             newImage: function () { return pdf.newImage.apply(pdf, arguments); }
         };
     },
+    svg: svg,
     obj: obj,
     pageTreeNode: pageTreeNode,
     utils: utils,

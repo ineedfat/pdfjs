@@ -2,7 +2,7 @@
 * pdfJS JavaScript Library
 * Authors: https://github.com/ineedfat/pdfjs
 * License: MIT (http://www.opensource.org/licenses/mit-license.php)
-* Compiled At: 03/11/2013 19:06
+* Compiled At: 03/15/2013 20:38
 ***********************************************/
 (function(_) {
 'use strict';
@@ -39,7 +39,8 @@ var graphicOperators = {
     
     */
     translate: function (tx, ty) {
-        this.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
+        
+        this.push('1 0 0 1 ' + parseFloat(tx).toFixed(2) + ' ' + parseFloat(ty).toFixed(2) + ' cm');
     },
     /**
     
@@ -50,7 +51,7 @@ var graphicOperators = {
     
     */
     scale: function (sx, sy) {
-        this.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
+        this.push(parseFloat(sx).toFixed(2) + ' 0 0 ' + parseFloat(sy).toFixed(2) + ' 0 0 cm');
     },
     /**
     
@@ -60,8 +61,8 @@ var graphicOperators = {
     
     */
     rotate: function (theta) {
-        var cos = Math.cos(theta),
-            sin = Math.sin(theta);
+        var cos = Math.cos(theta).toFixed(2),
+            sin = Math.sin(theta).toFixed(2);
         this.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
     },
     /**
@@ -73,7 +74,7 @@ var graphicOperators = {
    
    */
     skew: function (alphaX, betaY) {
-        this.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
+        this.push('1 ' + Math.tan(alphaX).toFixed(2) + ' ' + Math.tan(betaY).toFixed(2) + ' 1 0 0 cm');
     },
     /**
     
@@ -85,7 +86,7 @@ var graphicOperators = {
     
     */
     lineWidth: function (width) {
-        this.push(width + ' w');
+        this.push(parseFloat(width).toFixed(2) + ' w');
     },
     /**
     
@@ -183,7 +184,7 @@ path. .
     *@param {int} y
     */
     moveTo: function (x, y) {
-        if (arguments.length != 4) {
+        if (arguments.length != 2) {
             throw 'Invalid new path parameters';
         }
         var args = Array.prototype.slice.call(arguments);
@@ -199,7 +200,7 @@ path. .
     *@param {int} y
     */
     lineTo: function (x, y) {
-        if (arguments.length != 4) {
+        if (arguments.length != 2) {
             throw 'Invalid straight line  parameters';
         }
         var args = Array.prototype.slice.call(arguments);
@@ -418,11 +419,20 @@ name and no additional parameters (DeviceGray and DeviceRGB).
         }
 
         this.push('q');
-        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y).toFixed(2) + ' cm');
+        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + y.toFixed(2) + ' cm');
         this.push('/' + imgXObj.name + ' Do');
         this.push('Q');
 
         return this;
+    },
+    addSvg: function (svgObj, x, y, sx, sy) {
+        if (!sx && !sy) {
+            sx = sy = 1;
+        }
+        this.pushState();
+        this.push(sx.toFixed(2) + ' 0 0 ' + (-1 * sy.toFixed(2)) + ' ' + x.toFixed(2) + ' ' + (y + this.doc.settings.dimension[1]).toFixed(2) + ' cm');
+        this.push.apply(this, svgObj.content);
+        this.popState();
     }
 };
 /**
@@ -649,6 +659,7 @@ obj.prototype = {
     objectNumber: 0,
     generationNumber: 0
 };
+
 /**
 *Initialize new pageNode object.
 *@classdesc Representing a page in a PDF document.
@@ -1167,6 +1178,7 @@ docTemplate.prototype = Object.create(stream.prototype, {
 
         this.repeatableElements = [];
         this.templateStreams = [];
+        this.svgs = [];
         /**
         *Number of active async calls such as adding a new image. TODO: make this field private.
         *@Type int
@@ -1317,6 +1329,7 @@ docTemplate.prototype = Object.create(stream.prototype, {
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
                 buildObjs(this.repeatableElements),
+                buildObjs(this.svgs),
                 this.resObj.out(),
                 this.infoObj.out(),
                 this.catalogObj.out()
@@ -1516,7 +1529,7 @@ docTemplate.prototype = Object.create(stream.prototype, {
         contentBuilder.push('%%EOF');
         
         
-        //console.log(contentBuilder.join('\n'));
+        console.log(contentBuilder.join('\n'));
         return contentBuilder.join('\n');
     };
 //Create root pageTreeNode before calling catalog.
@@ -1777,7 +1790,7 @@ var sanitize = function(text) {
     return text.replace(sanitizeRegex, '\\$1');
 };
 
-var removeEmptyElement = function (arr) {
+var removeEmptyElement = function(arr) {
     var i, l, value, ret = [];
     for (i = 0, l = arr.length; i < l; i++) {
         value = arr[i];
@@ -1786,7 +1799,13 @@ var removeEmptyElement = function (arr) {
         }
     }
     return ret;
-}
+};
+
+var funcNameRegex = /function (.{1,})\(/;
+var getInstanceType = function (o) {
+    var results = (funcNameRegex).exec(o.constructor.toString());
+    return (results && results.length > 1) ? results[1] : "";
+};
 
 var checkValidRect = function (rect) {
     if (!rect || typeof rect !== 'object' || rect.length !== 4) {
@@ -2123,6 +2142,181 @@ var getJpegSize = function (imgData) {
         }
     }
 };
+var svg = function (svgStr) {
+    var self = this;
+
+    this.content = [];
+
+    if (svgStr) {
+        this.setSvg(svgStr);
+    }
+};
+
+svg.helpers = {
+    sanitizePath: function(path) {
+        var ret = path.replace(/\s{2,}/gm, ' '); //replace unnecessary white spaces;
+        ret = ret.replace(/([A-Za-z])(?=\d)/gm, '$1 '); //separate letter from numbers;
+        return ret;
+    },
+    drawPath: function(path) {
+        var pArr = svg.helpers.sanitizePath(path).split(' '),
+            val, i, l;
+        for (i = 0, l = pArr.length; i < l; i++) {
+            val = pArr[i];
+            switch(val.toUpperCase()) {
+                case 'M':
+                    this.moveTo(pArr[++i], pArr[++i]);
+                    break;
+                case 'L':
+                    this.lineTo(pArr[++i], pArr[++i]);
+                    break;
+                case 'H':
+                    this.lineTo(pArr[++i], 0);
+                    break;
+                case 'V':
+                    this.lineTo(0, pArr[++i]);
+                    break;
+                case 'C':
+                    this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
+                    console.error('Path Not Supported');
+                    break;
+                case 'S':
+                    this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
+                    console.error('Path Not Supported');
+                    break;
+                case 'Q':
+                    this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
+                    console.error('Path Not Supported');
+                    break;
+                case 'T':
+                    this.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
+                    console.error('Path Not Supported');
+                    break;
+                case 'A':
+                    i += 4;
+                    console.error('Path Not Supported');
+                    break;
+                case 'Z':
+                    this.close();
+                    
+                    break;
+                default:
+                    throw 'Invalid Path String!';
+            }
+        }
+    },
+    setGenericOpitons: function(name, value) {
+        switch(name) {
+            case 'stroke-width':
+                this.lineWidth(value);
+                break;
+            case 'stroke':
+                //TODO: Convert color name into RGB.
+                this.strokeColor(0);
+                break;
+            case 'fill':
+                //TODO: Convert color name into RGB.
+                this.fillColor(0);
+                break;
+        }
+    },
+    paintSvg: function (attrs, paintIfEmpty) {
+        var fill = attrs['fill'],
+            stroke = attrs['stroke'];
+        
+        if (fill && stroke) {
+            this.paintPath();
+        } else if (fill) {
+            this.paintPath('f');
+        } else if (stroke) {
+            this.paintPath('f');
+        } else if (paintIfEmpty) {
+            this.paintPath();
+        }
+    }
+};
+
+
+var svgOperators = {
+    SVGSVGElement: 'skip',
+    SVGCircleElement: function(circle) {
+        var attrs = circle.attributes,
+            i, item, 
+            r = parseInt(attrs['r'].value).toFixed(2),
+            x = attrs['cx'] ? parseInt(attrs['cx'].value).toFixed(2) : 0,
+            y = attrs['cy'] ? parseInt(attrs['cy'].value).toFixed(2) : 0,
+            sin33Dot31 = (0.5522422 * r).toFixed(2); // sine of 33 deg 31 sec
+        this.translate(x, y);
+        this.moveTo(0, -1 * r);
+        this.bezierCurve(sin33Dot31, -1 * r, r, -1 * sin33Dot31, r, 0);
+        this.bezierCurve(r, sin33Dot31, sin33Dot31, r, 0, r);
+        this.bezierCurve(-1 * sin33Dot31, r, -1 * r, sin33Dot31, -1 * r, 0);
+        this.bezierCurve(-1 * r, -1 * sin33Dot31, -1 * sin33Dot31, -1 * r, 0, -1 * r);
+        
+        for (i = 0; item = attrs[i]; i++) {
+            svg.helpers.setGenericOpitons.call(this, item.name.toLowerCase(), item.value);
+            console.log(item.name + ' = ' + item.value);
+        }
+        svg.helpers.paintSvg.call(this, attrs);
+    },
+    SVGPathElement: function(path) {
+        var attrs = path.attributes,
+            i, item, name;
+        for (i = 0; item = attrs[i]; i++) {
+            name = item.name.toLowerCase();
+            svg.helpers.setGenericOpitons.call(this, name, item.value);
+            switch(name) {
+                case 'd':
+                    svg.helpers.drawPath.call(this, item.value);
+                    break;
+                
+                default:
+                    console.error(item.name + ' not supported');
+                    break;
+            }
+            console.log(item.name + ' = ' + item.value);
+        }
+        svg.helpers.paintSvg.call(this, attrs, true);
+    }
+};
+
+
+var parseSVG = function (svg) {
+    console.log(svg);
+    var opt = svgOperators[getInstanceType(svg)];
+    if (!opt) {
+        console.error('Not Supported SVGElement: ' + getInstanceType(svg));
+    }
+    if (opt !== 'skip') {
+        this.pushState();
+        opt.call(this, svg);
+        this.popState();
+    }
+    //Recursively parse the child nodes.
+    for (var i = 0, item; item = svg.childNodes[i]; i++) {
+        if (item instanceof SVGElement) {
+            parseSVG.call(this, item);
+        }
+    }
+};
+
+svg.prototype = {
+    setSvg: function(svg) {
+        var pSvg;
+        if (svg instanceof SVGSVGElement) {
+            var pSvg = parseSVG.call(this, svg);
+        } else {
+            throw 'Element is not an SVGSVGElement';
+        }
+    },
+    push: function (args) {
+        Array.prototype.push.apply(this.content, arguments);
+        return this;
+    }
+};
+
+mixin(svg, textOperators);
+mixin(svg, graphicOperators);
 //Public
 /**
 @namespace
@@ -2151,6 +2345,7 @@ var pdfJS = {
             newImage: function () { return pdf.newImage.apply(pdf, arguments); }
         };
     },
+    svg: svg,
     obj: obj,
     pageTreeNode: pageTreeNode,
     utils: utils,

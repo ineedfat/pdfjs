@@ -3,7 +3,7 @@ var sanitize = function(text) {
     return text.replace(sanitizeRegex, '\\$1');
 };
 
-var removeEmptyElement = function (arr) {
+var removeEmptyElement = function(arr) {
     var i, l, value, ret = [];
     for (i = 0, l = arr.length; i < l; i++) {
         value = arr[i];
@@ -12,7 +12,13 @@ var removeEmptyElement = function (arr) {
         }
     }
     return ret;
-}
+};
+
+var funcNameRegex = /function (.{1,})\(/;
+var getInstanceType = function (o) {
+    var results = (funcNameRegex).exec(o.constructor.toString());
+    return (results && results.length > 1) ? results[1] : "";
+};
 
 var checkValidRect = function (rect) {
     if (!rect || typeof rect !== 'object' || rect.length !== 4) {

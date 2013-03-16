@@ -12,7 +12,8 @@ var graphicOperators = {
     
     */
     translate: function (tx, ty) {
-        this.push('1 0 0 1 ' + tx + ' ' + ty + ' cm');
+        
+        this.push('1 0 0 1 ' + parseFloat(tx).toFixed(2) + ' ' + parseFloat(ty).toFixed(2) + ' cm');
     },
     /**
     
@@ -23,7 +24,7 @@ var graphicOperators = {
     
     */
     scale: function (sx, sy) {
-        this.push(sx + ' 0 0 ' + sy + ' 0 0 cm');
+        this.push(parseFloat(sx).toFixed(2) + ' 0 0 ' + parseFloat(sy).toFixed(2) + ' 0 0 cm');
     },
     /**
     
@@ -33,8 +34,8 @@ var graphicOperators = {
     
     */
     rotate: function (theta) {
-        var cos = Math.cos(theta),
-            sin = Math.sin(theta);
+        var cos = Math.cos(theta).toFixed(2),
+            sin = Math.sin(theta).toFixed(2);
         this.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
     },
     /**
@@ -46,7 +47,7 @@ var graphicOperators = {
    
    */
     skew: function (alphaX, betaY) {
-        this.push('1 ' + Math.tan(alphaX) + ' ' + Math.tan(betaY) + ' 1 0 0 cm');
+        this.push('1 ' + Math.tan(alphaX).toFixed(2) + ' ' + Math.tan(betaY).toFixed(2) + ' 1 0 0 cm');
     },
     /**
     
@@ -58,7 +59,7 @@ var graphicOperators = {
     
     */
     lineWidth: function (width) {
-        this.push(width + ' w');
+        this.push(parseFloat(width).toFixed(2) + ' w');
     },
     /**
     
@@ -156,7 +157,7 @@ path. .
     *@param {int} y
     */
     moveTo: function (x, y) {
-        if (arguments.length != 4) {
+        if (arguments.length != 2) {
             throw 'Invalid new path parameters';
         }
         var args = Array.prototype.slice.call(arguments);
@@ -172,7 +173,7 @@ path. .
     *@param {int} y
     */
     lineTo: function (x, y) {
-        if (arguments.length != 4) {
+        if (arguments.length != 2) {
             throw 'Invalid straight line  parameters';
         }
         var args = Array.prototype.slice.call(arguments);
@@ -391,10 +392,19 @@ name and no additional parameters (DeviceGray and DeviceRGB).
         }
 
         this.push('q');
-        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + (y).toFixed(2) + ' cm');
+        this.push(w.toFixed(2) + ' 0 0 ' + h.toFixed(2) + ' ' + x.toFixed(2) + ' ' + y.toFixed(2) + ' cm');
         this.push('/' + imgXObj.name + ' Do');
         this.push('Q');
 
         return this;
+    },
+    addSvg: function (svgObj, x, y, sx, sy) {
+        if (!sx && !sy) {
+            sx = sy = 1;
+        }
+        this.pushState();
+        this.push(sx.toFixed(2) + ' 0 0 ' + (-1 * sy.toFixed(2)) + ' ' + x.toFixed(2) + ' ' + (y + this.doc.settings.dimension[1]).toFixed(2) + ' cm');
+        this.push.apply(this, svgObj.content);
+        this.popState();
     }
 };

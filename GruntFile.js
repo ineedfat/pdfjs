@@ -119,13 +119,13 @@
           'src/internals/info.js',
           'src/internals/resources.js',
           'src/internals/optionsConverter.js',
-
           //Supporting classes
           'src/utils.js',
 
 
           //plugins 
           'src/internals/addImage.js',
+          'src/internals/svg.js',
 
           //Public exposure
           'src/public.js'
