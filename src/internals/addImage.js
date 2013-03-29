@@ -119,7 +119,7 @@ var getJpegSize = function (imgData) {
             return [width, height];
         } else {
             i += 2;
-            blockLength = imgData.charCodeAt(i) * 256 + imgData.charCodeAt(i + 1)
+            blockLength = imgData.charCodeAt(i) * 256 + imgData.charCodeAt(i + 1);
         }
     }
 };

@@ -17,27 +17,27 @@
                 }
                 break;
             case 'mediabox':
-                if (checkValidRect(obj)) {
+                if (utils.checkValidRect(obj)) {
                     ret.push('/MediaBox [' + obj.join(' ') + ']');
                 }
                 break;
             case 'cropbox':
-                if (checkValidRect(obj)) {
+                if (utils.checkValidRect(obj)) {
                     ret.push('/CropBox [' + obj.join(' ') + ']');
                 }
                 break;
             case 'bleedbox':
-                if (checkValidRect(obj)) {
+                if (utils.checkValidRect(obj)) {
                     ret.push('/BleedBox [' + obj.join(' ') + ']');
                 }
                 break;
             case 'trimbox':
-                if (checkValidRect(obj)) {
+                if (utils.checkValidRect(obj)) {
                     ret.push('/TrimBox [' + obj.join(' ') + ']');
                 }
                 break;
             case 'artbox':
-                if (checkValidRect(obj)) {
+                if (utils.checkValidRect(obj)) {
                     ret.push('/ArtBox [' + obj.join(' ') + ']');
                 }
                 break;
@@ -115,13 +115,13 @@ var pageTreeOptionsConverter = function (options) {
                 break;
             //Inheritable
             case 'mediabox':
-                if (checkValidRect(obj)) {
+                if (utils.checkValidRect(obj)) {
                     ret.push('/MediaBox [' + obj.join(' ') + ']');
                 }
                 break;
                 //Inheritable
             case 'cropbox':
-                if (checkValidRect(obj)) {
+                if (utils.checkValidRect(obj)) {
                     ret.push('/CropBox [' + obj.join(' ') + ']');
                 }
                 break;

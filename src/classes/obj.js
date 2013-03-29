@@ -42,7 +42,7 @@ obj.prototype = {
         sb = sb.concat(this.body);
         sb.push('endobj');
 
-        return sb.join('\n')
+        return sb.join('\n');
     },
     body: [],
     objectNumber: 0,

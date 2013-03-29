@@ -23,10 +23,10 @@ var pdfJS = {
             output: function () { return pdf.output.apply(pdf, arguments); },
             outputAsync: function () { return pdf.outputAsync.apply(pdf, arguments); },
             addFont: function () { return pdf.addFont.apply(pdf, arguments); },
-            newImage: function () { return pdf.newImage.apply(pdf, arguments); }
+            newImage: function () { return pdf.newImage.apply(pdf, arguments); },
+            svgReader: function () { return pdf.svgReader.apply(pdf, arguments); }
         };
     },
-    svg: svg,
     obj: obj,
     pageTreeNode: pageTreeNode,
     utils: utils,

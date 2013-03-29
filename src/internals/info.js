@@ -22,11 +22,11 @@
     infoObj.body.push('/CreationDate (D:' +
         [
             created.getFullYear(),
-            padd2(created.getMonth() + 1),
-            padd2(created.getDate()),
-            padd2(created.getHours()),
-            padd2(created.getMinutes()),
-            padd2(created.getSeconds())
+            utils.padd2(created.getMonth() + 1),
+            utils.padd2(created.getDate()),
+            utils.padd2(created.getHours()),
+            utils.padd2(created.getMinutes()),
+            utils.padd2(created.getSeconds())
         ].join('') +
         ')'
     );

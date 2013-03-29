@@ -12,8 +12,8 @@ var graphicOperators = {
     
     */
     translate: function (tx, ty) {
-        
-        this.push('1 0 0 1 ' + parseFloat(tx).toFixed(2) + ' ' + parseFloat(ty).toFixed(2) + ' cm');
+        var args = utils.toPrecision(arguments);
+        this.push('1 0 0 1 ' + args[0] + ' ' + args[1] + ' cm');
     },
     /**
     
@@ -24,7 +24,8 @@ var graphicOperators = {
     
     */
     scale: function (sx, sy) {
-        this.push(parseFloat(sx).toFixed(2) + ' 0 0 ' + parseFloat(sy).toFixed(2) + ' 0 0 cm');
+        var args = utils.toPrecision(arguments);
+        this.push(args[0] + ' 0 0 ' + args[1] + ' 0 0 cm');
     },
     /**
     
@@ -34,9 +35,9 @@ var graphicOperators = {
     
     */
     rotate: function (theta) {
-        var cos = Math.cos(theta).toFixed(2),
-            sin = Math.sin(theta).toFixed(2);
-        this.push(cos + ' ' + sin + ' -' + sin + ' ' + cos + ' 0 0 cm');
+        var cos = parseFloat(Math.cos(theta).toFixed(2)),
+            sin = parseFloat(Math.sin(theta).toFixed(2));
+        this.push(cos + ' ' + sin + ' ' + -sin + ' ' + cos + ' 0 0 cm');
     },
     /**
    
@@ -160,7 +161,7 @@ path. .
         if (arguments.length != 2) {
             throw 'Invalid new path parameters';
         }
-        var args = Array.prototype.slice.call(arguments);
+        var args = utils.toPrecision(arguments);
         this.push(args.join(' ') + ' m');
     },
     /**
@@ -176,7 +177,7 @@ path. .
         if (arguments.length != 2) {
             throw 'Invalid straight line  parameters';
         }
-        var args = Array.prototype.slice.call(arguments);
+        var args = utils.toPrecision(arguments);
         this.push(args.join(' ') + ' l');
     },
     /**
@@ -193,7 +194,8 @@ from the current point to the point (x3, y3), using the other pairs of points as
     *@param {int} y3
     */
     bezierCurve: function (x1, y1, x2, y2, x3, y3) {
-        var args = Array.prototype.slice.call(arguments);
+        var args = utils.toPrecision(arguments);
+        
         switch (arguments.length) {
             case 4:
                 this.push(args.join(' ') + ' v');
@@ -207,6 +209,15 @@ from the current point to the point (x3, y3), using the other pairs of points as
             default:
                 throw 'Invalid bezier curve parameters';
         }
+    },
+    ellipseArc: function(rx, ry, rot, laF, sF, x, y, sign) {
+        var flip = sign ? -1 : 1;
+        rx = Math.abs(rx).toFixed(2);
+        ry = Math.abs(ry).toFixed(2);
+        var lx = (0.5522422 * rx).toFixed(2),
+            ly = (0.5522422 * ry).toFixed(2);
+
+        this.bezierCurve(lx, flip * ry, rx, flip * ly, x, y);
     },
     /**
     *Close the current subpath by appending a straight line segment
@@ -307,7 +318,7 @@ space. .
         if (arguments.length != 4) {
             throw 'Invalid rectangle parameters';
         }
-        var args = Array.prototype.slice.call(arguments);
+        var args = utils.toPrecision(arguments);
         this.push(args.join(' ') + ' re');
     },
     /**
@@ -322,24 +333,35 @@ space. .
     
     */
     fillColor: function (colorValue1, colorValue2, colorValue3) {
+        var args = utils.toPrecision(arguments);
+        
         switch (arguments.length) {
             case 1:
-                if (this.activeFillCS !== 'DeviceGray') {
+                if (!this.activeFillCS) {
                     this.push('/DeviceGray cs');
                     this.activeFillCS = 'DeviceGray';
+                    this.push(args.join(' ') + ' sc');
+                }else if (this.activeFillCS === 'DeviceRGB') {
+                    this.push(args[0] + ' ' + args[0] + ' ' + args[0] + ' sc');
+                } else if (this.activeFillCS === 'DeviceGray') {
+                    this.push(args.join(' ') + ' sc');
                 }
                 break;
             case 3:
-                if (this.activeFillCS !== 'DeviceRGB') {
+                if (!this.activeFillCS) {
                     this.push('/DeviceRGB cs');
                     this.activeFillCS = 'DeviceRGB';
+                    this.push(args.join(' ') + ' sc');
+                }else if (this.activeFillCS === 'DeviceGray') {
+                    this.push(args[0] + ' sc');
+                }
+                else if (this.activeFillCS === 'DeviceRGB') {
+                    this.push(args.join(' ') + ' sc');
                 }
                 break;
             default:
                 throw ('Invalid color values');
         }
-        var args = Array.prototype.slice.call(arguments);
-        this.push(args.join(' ') + ' sc');
     },
     /**
     *Set the color space to use for stroking operations. The operand
@@ -352,24 +374,35 @@ name and no additional parameters (DeviceGray and DeviceRGB).
     *@method
     */
     strokeColor: function (colorValue1, colorValue2, colorValue3) {
+        var args = utils.toPrecision(arguments);
         switch (arguments.length) {
             case 1:
-                if (this.activeStrokeCS !== 'DeviceGray') {
+                if (!this.activeStrokeCS) {
                     this.push('/DeviceGray CS');
                     this.activeStrokeCS = 'DeviceGray';
+                    this.push(args.join(' ') + ' SC');
+                }else if (this.activeStrokeCS === 'DeviceRGB') {
+                    this.push(args[0] + ' ' + args[0] + ' ' + args[0] + ' SC');
+                } else if (this.activeStrokeCS === 'DeviceGray') {
+                    this.push(args.join(' ') + ' SC');
                 }
                 break;
             case 3:
-                if (this.activeStrokeCS !== 'DeviceRGB') {
+                if (!this.activeStrokeCS) {
                     this.push('/DeviceRGB CS');
                     this.activeStrokeCS = 'DeviceRGB';
+                    this.push(args.join(' ') + ' SC');
+                } else if (this.activeStrokeCS === 'DeviceGray') {
+                    this.push(args[0] + ' SC');
                 }
+                else if (this.activeStrokeCS === 'DeviceRGB') {
+                    this.push(args.join(' ') + ' SC');
+                }
+                break;
             default:
                 throw ('Invalid color values');
         }
 
-        var args = Array.prototype.slice.call(arguments);
-        this.push(args.join(' ') + ' SC');
     },
     /*Color Controls End*/
     /**
@@ -397,14 +430,5 @@ name and no additional parameters (DeviceGray and DeviceRGB).
         this.push('Q');
 
         return this;
-    },
-    addSvg: function (svgObj, x, y, sx, sy) {
-        if (!sx && !sy) {
-            sx = sy = 1;
-        }
-        this.pushState();
-        this.push(sx.toFixed(2) + ' 0 0 ' + (-1 * sy.toFixed(2)) + ' ' + x.toFixed(2) + ' ' + (y + this.doc.settings.dimension[1]).toFixed(2) + ' cm');
-        this.push.apply(this, svgObj.content);
-        this.popState();
     }
 };

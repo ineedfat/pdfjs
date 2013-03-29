@@ -32,7 +32,7 @@ var textOperators = {
     *@param {int} y Translate by y pt in y direction. from current text coordinate
     */
     textPosition: function (x, y) {
-        this.push(x + ' ' + y + ' Td');
+        this.push(parseFloat(x).toFixed(2) + ' ' + parseFloat(y).toFixed(2) + ' Td');
     },
     /**
     *Character Spacing
@@ -127,11 +127,11 @@ baseline up and opposite for negative values.
     print: function (textString, wordSpace, charSpace) {
         if (arguments.length === 1) {
             this.push('(' +
-                this.activeFont.charactersEncode(sanitize(textString)) + ') Tj');
+                this.activeFont.charactersEncode(utils.sanitize(textString)) + ') Tj');
         }
         else {
             this.push(wordSpace + ' ' + charSpace + ' (' +
-                this.activeFont.charactersEncode(sanitize(textString)) + ') "');
+                this.activeFont.charactersEncode(utils.sanitize(textString)) + ') "');
         }
     },
     /**

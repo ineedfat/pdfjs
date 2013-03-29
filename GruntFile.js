@@ -112,6 +112,7 @@
           'src/classes/font.js',
           'src/classes/imageXObject.js',
           'src/classes/docTemplate.js',
+          'src/classes/ellipticalArc.js',
 
           //PDF core parts
           'src/internals/core.js',
@@ -119,13 +120,20 @@
           'src/internals/info.js',
           'src/internals/resources.js',
           'src/internals/optionsConverter.js',
+          'src/internals/enums.js',
           //Supporting classes
           'src/utils.js',
 
 
+
           //plugins 
           'src/internals/addImage.js',
-          'src/internals/svg.js',
+            
+          'src/internals/svg/svgReader.prototype.parser.js',
+          'src/internals/svg/svgReader.js',
+          'src/internals/svg/svgReader.utils.js',
+          'src/internals/svg/svgReader.elements.js',
+
 
           //Public exposure
           'src/public.js'

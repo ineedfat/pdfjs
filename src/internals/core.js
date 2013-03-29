@@ -49,13 +49,13 @@
         *@property {Object} settings.documentProperties.creator - creator
         */
         this.settings = {
-            dimension: utils.paperFormat['letter'],
+            dimension: enums.paperFormat['letter'],
             documentProperties: { 'title': '', 'subject': '', 'author': '', 'keywords': '', 'creator': '' }
         };
         
         //Determine page dimensions.
         if (typeof format === 'string') {
-            self.settings.dimension = utils.paperFormat[format.toLowerCase()].slice();
+            self.settings.dimension = enums.paperFormat[format.toLowerCase()].slice();
         } else {
             self.settings.dimension = format.slice().splice(0, 2);
         }
@@ -162,7 +162,7 @@
         */
         output: function(type) {
 
-            var content = removeEmptyElement([
+            var content = utils.removeEmptyElement([
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
@@ -275,6 +275,14 @@
             var template = new docTemplate(this);
             this.templateStreams.push(template);
             return template;
+        },
+        svgReader: function (stream) {
+            var parser = new svgReader(stream, this);
+            return {
+                drawSvg: function(args) {
+                    parser.drawSvg.apply(parser, arguments);
+                }
+            };
         }
     };
 
@@ -350,7 +358,7 @@
         for (i = 0; i < objectCount; i++) {
             //TODO: take account for free objects just in case user screw up by allocating an object doesn't use it 
             //within the document.
-            contentBuilder.push(padd10(offsets[i].offset) + ' 00000 n ');
+            contentBuilder.push(utils.padd10(offsets[i].offset) + ' 00000 n ');
         }
         
         // Trailer

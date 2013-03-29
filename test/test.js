@@ -31,12 +31,16 @@ var generatePDfWithImage = function () {
 
 var generatePDfWithSVG = function () {
     var sObj = $('svg');
-    var doc = new pdfJS.doc('letter', ' portrait');
+    sObj.find('*[isTracker=true]').remove();
+    //sObj.find('*[fill-opacity]').remove();
+
+    var doc = new pdfJS.doc([3000, 1000], ' portrait');
     var p = doc.addPage().currentStream;
-    var svg = new pdfJS.svg(sObj[0]);
-    p.fillColor(0);
-    p.strokeColor(0);
-    p.addSvg(svg, 0, 0, 1, 1);
+    var reader = doc.svgReader(p);
+    p.fillColor(0, 0, 0);
+    p.strokeColor(0, 0, 0);
+    p.translate(0, 790);
+    reader.drawSvg(sObj[0]);
     doc.outputAsync('datauristring', function (data) {
         window.open(data, "pdfWindow", "height: 700, width: 500");
     });
