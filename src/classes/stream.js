@@ -11,6 +11,7 @@ var stream = function (objectNumber, generationNumber, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
+    statesTracker.call(this);
     /**
         *The content of this stream.
         *@Type [string]
@@ -89,3 +90,4 @@ stream.prototype = Object.create(obj.prototype, {
 });
 mixin(stream, textOperators);
 mixin(stream, graphicOperators);
+mixin(stream, statesTracker.prototype);

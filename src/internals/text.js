@@ -14,6 +14,7 @@ var textOperators = {
     beginText: function (name, style, size) {
         this.push('BT');
         this.fontStyle(name, style, size);
+        this.pushTextState();
     },
     /**
     End text operator.
@@ -23,6 +24,7 @@ var textOperators = {
     endText: function () {
         this.push('ET');
         this.activeFont = undefined;
+        this.popTextState();
     },
     /**
     *Move from current text coordinate.
@@ -32,7 +34,12 @@ var textOperators = {
     *@param {int} y Translate by y pt in y direction. from current text coordinate
     */
     textPosition: function (x, y) {
-        this.push(parseFloat(x).toFixed(2) + ' ' + parseFloat(y).toFixed(2) + ' Td');
+        var args = utils.toPrecision(arguments);
+        if (!args[0] && !args[1]) {
+            return;
+        }
+        this.textStateTranslate(args[0], args[1]);
+        this.push(args[0] + ' ' + args[1] + ' Td');
     },
     /**
     *Character Spacing
@@ -114,7 +121,12 @@ var textOperators = {
 baseline up and opposite for negative values.
     */
     rise: function (rise) {
-        this.push(rise + ' Ts');
+        var args = utils.toPrecision(arguments);
+        if (!args[0] && !args[1]) {
+            return;
+        }
+        this.textStateTranslate(0, args[0]);
+        this.push(args[0] + ' Ts');
     },
     /**
     *Print text

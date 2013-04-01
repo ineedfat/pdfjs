@@ -105,6 +105,7 @@
           'src/internals/text.js',
 
           //Classes
+          'src/classes/statesTracker.js',
           'src/classes/obj.js',
           'src/classes/pageNode.js',
           'src/classes/pageTreeNode.js',

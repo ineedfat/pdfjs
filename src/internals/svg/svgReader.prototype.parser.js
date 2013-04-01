@@ -109,7 +109,7 @@
         var i, item;
         for (i = 0; item = attrs[i]; i++) {
             this.setGenericOption(item.name.toLowerCase(), item.value);
-            console.log(item.name + ' = ' + item.value);
+            //console.log(item.name + ' = ' + item.value);
         }
     },
     setGenericOption: function (name, value) {
@@ -208,7 +208,7 @@
         var i, item;
         for (i = 0; item = attrs[i]; i++) {
             this.setCssOption( item.name.toLowerCase(), item.value);
-            console.log(item.name + ' = ' + item.value);
+            //console.log(item.name + ' = ' + item.value);
         }
     },
     setCssOption: function (name, value) {
@@ -232,40 +232,39 @@
         var i, item;
         for (i = 0; item = attrs[i]; i++) {
             this.setTextOption( item.name.toLowerCase(), item.value);
-            console.log(item.name + ' = ' + item.value);
+            //console.log(item.name + ' = ' + item.value);
         }
     },
     setTextOption: function (name, value) {
         if (!name) {
             return;
         }
-        var temp;
+        var temp, graphicState, textState;
+        
         switch (name.toLowerCase()) {
             //TODO support list coordinates
             case 'x':
-                if (this.textCurrentPoint.x) {
-                    this.stream.translate(-this.textCurrentPoint.x, 0);
-                }
-                this.textCurrentPoint.x = parseFloat(parseFloat(value).toFixed(2));
-                this.stream.translate(this.textCurrentPoint.x, 0);
+                textState = this.stream.getCurrentTextState();
+                graphicState = this.getCurrentSvgElement();
+                temp = parseFloat(parseFloat(value).toFixed(2));
+                this.stream.textPosition(
+                    temp - (textState.tCpX - (svgReader.utils.computeTextOffsetByAnchor
+                        (graphicState.element, graphicState['textAnchor']))), 0);
                 break;
             case 'y':
-                if (this.textCurrentPoint.y) {
-                    this.stream.translate(0, -this.textCurrentPoint.y);
-                }
-                this.textCurrentPoint.y = parseFloat(parseFloat(value).toFixed(2));
-                this.stream.translate(0, this.textCurrentPoint.y);
-
+                textState = this.stream.getCurrentTextState();
+                temp = parseFloat(parseFloat(value).toFixed(2));
+                this.stream.textPosition(0, -temp - textState.tCpY);
                 break;
             case 'dx':
                 temp = parseFloat(parseFloat(value).toFixed(2));
-                this.textCurrentPoint.x += temp;
-                this.stream.translate(this.textCurrentPoint.x, this.textCurrentPoint.y);
+                graphicState = this.getCurrentSvgElement();
+                this.stream.textPosition(temp - (svgReader.utils.computeTextOffsetByAnchor
+                        (graphicState.element, graphicState['textAnchor'])), 0);
                 break;
             case 'dy':
                 temp = parseFloat(parseFloat(value).toFixed(2));
-                this.textCurrentPoint.y += temp;
-                this.stream.translate(this.textCurrentPoint.x, this.textCurrentPoint.y);
+                this.stream.textPosition(0, -temp);
                 break;
             case 'rotate':
                 this.stream.rotate(parseFloat(value).toFixed(2));
@@ -273,16 +272,12 @@
                 //TODO: support 'textLength';
                 //TODO: support 'lengthAdjust';
             case 'text-anchor':
-                switch (value.toLowerCase()) {
-                    case 'middle':
-                        this.stream.textPosition(-(this.getCurrentSvgElement().element.getComputedTextLength() / 2), 0);
-                        break;
-                    case 'end':
-                        this.stream.textPosition(-this.getCurrentSvgElement().element.getComputedTextLength(), 0);
-                        break;
-
+                graphicState = this.getCurrentSvgElement();
+                graphicState['textAnchor'] = value.toLowerCase();
+                var offset = svgReader.utils.computeTextOffsetByAnchor(graphicState.element);
+                if (offset) {
+                    this.stream.textPosition(offset, 0);
                 }
-                break;
         }
     }
 };

@@ -13,7 +13,12 @@ var graphicOperators = {
     */
     translate: function (tx, ty) {
         var args = utils.toPrecision(arguments);
+        if (!args[0] && !args[1]) {
+            return;
+        }
+        this.graphicStateTranslate(args[0], args[1]);
         this.push('1 0 0 1 ' + args[0] + ' ' + args[1] + ' cm');
+
     },
     /**
     
@@ -25,6 +30,9 @@ var graphicOperators = {
     */
     scale: function (sx, sy) {
         var args = utils.toPrecision(arguments);
+        if (args[0] == args[1] == 1)
+            return;
+        this.graphicStateScale(args[0], args[1]);
         this.push(args[0] + ' 0 0 ' + args[1] + ' 0 0 cm');
     },
     /**
@@ -133,6 +141,7 @@ exceeded, the join is converted from a miter to a bevel.
     */
     pushState: function () {
         this.push('q');
+        this.pushGraphicState();
     },
     /**
     *Restore the graphics state by removing the most recently saved state from
@@ -143,6 +152,7 @@ the stack and making it the current state .
     */
     popState: function () {
         this.push('Q');
+        this.popGraphicState();
     },
     /*Path Controls Begin*/
     /**
@@ -162,6 +172,7 @@ path. .
             throw 'Invalid new path parameters';
         }
         var args = utils.toPrecision(arguments);
+        this.graphicStateTranslate.apply(this, args);
         this.push(args.join(' ') + ' m');
     },
     /**
@@ -178,6 +189,7 @@ path. .
             throw 'Invalid straight line  parameters';
         }
         var args = utils.toPrecision(arguments);
+        this.graphicStateTranslate.apply(this, args);
         this.push(args.join(' ') + ' l');
     },
     /**
@@ -199,12 +211,15 @@ from the current point to the point (x3, y3), using the other pairs of points as
         switch (arguments.length) {
             case 4:
                 this.push(args.join(' ') + ' v');
+                this.graphicStateTranslate(x2, y2);
                 break;
             case 5:
                 this.push(args.slice(0, 4).join(' ') + ' y');
+                this.graphicStateTranslate(x2, y2);
                 break;
             case 6:
                 this.push(args.join(' ') + ' c');
+                this.graphicStateTranslate(x3, y3);
                 break;
             default:
                 throw 'Invalid bezier curve parameters';

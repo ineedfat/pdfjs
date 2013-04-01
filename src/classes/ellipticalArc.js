@@ -280,7 +280,7 @@
             this.y2 = this.cy + aCosEta2 * sinTheta + bSinEta2 * cosTheta;
         },
 
-        buildEllipticalArc: function (degree, threshold, stream) {
+        buildEllipticalArc: function (degree, threshold, out) {
             var cosTheta = Math.cos(this.theta);
             var sinTheta = Math.sin(this.theta);
             var found = false;
@@ -314,10 +314,10 @@
             var yBDot = -aSinEtaB + sinTheta + bCosEtaB * cosTheta;
             
             if (this.isPieSlice) {
-                stream.moveTo(this.cx, this.cy);
-                stream.lineTo( xB, yB);
+                out.stream.moveTo(this.cx, this.cy);
+                out.stream.lineTo( xB, yB);
             } else {
-                stream.moveTo( xB,  yB);
+                out.stream.moveTo( xB,  yB);
             }
             
             var t     = Math.tan(0.5 * dEta);
@@ -346,22 +346,22 @@
 
 
                 if (degree == 1) {
-                    stream.lineTo(xB, yB);
+                    out.stream.lineTo(xB, yB);
                 } else if (degree == 2) {
                     var k = (yBDot * (xB - xA) - xBDot * (yB - yA))
                         / (xADot * yBDot - yADot * xBDot);
-                    stream.quadTo((xA + k * xADot), (yA + k * yADot),
+                    out.stream.quadTo((xA + k * xADot), (yA + k * yADot),
                         xB, yB);
                 } else {
-                    stream.pushState();
-                    stream.fillColor(.5);
-                    stream.translate(0, 0);
-                    stream.beginText('F1', null, 22);
-                    stream.textPosition(xB, yB);
-                    stream.print((window.count ? ++window.count : (window.count = 1)).toString());
-                    stream.endText();
-                    stream.popState();
-                    stream.bezierCurve((xA + alpha * xADot), (yA + alpha * yADot),
+                    out.stream.pushState();
+                    out.stream.fillColor(.5);
+                    out.stream.translate(0, 0);
+                    out.stream.beginText('F1', null, 22);
+                    out.stream.textPosition(xB, yB);
+                    out.stream.print((window.count ? ++window.count : (window.count = 1)).toString());
+                    out.stream.endText();
+                    out.stream.popState();
+                    out.stream.bezierCurve((xA + alpha * xADot), (yA + alpha * yADot),
                         (xB - alpha * xBDot), (yB - alpha * yBDot),
                         xB, yB);
                 }
@@ -369,7 +369,7 @@
 
 
             if (this.isPieSlice) {
-                stream.close();
+                out.stream.close();
             }
         }
     };

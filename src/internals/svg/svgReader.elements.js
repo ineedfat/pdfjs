@@ -9,31 +9,45 @@
         //TODO Process text elements;
         this.stream.beginText();
         var attrs = textElement.attributes;
-        this.setGenericOptions( attrs);
-        this.setTextOptions( attrs);
+        this.setGenericOptions(attrs);
+        this.setTextOptions(attrs);
         if (!textElement.childElementCount && textElement.textContent) {
             this.stream.scale(1, -1);
             this.stream.print(textElement.textContent);
             this.stream.scale(1, -1);
         }
-        this.textCurrentPoint.x = this.textCurrentPoint.y = 0;
-        this.processChildNodes( textElement);
+        this.textCurrentPoint = { x: 0, y: 0 };
+        this.processChildNodes(textElement);
+
         this.stream.endText();
         this.states.textMode = false;
     },
     SVGTSpanElement: function (tSpanElement) {
+        this.stream.popState();
+        var temp = this.getCurrentSvgElement();
+        if (temp) {
+            if (temp.fill) {
+                this.stream.fillColor.call(this.stream, temp.fill.r, temp.fill.g, temp.fill.b);
+            }
+            if (temp.stroke) {
+                this.stream.fillColor.call(this.stream, temp.stroke.r, temp.stroke.g, temp.stroke.b);
+            }
+        }
         var attrs = tSpanElement.attributes;
         this.setGenericOptions( attrs);
         this.setTextOptions( attrs);
 
+        console.log(tSpanElement.textContent);
 
         if (tSpanElement.textContent) {
             this.stream.scale(1, -1);
             
             this.stream.print(tSpanElement.textContent);
-            this.textCurrentPoint.x += tSpanElement.getComputedTextLength();
+            this.stream.textPosition(tSpanElement.getComputedTextLength(), 0);
             this.stream.scale(1, -1);
         }
+
+        this.stream.pushState();
     },
     SVGCircleElement: function (circle) {
         var attrs = circle.attributes,

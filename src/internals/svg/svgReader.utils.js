@@ -21,9 +21,9 @@
 
         this.stream.bezierCurve(xq1, yq1, xq2, yq2, q2x, q2y);
         this.currentPoint = { x: q2x, y: q2y };
-        this.this.lastCP = { x: q1x, y: q1y };
+        this.lastCP = { x: q1x, y: q1y };
     },
-    computeArc: function(x0, y0, rx, ry, angle, largeArcFlag, sweepFlag, x, y, stream) {
+    computeArc: function(x0, y0, rx, ry, angle, largeArcFlag, sweepFlag, x, y) {
         //Computing arc based on SVG specification note. http://www.w3.org/TR/SVG/implnote.html#ArcImplementationNotes
 
         var dx2 = (x0 - x) / 2.0,
@@ -96,30 +96,30 @@
 
         angleExtent %= 360.0;
         angleStart %= 360.0;
-        stream.pushState();
-        stream.fillColor(.5);
-        stream.translate(0, 0);
-        stream.beginText('F1', null, 22);
-        stream.textPosition(cx, cy);
-        stream.print('Center');
-        stream.endText();
-        stream.popState();
-        stream.pushState();
-        stream.fillColor(.5);
-        stream.translate(0, 0);
-        stream.beginText('F1', null, 22);
-        stream.textPosition(x, y);
-        stream.print('End');
-        stream.endText();
-        stream.popState();
-        stream.pushState();
-        stream.fillColor(.5);
-        stream.translate(0, 0);
-        stream.beginText('F1', null, 22);
-        stream.textPosition(x0, y0);
-        stream.print('Start');
-        stream.endText();
-        stream.popState();
+        this.stream.pushState();
+        this.stream.fillColor(.5);
+        this.stream.translate(0, 0);
+        this.stream.beginText('F1', null, 22);
+        this.stream.textPosition(cx, cy);
+        this.stream.print('Center');
+        this.stream.endText();
+        this.stream.popState();
+        this.stream.pushState();
+        this.stream.fillColor(.5);
+        this.stream.translate(0, 0);
+        this.stream.beginText('F1', null, 22);
+        this.stream.textPosition(x, y);
+        this.stream.print('End');
+        this.stream.endText();
+        this.stream.popState();
+        this.stream.pushState();
+        this.stream.fillColor(.5);
+        this.stream.translate(0, 0);
+        this.stream.beginText('F1', null, 22);
+        this.stream.textPosition(x0, y0);
+        this.stream.print('Start');
+        this.stream.endText();
+        this.stream.popState();
         return {
             cx: cx,
             cy: cy,
@@ -172,5 +172,16 @@
     computePointReflection: function(pt, relativePt) {
         return { x: 2 * (relativePt.x) - pt.x, y: 2 * (relativePt.y) - pt.y };
     },
+    computeTextOffsetByAnchor: function (svgElement, textAnchor) {
+        if (!textAnchor)
+            return 0;
+        switch (textAnchor.toLowerCase()) {
+            case 'middle':
+                return -(svgElement.getComputedTextLength() / 2);
+            case 'end':
+                return -svgElement.getComputedTextLength();
+        }
+        return 0;
+    }
     
 };

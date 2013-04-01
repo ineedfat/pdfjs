@@ -79,5 +79,31 @@ var utils = {
             arr[i] = parseFloat(parseFloat(arr[i]).toFixed(n));
         }
         return arr;
+    },
+    clone: function (obj) {
+        if (typeof obj === 'undefined')
+            return obj;
+        var type = utils.getInstanceType(obj),
+            index, ret, l;
+        switch(type) {
+            case 'Object':
+                ret = {};
+                for (index in obj) {
+                    if (obj.hasOwnProperty(index)) {
+                        ret[index] = utils.clone(obj[index]);
+                    }
+                }
+                break;
+            case 'Array':
+                ret = [];
+                for (index = 0, l = obj.length; index < l; index++)
+                {
+                    ret.push(utils.clone(obj[index]));
+                }
+                break;
+            default:
+                ret = obj;
+        }
+        return ret;
     }
 };

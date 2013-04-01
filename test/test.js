@@ -39,7 +39,7 @@ var generatePDfWithSVG = function () {
     var reader = doc.svgReader(p);
     p.fillColor(0, 0, 0);
     p.strokeColor(0, 0, 0);
-    p.translate(0, 790);
+    p.translate(0, 1000);
     reader.drawSvg(sObj[0]);
     doc.outputAsync('datauristring', function (data) {
         window.open(data, "pdfWindow", "height: 700, width: 500");

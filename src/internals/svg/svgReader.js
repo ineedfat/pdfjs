@@ -1,4 +1,5 @@
 ﻿var svgReader = function (stream, doc) {
+    statesTracker.call(this);
     this.doc = doc;
     this.stream = stream;
     this.states = {currentElementStack: []}; //Keep the state current state of the pdf.
@@ -9,25 +10,27 @@
 
 svgReader.prototype = {
     parseSVG: function (svgElement) {
-        var opt = svgReader.elements[utils.getInstanceType(svgElement)];
+        var opt = svgReader.elements[utils.getInstanceType(svgElement)],
+            temp;
         if (!opt) {
             console.error('Not Supported SVGElement: ' + utils.getInstanceType(svgElement));
             return;
         }
         if (opt !== 'skip') {
             this.stream.pushState();
-            this.states.currentElementStack.push({ element: svgElement });
-            opt.call(this, svgElement);
-            this.states.currentElementStack.pop();
-            var colors = this.getCurrentSvgElement();
-            if (colors) {
-                if (colors.fill) {
-                    this.stream.fillColor.call(this.stream, colors.fill.r, colors.fill.g, colors.fill.b);
+            temp = utils.clone(this.getCurrentSvgElement());
+            temp.element = svgElement;
+            this.states.currentElementStack.push(temp);
+            if (temp) {
+                if (temp.fill) {
+                    this.stream.fillColor.call(this.stream, temp.fill.r, temp.fill.g, temp.fill.b);
                 }
-                if (colors.stroke) {
-                    this.stream.fillColor.call(this.stream, colors.stroke.r, colors.stroke.g, colors.stroke.b);
+                if (temp.stroke) {
+                    this.stream.fillColor.call(this.stream, temp.stroke.r, temp.stroke.g, temp.stroke.b);
                 }
             }
+            opt.call(this, svgElement);
+            this.states.currentElementStack.pop();
             this.stream.popState();
         } else {
             this.processChildNodes( svgElement);
@@ -72,8 +75,9 @@ svgReader.prototype = {
         return this;
     },
     getCurrentSvgElement: function() {
-        return this.states.currentElementStack[this.states.currentElementStack.length - 1];
+        return this.states.currentElementStack[this.states.currentElementStack.length - 1] || {};
     },
 };
 
 mixin(svgReader, svgParser);
+mixin(svgReader, statesTracker.prototype);
