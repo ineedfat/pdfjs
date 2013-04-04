@@ -11,7 +11,7 @@ statesTracker.prototype = {
         var current = this.getCurrentGraphicState();
         current.cpX += current.sX*x;
         current.cpY += current.sY*y;
-        console.log("x: " + current.cpX + ' y: ' + current.cpY);
+        //console.log("x: " + current.cpX + ' y: ' + current.cpY);
     },
     graphicStateScale: function(sx, sy) {
         var current = this.getCurrentGraphicState();
@@ -23,15 +23,11 @@ statesTracker.prototype = {
     },
     pushGraphicState: function () {
         this.graphicStack.push(utils.clone(this.getCurrentGraphicState()));
-        var current = this.getCurrentGraphicState();
-        console.log('Push Graphic State: ' + "x: " + current.cpX + ' y: ' + current.cpY);
 
         this.pushTextState();
 
     },
     popGraphicState: function () {
-        var removed = this.graphicStack.pop();
-        console.log('Pop Graphic State: ' + "x: " + removed.cpX + ' y: ' + removed.cpY);
         this.popTextState();
     },
     //Text States
@@ -39,7 +35,6 @@ statesTracker.prototype = {
         var current = this.getCurrentTextState();
         current.tCpX += x;
         current.tCpY += y;
-        console.log("x: " + current.tCpX + ' y: ' + current.tCpY);
     },
     textStateScale: function (sx, sy) {
         var current = this.getCurrentTextState();
@@ -51,13 +46,9 @@ statesTracker.prototype = {
     },
     pushTextState: function () {
         this.textStack.push(utils.clone(this.getCurrentTextState()));
-        var current = this.getCurrentTextState();
-        console.log('Push Text State: ' + "x: " + current.tCpX + ' y: ' + current.tCpY);
 
     },
     popTextState: function () {
-        var removed = this.textStack.pop();
-        console.log('Pop Text State: ' + "x: " + removed.tCpX + ' y: ' + removed.tCpY);
-
+        this.textStack.pop();
     }
 }

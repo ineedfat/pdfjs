@@ -297,7 +297,7 @@
             matches, i, match,
             searchRegex;
         //let's search the string for all object declaration in data. 
-        matches = data.match(/\d+\s\d+\sobj/gim)
+        matches = data.match(/\d+\s\d+\sobj/gim);
 
         for (i = 0; match = matches[i]; i++) {
             searchRegex = new RegExp('[^\\d]' + match.replace(/\s+/g, '\\s+'));
@@ -318,7 +318,7 @@
         for (i = 0; item = node.kids[i]; i++) {
             if (item instanceof pageTreeNode) {
                 ret.push(buildPageTreeNodes(item));
-                continue
+                continue;
             }
             ret.push(item.out());
         }

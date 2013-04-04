@@ -99,13 +99,13 @@
         srcFiles: [
           //Polyfills
           'src/internals/pollyfills.js',
+          'src/internals/statesTracker.js',
 
             //API calls
           'src/internals/graphics.js',
           'src/internals/text.js',
 
           //Classes
-          'src/classes/statesTracker.js',
           'src/classes/obj.js',
           'src/classes/pageNode.js',
           'src/classes/pageTreeNode.js',
@@ -135,6 +135,7 @@
           'src/internals/svg/svgReader.utils.js',
           'src/internals/svg/svgReader.elements.js',
 
+          'src/internals/pluginAdapter.js',
 
           //Public exposure
           'src/public.js'

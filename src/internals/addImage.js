@@ -1,5 +1,5 @@
 ﻿doc.prototype.newImage = function (imageData, crossOrigin, resources) {
-    var newImage = new imageXObject(++this.objectNumber, 0, 0, 0, utils.colorSpace.deviceRGB, 8, 'DCTDecode');
+    var newImage = new imageXObject(++this.objectNumber, 0, 0, 0, enums.colorSpace.deviceRGB, 8, 'DCTDecode');
 
     analyzeImage.call(this, imageData, newImage, resources || this.resObj, crossOrigin, this);
 

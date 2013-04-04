@@ -30,7 +30,7 @@ var graphicOperators = {
     */
     scale: function (sx, sy) {
         var args = utils.toPrecision(arguments);
-        if (args[0] == args[1] == 1)
+        if (args[0] == 1 &&  args[1] == 1)
             return;
         this.graphicStateScale(args[0], args[1]);
         this.push(args[0] + ' 0 0 ' + args[1] + ' 0 0 cm');

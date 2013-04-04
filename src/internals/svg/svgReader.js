@@ -40,6 +40,8 @@ svgReader.prototype = {
     drawSvg: function (svg) {
         if (svg instanceof SVGSVGElement) {
             this.stream.pushState();
+            this.stream.fillColor(0, 0, 0);
+            this.stream.strokeColor(0, 0, 0);
             this.stream.scale(1, -1);
             this.parseSVG(svg);
             this.stream.popState();

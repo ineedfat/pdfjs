@@ -1,14 +1,9 @@
 ﻿var colorCCanvas;
 var funcNameRegex = /function (.{1,})\(/;
 var sanitizeRegex = /((\(|\)|\\))/ig;
-var listParamsRegex = /(\S*)\(((\d|,|;|\-|\s)*)\)/gm;
+var listParamsRegex = /(\S*)\(((\d|,|;|\.|\-|\s)*)\)/gm;
 
 
-// simplified (speedier) replacement for sprintf's %.2f conversion
-/**
-@namespace
-*@memberof pdfJS.
-*/
 var utils = {
     radsToDegrees: function(rads) {
         return rads * (180 / Math.PI);
@@ -30,6 +25,8 @@ var utils = {
         return ret;
     },
     getInstanceType: function (o) {
+        if (o === null)
+            return null;
         var results = (funcNameRegex).exec(o.constructor.toString());
         return (results && results.length > 1) ? results[1] : "";
     },
@@ -105,5 +102,36 @@ var utils = {
                 ret = obj;
         }
         return ret;
+    },
+    extend: function (obj1, obj2) {
+        if (!obj1) {
+            obj1 = {};
+        }
+        for (var prop in obj2) {
+            if (obj2.hasOwnProperty(prop)) {
+                obj1[prop] = obj2[prop];
+            }
+        }
+        return obj1;
+    },
+    evalOptions: function (options) {
+        var sb = [], item, index;
+        for (index in options) {
+            if (options.hasOwnProperty(index)) {
+                item = options[index];
+                switch(utils.getInstanceType(item)) {
+                    case 'String':
+                        sb.push('/' + index + ' ' + item);
+                        break;
+                    case 'Number':
+                        sb.push('/' + index + ' ' + utils.toPrecision(item));
+                        break;
+                    case 'dictionary':
+                        console.error('Not yet supported');
+                        break;
+                }
+            }
+        }
+        return sb.join('\n');
     }
 };
