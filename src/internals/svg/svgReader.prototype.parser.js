@@ -109,7 +109,6 @@
         var i, item;
         for (i = 0; item = attrs[i]; i++) {
             this.setGenericOption(item.name.toLowerCase(), item.value);
-            //console.log(item.name + ' = ' + item.value);
         }
     },
     setGenericOption: function (name, value) {
@@ -117,7 +116,7 @@
             return;
         }
         var rgb, i, matches, item, temp, sb;
-        switch (name.toLowerCase()) {
+        switch (name) {
             case 'stroke-width':
                 this.stream.lineWidth(value);
                 break;
@@ -190,25 +189,34 @@
                 }
                 break;
             case 'style':
-                temp = value.split(';');
-                if (!temp)
-                    return;
-                temp = temp.map(function (aItem, index, arr) {
-                    var splits = aItem.split(':');
-                    if (splits.length != 2)
-                        return { name: 'IgnoreObject' };
-
-                    return { name: splits[0].trim(), value: splits[1].trim() };
-                });
-                this.setCssOptions( temp);
-                break;
+                
         }
     },
     setCssOptions: function (attrs) {
         var i, item;
         for (i = 0; item = attrs[i]; i++) {
+            if (item.name.toLowerCase() === 'style') {
+                break;
+            }
+        }
+        if (!item) {
+            return;
+        }
+        var cssStyles = item.value.split(';');
+        
+        if (!cssStyles)
+            return;
+        
+        cssStyles = cssStyles.map(function (aItem, index, arr) {
+            var splits = aItem.split(':');
+            if (splits.length != 2)
+                return { name: 'IgnoreObject' };
+
+            return { name: splits[0].trim(), value: splits[1].trim() };
+        });
+        
+        for (i = 0; item = cssStyles[i]; i++) {
             this.setCssOption( item.name.toLowerCase(), item.value);
-            //console.log(item.name + ' = ' + item.value);
         }
     },
     setCssOption: function (name, value) {
@@ -217,9 +225,6 @@
         }
         switch (name.toLowerCase()) {
             case 'font-size':
-                if (!this.states.textMode)
-                    console.error('Attempt to set font-size when text hasn\'t begun');
-
                 this.stream.fontSize(parseInt(value));
                 break;
             case 'color':

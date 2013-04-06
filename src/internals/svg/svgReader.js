@@ -10,14 +10,17 @@
 
 svgReader.prototype = {
     parseSVG: function (svgElement) {
-        var opt = svgReader.elements[utils.getInstanceType(svgElement)],
+        var elementType = utils.getInstanceType(svgElement);
+        var opt = svgReader.elements[elementType],
             temp;
         if (!opt) {
             console.error('Not Supported SVGElement: ' + utils.getInstanceType(svgElement));
             return;
         }
         if (opt !== 'skip') {
-            this.stream.pushState();
+            if (elementType !== 'SVGTSpanElement') {
+                this.stream.pushState();
+            }
             temp = utils.clone(this.getCurrentSvgElement());
             temp.element = svgElement;
             this.states.currentElementStack.push(temp);
@@ -31,7 +34,9 @@ svgReader.prototype = {
             }
             opt.call(this, svgElement);
             this.states.currentElementStack.pop();
-            this.stream.popState();
+            if (elementType !== 'SVGTSpanElement') {
+                this.stream.popState();
+            }
         } else {
             this.processChildNodes( svgElement);
         }
