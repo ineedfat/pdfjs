@@ -121,9 +121,13 @@
           'src/internals/info.js',
           'src/internals/resources.js',
           'src/internals/optionsConverter.js',
-          'src/internals/enums.js',
+            
           //Supporting classes
           'src/utils.js',
+          'src/internals/operators.js',
+          'src/internals/operationStates.js',
+          'src/internals/enums.js',
+          
 
 
 

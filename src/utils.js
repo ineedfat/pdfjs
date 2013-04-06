@@ -2,6 +2,7 @@
 var funcNameRegex = /function (.{1,})\(/;
 var sanitizeRegex = /((\(|\)|\\))/ig;
 var listParamsRegex = /(\S*)\(((\d|,|;|\.|\-|\s)*)\)/gm;
+var operatorRegex = /(\w{1,3}$)/gm;
 
 
 var utils = {
@@ -103,16 +104,20 @@ var utils = {
         }
         return ret;
     },
-    extend: function (obj1, obj2) {
-        if (!obj1) {
-            obj1 = {};
+    extend: function (out, obj2) {
+        var i, l, obj, prop;
+        if (!out) {
+            out = {};
         }
-        for (var prop in obj2) {
-            if (obj2.hasOwnProperty(prop)) {
-                obj1[prop] = obj2[prop];
+        for (i = 1, l = arguments.length; i < l; i++) {
+            obj = arguments[i];
+            for (prop in obj) {
+                if (obj.hasOwnProperty(prop)) {
+                    out[prop] = obj[prop];
+                }
             }
         }
-        return obj1;
+        return out;
     },
     evalOptions: function (options) {
         var sb = [], item, index;

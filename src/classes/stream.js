@@ -83,6 +83,7 @@ stream.prototype = Object.create(obj.prototype, {
         */
     push: {
         value: function (args) {
+            this.validate(args);
             Array.prototype.push.apply(this.content, arguments);
             return this;
         }

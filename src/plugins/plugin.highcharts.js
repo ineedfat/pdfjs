@@ -1,25 +1,26 @@
 ﻿var plugin = plugin || {};
 
-plugin.highchart = ['stream', 'utils', function (stream, utils) {
-    var renderHighChart = function (highChart, width, height) {
-        if (!width || !height) {
-            
-        }
+plugin.highcharts = ['stream', 'utils', function (stream, utils) {
+    var renderHighchart = function (highchart, width, height) {
         var div = document.createElement("div");
         div.style.height = (height) + 'px';
         div.style.width = (width) + 'px';
-
-        var options = utils.clone(highChart.options);
-
+        div.style.opacity = 0;
+        div.setAttribute('id', 'cloneHighchart');
+        
+        var options = utils.clone(highchart.options);
         if (!options.chart) {
             options.chart = {};
         }
-
         options.chart.renderTo = div;
+        
+        /*We need to temporary inject this into the DOM
+        otherwise highchats may not render the chart correctly.*/
+        document.body.appendChild(div);
         return new Highcharts.Chart(options);
     };
-    var computeChartDimension = function(highChart, width, height) {
-        var chargSvg = highChart.container.childNodes[0],
+    var computeChartDimension = function(highchart, width, height) {
+        var chargSvg = highchart.container.childNodes[0],
             origHeight = parseInt(chargSvg.attributes['height'].value),
             origWidth = parseInt(chargSvg.attributes['width'].value),
             aspectRatio = origWidth / origHeight;
@@ -32,7 +33,7 @@ plugin.highchart = ['stream', 'utils', function (stream, utils) {
         } else if (!width && height) {
             ret = { width: height * aspectRatio, height: height };
         } else {
-            var chartSvg = newChart.container.childNodes[0];
+            var chartSvg = highchart.container.childNodes[0];
             ret = {
                 width: parseInt(chartSvg.attributes['width'].value),
                 height: parseInt(chartSvg.attributes['height'].value)
@@ -40,13 +41,13 @@ plugin.highchart = ['stream', 'utils', function (stream, utils) {
         }
         return ret;
     };
-    stream.prototype.addHighChart =
-        function (highChart, x, y, processCallback, sourceWidth, sourceHeight, printWidth, printHeight) {
+    stream.prototype.addHighchart =
+        function (highchart, x, y, processCallback, sourceWidth, sourceHeight, printWidth, printHeight) {
             var pageWidth = this.doc.settings.dimension[0],
                 scaleX, scaleY, svgWidth, svgHeight, reader, graphicsState;
 
-            var dimension = computeChartDimension(highChart, sourceWidth, sourceHeight);
-            var newChart = renderHighChart(highChart, dimension.width, dimension.height);
+            var dimension = computeChartDimension(highchart, sourceWidth, sourceHeight);
+            var newChart = renderHighchart(highchart, dimension.width, dimension.height);
 
             processCallback(newChart);
             var chartSvg = newChart.container.childNodes[0];
@@ -70,10 +71,11 @@ plugin.highchart = ['stream', 'utils', function (stream, utils) {
             this.scale(scaleX, scaleY);
             reader.drawSvg(chartSvg);
             this.popState();
-        
+
             newChart.destroy();
+            document.body.removeChild(document.getElementById('cloneHighchart'));
 
             return { width: scaleX * svgWidth, height: scaleY * svgHeight };
         };
 }];
-pdfJS.addPlugin(plugin.highchart);
+pdfJS.addPlugin(plugin.highcharts);

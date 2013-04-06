@@ -11,7 +11,7 @@
     *@param {string} [orientation=portrait] Document orientation.
     *@param {array} [margin=[18,18]] Horizontal and vertical margin in points (e.g [horizontal, vertical])
 */
-    var doc = function (format, orientation, margin) {
+    var doc = function (format, orientation, margin, disableValidation) {
         var self = this;
         this.pageCount = 0;
 
@@ -50,7 +50,8 @@
         */
         this.settings = {
             dimension: enums.paperFormat['letter'],
-            documentProperties: { 'title': '', 'subject': '', 'author': '', 'keywords': '', 'creator': '' }
+            documentProperties: { 'title': '', 'subject': '', 'author': '', 'keywords': '', 'creator': '' },
+            disableValidation: disableValidation
         };
         
         //Determine page dimensions.

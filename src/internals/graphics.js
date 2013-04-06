@@ -349,34 +349,23 @@ space. .
     */
     fillColor: function (colorValue1, colorValue2, colorValue3) {
         var args = utils.toPrecision(arguments);
-        
-        switch (arguments.length) {
+        var graphicState = this.getCurrentGraphicState();
+        switch (args.length) {
             case 1:
-                if (!this.activeFillCS) {
+                if (graphicState.fillColor.length !== 1) {
                     this.push('/DeviceGray cs');
-                    this.activeFillCS = 'DeviceGray';
-                    this.push(args.join(' ') + ' sc');
-                }else if (this.activeFillCS === 'DeviceRGB') {
-                    this.push(args[0] + ' ' + args[0] + ' ' + args[0] + ' sc');
-                } else if (this.activeFillCS === 'DeviceGray') {
-                    this.push(args.join(' ') + ' sc');
                 }
                 break;
             case 3:
-                if (!this.activeFillCS) {
+                if (graphicState.fillColor.length !== 3) {
                     this.push('/DeviceRGB cs');
-                    this.activeFillCS = 'DeviceRGB';
-                    this.push(args.join(' ') + ' sc');
-                }else if (this.activeFillCS === 'DeviceGray') {
-                    this.push(args[0] + ' sc');
-                }
-                else if (this.activeFillCS === 'DeviceRGB') {
-                    this.push(args.join(' ') + ' sc');
                 }
                 break;
             default:
                 throw ('Invalid color values');
         }
+        this.graphicStateFillColor.apply(this, args);
+        this.push(args.join(' ') + ' sc');
     },
     /**
     *Set the color space to use for stroking operations. The operand
@@ -390,34 +379,23 @@ name and no additional parameters (DeviceGray and DeviceRGB).
     */
     strokeColor: function (colorValue1, colorValue2, colorValue3) {
         var args = utils.toPrecision(arguments);
-        switch (arguments.length) {
+        var graphicState = this.getCurrentGraphicState();
+        switch (args.length) {
             case 1:
-                if (!this.activeStrokeCS) {
+                if (graphicState.strokeColor.length !== 1) {
                     this.push('/DeviceGray CS');
-                    this.activeStrokeCS = 'DeviceGray';
-                    this.push(args.join(' ') + ' SC');
-                }else if (this.activeStrokeCS === 'DeviceRGB') {
-                    this.push(args[0] + ' ' + args[0] + ' ' + args[0] + ' SC');
-                } else if (this.activeStrokeCS === 'DeviceGray') {
-                    this.push(args.join(' ') + ' SC');
                 }
                 break;
             case 3:
-                if (!this.activeStrokeCS) {
+                if (graphicState.strokeColor.length !== 3) {
                     this.push('/DeviceRGB CS');
-                    this.activeStrokeCS = 'DeviceRGB';
-                    this.push(args.join(' ') + ' SC');
-                } else if (this.activeStrokeCS === 'DeviceGray') {
-                    this.push(args[0] + ' SC');
-                }
-                else if (this.activeStrokeCS === 'DeviceRGB') {
-                    this.push(args.join(' ') + ' SC');
                 }
                 break;
             default:
                 throw ('Invalid color values');
         }
-
+        this.graphicStateFillColor.apply(this, args);
+        this.push(args.join(' ') + ' SC');
     },
     /*Color Controls End*/
     /**

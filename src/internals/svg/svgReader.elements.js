@@ -37,8 +37,6 @@
         this.setGenericOptions( attrs);
         this.setTextOptions( attrs);
 
-        console.log(tSpanElement.textContent);
-
         if (tSpanElement.textContent) {
             this.stream.scale(1, -1);
             
