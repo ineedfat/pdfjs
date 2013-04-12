@@ -225,6 +225,24 @@ from the current point to the point (x3, y3), using the other pairs of points as
                 throw 'Invalid bezier curve parameters';
         }
     },
+    quadraticCurveTo: function (q0x, q0y, q1x, q1y, q2x, q2y) {
+        //We don't want to lose the precision for the first 4 values.
+        q0x = parseFloat(q0x);
+        q0y = parseFloat(q0y);
+        q1x = parseFloat(q1x);
+        q1y = parseFloat(q1y);
+        q2x = parseFloat(q2x).toFixed(2);
+        q2y = parseFloat(q2y).toFixed(2);
+            
+        var xq1, yq1, xq2, yq2;
+        xq1 = (q1x * 2 / 3 + q0x / 3).toFixed(2);
+        yq1 = (q1y * 2 / 3 + q0y / 3).toFixed(2);
+        xq2 = (q1x * 2 / 3 + q2x / 3).toFixed(2);
+        yq2 = (q1y * 2 / 3 + q2y / 3).toFixed(2);
+
+        this.bezierCurve(xq1, yq1, xq2, yq2, q2x, q2y);
+        this.graphicStateTranslate(q2x, q2y);
+    },
     ellipseArc: function(rx, ry, rot, laF, sF, x, y, sign) {
         var flip = sign ? -1 : 1;
         rx = Math.abs(rx).toFixed(2);

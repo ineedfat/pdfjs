@@ -154,7 +154,7 @@
                     '***********************************************/\n' +
                     '(function(_) {\n' +
                     '\'use strict\';\n' +
-                    'var PDFJS_VERSION = \'<%= pkg.version %>\';',
+                    'var PDFJS_VERSION = \'<%= pkg.version %>\';\n',
                 footer: '\n}(window));'
             },
             debug: {

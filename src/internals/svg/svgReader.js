@@ -1,5 +1,5 @@
 ﻿var svgReader = function (stream, doc) {
-    statesTracker.call(this);
+    //statesTracker.call(this);
     this.doc = doc;
     this.stream = stream;
     this.states = {currentElementStack: []}; //Keep the state current state of the pdf.

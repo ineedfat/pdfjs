@@ -1,9 +1,7 @@
 ﻿var statesTracker = function () {
-    this.graphicStack = [{ cpX: 0, cpY: 0, sX: 1, sY: 1, fillColor: [], strokeColor:[] }];
+    this.graphicStack = [{ cpX: 0, cpY: 0, sX: 1, sY: 1, fillColor: [], strokeColor: []}];
     //TODO: Support Char Spacing, text length, text leading
     this.textStack = [{ tCpX: 0, tCpY: 0, tSX: 1, tSY: 1 }];
-
-    this.isTextMode = false;
     this.operationState = operationStates.pageLevel;
 };
 statesTracker.prototype = {
@@ -11,8 +9,8 @@ statesTracker.prototype = {
         if (this.doc.settings.disableValidation) {
             return;
         }
-        var opt = operation.match(operatorRegex);
-        var transitionTo;
+        var opt = operation.match(operatorRegex),
+            transitionTo;
         if (opt) {
             opt = opt[0];
             transitionTo = this.operationState.transition[opt];
@@ -47,14 +45,17 @@ statesTracker.prototype = {
     },
     graphicStateFillColor: function (args) {
         var current = this.getCurrentGraphicState();
-        current.fillColor = arguments;
+        if (typeof args !== 'undefined') {
+            current.fillColor = arguments;
+        }
 
         return current.fillColor;
     },
     graphicStateStrokeColor: function (args) {
         var current = this.getCurrentGraphicState();
-        current.stroke = arguments;
-
+        if (typeof args !== 'undefined') {
+            current.stroke = arguments;
+        }
         return current.strokeColor;
     },
     getCurrentGraphicState: function () {

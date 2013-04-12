@@ -6,8 +6,8 @@
     },
     SVGTextElement: function (textElement) {
         var attrs = textElement.attributes;
-        this.stream.scale(1, -1);
         this.setGenericOptions(attrs);
+        this.stream.scale(1, -1);
         this.stream.beginText();
         this.setCssOptions(attrs);
         this.setTextOptions(attrs);
@@ -31,7 +31,7 @@
         }
     },
     SVGCircleElement: function (circle) {
-        var attrs = circle.attributes;
+        var attrs = circle.attributes,
             r = Math.abs(parseInt(attrs['r'].value)).toFixed(2),
             x = attrs['cx'] ? parseInt(attrs['cx'].value).toFixed(2) : 0,
             y = attrs['cy'] ? parseInt(attrs['cy'].value).toFixed(2) : 0,
@@ -49,7 +49,6 @@
     },
     SVGEllipseElement: function (ellipse) {
         var attrs = ellipse.attributes,
-            i, item,
             rx = Math.abs(parseInt(attrs['rx'].value)).toFixed(2),
             ry = Math.abs(parseInt(attrs['ry'].value)).toFixed(2),
             x = attrs['cx'] ? parseInt(attrs['cx'].value).toFixed(2) : 0,
