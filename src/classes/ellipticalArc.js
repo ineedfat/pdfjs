@@ -174,7 +174,7 @@
         this.sinTheta = Math.sin(theta);
 
         //// make sure we have eta1 <= eta2 <= eta1 + 2 PI
-        this.eta2 -= twoPi * Math.floor((this.eta2 - this.eta1) / twoPi);
+        //this.eta2 -= twoPi * Math.floor((this.eta2 - this.eta1) / twoPi);
 
         //// the preceding correction fails if we have exactly et2 - eta1 = 2 PI
         //// it reduces the interval to zero length

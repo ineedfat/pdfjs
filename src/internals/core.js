@@ -177,6 +177,8 @@
             switch (type.toLowerCase()) {
             case 'dataurl':
                 return 'data:application/pdf;base64,' + btoa(pdf);
+            case 'base64':
+                    return btoa(pdf);
             default:
                 return pdf;
             }
