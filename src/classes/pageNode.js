@@ -14,7 +14,6 @@
 var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams,
     repeatableStreams, templateStreams, document) {
     var self = this;
-
     obj.call(this, objectNumber, generationNumber);
     /**
         *Page Config options.
@@ -67,8 +66,6 @@ pageNode.prototype = Object.create(obj.prototype, {
             this.body.push(pageOptionsConverter(this.pageOptions));
             this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
             this.body.push('/Contents ');
-
-            
 
             //TODO: add resources page 80.
             if (this.contentStreams.length) {

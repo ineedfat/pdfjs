@@ -92,11 +92,11 @@
                         this.currentPoint.y = y2;
                         if (!rx || !ry) {
                             this.stream.lineTo(x2, y2);
-                            return;
+                        } else {
+                            var c = svgReader.utils.computeArc.call(this, x1, y1, rx, ry, phi, fa, fs, x2, y2, this);
+                            var arc = new ellipticalArc(c.cx, c.cy, c.rx, c.ry, phi, c.theta, c.theta + c.dTheta, false);
+                            arc.buildEllipticalArc(3, 0.01, this);
                         }
-                        var c = svgReader.utils.computeArc.call(this, x1, y1, rx, ry, phi, fa, fs, x2, y2, this);
-                        var arc = new ellipticalArc(c.cx, c.cy, c.rx, c.ry, phi, c.theta, c.theta + c.dTheta, false);
-                        arc.buildEllipticalArc(3, 0.01, this);
                         next = parseFloat(pArr[i + 1]);
                     } while (next || next === 0)
                     break;

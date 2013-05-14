@@ -1,8 +1,8 @@
 {
   "name": "pdfJS",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "PDF JavaScript Framework",
-  "main": "pdfJS_0.0.1.js",
+  "main": "pdfJS_0.0.2.js",
   "devDependencies": {
     "grunt": "~0.4.0",
     "grunt-contrib-concat": "~0.1.2",

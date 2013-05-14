@@ -162,8 +162,8 @@
         *@return {string} PDF data string.
         */
         output: function(type) {
-
-            var content = utils.removeEmptyElement([
+            type = type || 'dataurl';
+        var content = utils.removeEmptyElement([
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
@@ -174,18 +174,9 @@
             ]).join('\n');
 
             var pdf = buildDocument(content, this.catalogObj, this.infoObj);
-            switch (type) {
-            case 'datauristring':
-            case 'dataurlstring':
-                return 'data:application/pdf;base64,' + btoa(pdf);
-            case 'datauri':
+            switch (type.toLowerCase()) {
             case 'dataurl':
-                document.location.href = 'data:application/pdf;base64,' + btoa(pdf);
-                break;
-                break;
-            case 'dataurlnewwindow':
-                window.open('data:application/pdf;base64,' + btoa(pdf));
-                break;
+                return 'data:application/pdf;base64,' + btoa(pdf);
             default:
                 return pdf;
             }
@@ -236,7 +227,6 @@
         *Add a list of standard fonts to document.
         */
         addStandardFonts: function() {
-
             var HELVETICA = "helvetica",
                 TIMES = "times",
                 COURIER = "courier",
@@ -259,7 +249,7 @@
                     ['Times-Italic', TIMES, ITALIC],
                     ['Times-BoldItalic', TIMES, BOLD_ITALIC],
                     ['Symbol', 'symbol', NORMAL],
-                    ['ZapfDingbats', 'zapfdingbats', NORMAL],
+                    ['ZapfDingbats', 'zapfdingbats', NORMAL]
                 ];
 
             for (var i = 0, l = standardFonts.length; i < l; i++) {
@@ -313,8 +303,7 @@
     };
 
     var buildPageTreeNodes = function (node) {
-        var self = this,
-            ret = [node.out()], i, item;
+        var ret = [node.out()], i, item;
         
         for (i = 0; item = node.kids[i]; i++) {
             if (item instanceof pageTreeNode) {
@@ -373,7 +362,6 @@
         contentBuilder.push(o);
 
         contentBuilder.push('%%EOF');
-        
         
         //console.log(contentBuilder.join('\n'));
         return contentBuilder.join('\n');

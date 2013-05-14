@@ -66,6 +66,7 @@ statesTracker.prototype = {
         this.pushTextState();
     },
     popGraphicState: function () {
+        this.graphicStack.pop();
         this.popTextState();
     },
     //Text States
