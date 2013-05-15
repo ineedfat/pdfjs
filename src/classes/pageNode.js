@@ -103,14 +103,11 @@ pageNode.prototype = Object.create(obj.prototype, {
     */
     setStream: {
         value: function (index) {
-            if (index >= this.contentStreams.length)
+            if (index >= this.contentStreams.length) {
                 throw 'Invalid stream index';
+            }
             this.currentStream = this.contentStreams[index];
             return this;
         }
     }
 });
-
-
-
-

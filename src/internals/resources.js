@@ -1,6 +1,4 @@
-﻿
-var resources = function (objectNumber, generationNumber) {
-    var self = this;
+﻿var resources = function (objectNumber, generationNumber) {
     obj.call(this, objectNumber, generationNumber);
     this.fontObjs = [];
     this.imageXObjects = [];
@@ -31,7 +29,7 @@ resources.prototype = Object.create(obj.prototype, {
             this.body.push(printDictionaryElements(this.fontObjs, 'F'));
             this.body.push('>>');
 
-            var xImgObjs = printDictionaryElements(this.imageXObjects, 'Im')
+            var xImgObjs = printDictionaryElements(this.imageXObjects, 'Im');
             if (xImgObjs) {
                 this.body.push('/XObject <<');
                 this.body.push(xImgObjs);
@@ -49,11 +47,10 @@ resources.prototype = Object.create(obj.prototype, {
                     if (font.description.key.toLowerCase() === name.toLowerCase()) {
                         return font;
                     }
-                    if (typeof style === 'string') {
-                        if (font.description.fontName.toLowerCase() === name.toLowerCase() &&
-                            font.description.fontStyle.toLowerCase() === style.toLowerCase()) {
+                    if (typeof style === 'string' &&
+                        font.description.fontName.toLowerCase() === name.toLowerCase() &&
+                        font.description.fontStyle.toLowerCase() === style.toLowerCase()) {
                             return font;
-                        }
                     }
                 }
             }

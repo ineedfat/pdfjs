@@ -2,15 +2,13 @@
     var ret = [],
         obj;
     for (var item in options) {
-        if (!options.hasOwnProperty(item))
-            continue;
-        obj = options[item];
-        switch (item.toLowerCase()) {
+        if (options.hasOwnProperty(item)) {
+            obj = options[item];
+            switch (item.toLowerCase()) {
             case 'resources':
                 if (obj instanceof resources) {
                     ret.push('/Resources ' + obj.objectNumber + ' ' + obj.generationNumber + ' R');
-                }
-                else if (typeof obj === 'string') {
+                } else if (typeof obj === 'string') {
                     ret.push(obj);
                 } else {
                     throw 'Invalid Resources!';
@@ -51,15 +49,15 @@
                 break;
             case 'b':
                 //TODO: B 
-                /*(Optional; PDF 1.1; recommended if the page contains article beads) An 
-                array of indirect references to article beads appearing on the page*/
+                    /*(Optional; PDF 1.1; recommended if the page contains article beads) An 
+                    array of indirect references to article beads appearing on the page*/
                 break;
             case 'dur':
                 //TODO: Dur 
-                /*(Optional; PDF 1.1) The page’s display duration (also called its advance 
-                timing): the maximum length of time, in seconds, that the page will be
-                displayed during presentations before the viewer application automatically
-                advances to the next page*/
+                    /*(Optional; PDF 1.1) The page’s display duration (also called its advance 
+                    timing): the maximum length of time, in seconds, that the page will be
+                    displayed during presentations before the viewer application automatically
+                    advances to the next page*/
                 break;
             case 'Trans':
                 //TODO: Trans 
@@ -88,6 +86,7 @@
             case 'SeparationInfo':
                 //TODO: SeparationInfo 
                 break;
+            }
         }
     }
     return ret.join('\n');
@@ -98,16 +97,14 @@ var pageTreeOptionsConverter = function (options) {
     var ret = [],
         obj;
     for (var item in options) {
-        if (!options.hasOwnProperty(item))
-            continue;
-        obj = options[item];
-        switch (item.toLowerCase()) {
+        if (options.hasOwnProperty(item)) {
+            obj = options[item];
+            switch (item.toLowerCase()) {
             //Inheritable
             case 'resources':
                 if (obj instanceof resources) {
                     ret.push('/Resources ' + obj.objectNumber + ' ' + obj.generationNumber + ' R');
-                }
-                else if (typeof obj === 'string') {
+                } else if (typeof obj === 'string') {
                     ret.push(obj);
                 } else {
                     throw 'Invalid Resources!';
@@ -119,7 +116,7 @@ var pageTreeOptionsConverter = function (options) {
                     ret.push('/MediaBox [' + obj.join(' ') + ']');
                 }
                 break;
-                //Inheritable
+            //Inheritable
             case 'cropbox':
                 if (utils.checkValidRect(obj)) {
                     ret.push('/CropBox [' + obj.join(' ') + ']');
@@ -130,7 +127,7 @@ var pageTreeOptionsConverter = function (options) {
                     ret.push('/Rotate ' + obj);
                 }
                 break;
-            
+            }
         }
     }
     return ret.join('\n');

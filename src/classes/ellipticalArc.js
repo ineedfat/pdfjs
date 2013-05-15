@@ -1,5 +1,5 @@
 ﻿var ellipticalArc;
-(function () {
+(function() {
     // coefficients for error estimation
     // while using quadratic Bézier curves for approximation
     // 0 < b/a < 1/4
@@ -7,7 +7,7 @@
     [
         [
             [3.92478, -13.5822, -0.233377, 0.0128206],
-                [-1.08814, 0.859987, 0.000362265, 0.000229036],
+            [-1.08814, 0.859987, 0.000362265, 0.000229036],
             [-0.942512, 0.390456, 0.0080909, 0.00723895],
             [-0.736228, 0.20998, 0.0129867, 0.0103456]
         ],
@@ -86,10 +86,10 @@
      * @param x absissa for which the value should be computed
      * @param c coefficients array of the rational function
      */
-    var rationalFunction = function (x, c) {
+    var rationalFunction = function(x, c) {
         return (x * (x * c[0] + c[1]) + c[2]) / (x + c[3]);
     };
-    var estimateError = function (degree, etaA, etaB, theta, a, b, cx, cy) {
+    var estimateError = function(degree, etaA, etaB, theta, a, b, cx, cy) {
         var cosTheta = Math.cos(theta);
         var sinTheta = Math.sin(theta);
         var x;
@@ -117,11 +117,10 @@
             var dx = xB - xA;
             var dy = yB - yA;
 
-            return Math.abs(x * dy - y * dx + xB * yA - xA * yB)
-                 / Math.sqrt(dx * dx + dy * dy);
+            return Math.abs(x * dy - y * dx + xB * yA - xA * yB) /
+                Math.sqrt(dx * dx + dy * dy);
 
-        }
-        else {
+        } else {
 
             x = b / a;
             var dEta = etaB - etaA;
@@ -140,21 +139,21 @@
                 safety = safety3;
             }
 
-            var c0 = rationalFunction(x, coeffs[0][0])
-               + cos2 * rationalFunction(x, coeffs[0][1])
-               + cos4 * rationalFunction(x, coeffs[0][2])
-               + cos6 * rationalFunction(x, coeffs[0][3]);
+            var c0 = rationalFunction(x, coeffs[0][0]) +
+                cos2 * rationalFunction(x, coeffs[0][1]) +
+                cos4 * rationalFunction(x, coeffs[0][2]) +
+                cos6 * rationalFunction(x, coeffs[0][3]);
 
-            var c1 = rationalFunction(x, coeffs[1][0])
-               + cos2 * rationalFunction(x, coeffs[1][1])
-               + cos4 * rationalFunction(x, coeffs[1][2])
-               + cos6 * rationalFunction(x, coeffs[1][3]);
+            var c1 = rationalFunction(x, coeffs[1][0]) +
+                cos2 * rationalFunction(x, coeffs[1][1]) +
+                cos4 * rationalFunction(x, coeffs[1][2]) +
+                cos6 * rationalFunction(x, coeffs[1][3]);
 
             return rationalFunction(x, safety) * a * Math.exp(c0 + c1 * dEta);
         }
     };
     //Access outside of closure
-    ellipticalArc = function (cx, cy, a, b, theta, lambda1, lambda2, isPieSlice) {
+    ellipticalArc = function(cx, cy, a, b, theta, lambda1, lambda2, isPieSlice) {
         var twoPi = 2 * Math.PI;
         //lambda1 = (lambda1);
         //lambda2 = svgReader.utils.reflectAngleAboutY(lambda2);
@@ -164,11 +163,11 @@
         this.b = b;
         this.theta = theta;
         this.isPieSlice = isPieSlice;
-        
+
         this.eta1 = Math.atan2(Math.sin(lambda1) / b,
-                           Math.cos(lambda1) / a);
+            Math.cos(lambda1) / a);
         this.eta2 = Math.atan2(Math.sin(lambda2) / b,
-                                Math.cos(lambda2) / a);
+            Math.cos(lambda2) / a);
 
         this.cosTheta = Math.cos(theta);
         this.sinTheta = Math.sin(theta);
@@ -184,21 +183,21 @@
     };
 
     ellipticalArc.prototype = {
-        computePoint: function (eta) {
+        computePoint: function(eta) {
             var aCosEta = this.a * Math.cos(eta),
                 bSinEta = this.b * Math.sin(svgReader.utils.reflectAngleAboutY(eta)),
                 x = this.cx + aCosEta * this.cosTheta - bSinEta * this.sinTheta,
                 y = this.cy + (aCosEta * this.sinTheta + bSinEta * this.cosTheta);
             return { x: x, y: y };
         },
-        computePointDot: function (eta) {
+        computePointDot: function(eta) {
             var aSinEta = this.a * Math.sin(eta),
                 bCosEta = this.b * Math.cos(eta),
                 xDot = -aSinEta * this.cosTheta - bCosEta * this.sinTheta,
                 yDot = -aSinEta + this.sinTheta + bCosEta * this.cosTheta;
             return { xDot: xDot, yDot: yDot };
         },
-        getSegmentCount: function (degree, threshold) {
+        getSegmentCount: function(degree, threshold) {
             var n = 1,
                 found = false,
                 etaA, etaB, dEta, i;
@@ -207,17 +206,18 @@
                 if (dEta <= 0.5 * Math.PI) {
                     etaB = this.eta1;
                     found = true;
-                    for (i = 0; found && (i < n) ; i++) {
+                    for (i = 0; found && (i < n); i++) {
                         etaA = etaB;
                         etaB += dEta;
-                        found = (estimateError(degree, etaA, etaB, this.theta, this.a, this.b, this.cx, this.cy) <= threshold);
+                        found = (estimateError(degree,
+                            etaA, etaB, this.theta, this.a, this.b, this.cx, this.cy) <= threshold);
                     }
                 }
                 n <<= 1;
             }
             return n;
         },
-        buildEllipticalArc: function (degree, threshold, out) {
+        buildEllipticalArc: function(degree, threshold, out) {
             degree = 1;
             var n = this.getSegmentCount(degree, threshold),
                 i, dEta, etaB, pointA, pointB, pointDA, pointDB;
@@ -234,8 +234,8 @@
             } else {
                 out.stream.moveTo(pointB.x, pointB.y);
             }
-            
-            var t     = Math.tan(0.5 * dEta);
+
+            var t = Math.tan(0.5 * dEta);
             var alpha = Math.sin(dEta) * (Math.sqrt(4 + 3 * t * t) - 1) / 3;
 
             for (i = 0; i < n; ++i) {
@@ -248,9 +248,12 @@
                     pointDA = pointDB;
                     pointDB = this.computePointDot(etaB);
                     if (degree === 2) {
-                        var k = (pointDB.yDot * (pointB.x - pointA.x) - pointDB.xDot * (pointB.y - pointA.y))
-                            / (pointDA.xDot * pointDB.yDot - pointDA.yDot * pointDB.xDot);
-                        out.stream.quadraticCurveTo((pointA.x + k * pointDA.xDot), (pointA.y + k * pointDA.yDot),
+                        var k = (pointDB.yDot * (pointB.x - pointA.x) -
+                            pointDB.xDot * (pointB.y - pointA.y)) /
+                            (pointDA.xDot * pointDB.yDot - pointDA.yDot * pointDB.xDot);
+
+                        out.stream.quadraticCurveTo((pointA.x + k * pointDA.xDot),
+                            (pointA.y + k * pointDA.yDot),
                             pointB.x, pointB.y);
                     } else {
                         out.stream.bezierCurve(
@@ -265,4 +268,4 @@
             }
         }
     };
-})()
+})();

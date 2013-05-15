@@ -169,5 +169,4 @@ no-op,” used primarily for the side effect of changing the clipping path*/
         /**Add text to path for clipping.*/
         clipText: 7
     }
-
-}
+};

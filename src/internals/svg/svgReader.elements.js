@@ -32,9 +32,9 @@
     },
     SVGCircleElement: function (circle) {
         var attrs = circle.attributes,
-            r = Math.abs(parseInt(attrs['r'].value)).toFixed(2),
-            x = attrs['cx'] ? parseInt(attrs['cx'].value).toFixed(2) : 0,
-            y = attrs['cy'] ? parseInt(attrs['cy'].value).toFixed(2) : 0,
+            r = Math.abs(parseInt(attrs['r'].value, 10)).toFixed(2),
+            x = attrs['cx'] ? parseInt(attrs['cx'].value, 10).toFixed(2) : 0,
+            y = attrs['cy'] ? parseInt(attrs['cy'].value, 10).toFixed(2) : 0,
             l = (0.5522422 * r).toFixed(2); // kappa = 4((sqrt(2) - 1)/2
         this.setGenericOptions(attrs);
 
@@ -49,10 +49,10 @@
     },
     SVGEllipseElement: function (ellipse) {
         var attrs = ellipse.attributes,
-            rx = Math.abs(parseInt(attrs['rx'].value)).toFixed(2),
-            ry = Math.abs(parseInt(attrs['ry'].value)).toFixed(2),
-            x = attrs['cx'] ? parseInt(attrs['cx'].value).toFixed(2) : 0,
-            y = attrs['cy'] ? parseInt(attrs['cy'].value).toFixed(2) : 0,
+            rx = Math.abs(parseInt(attrs['rx'].value, 10)).toFixed(2),
+            ry = Math.abs(parseInt(attrs['ry'].value, 10)).toFixed(2),
+            x = attrs['cx'] ? parseInt(attrs['cx'].value, 10).toFixed(2) : 0,
+            y = attrs['cy'] ? parseInt(attrs['cy'].value, 10).toFixed(2) : 0,
             lx = (0.5522422 * rx).toFixed(2), // kappa = 4((sqrt(2) - 1)/2
             ly = (0.5522422 * ry).toFixed(2); // kappa = 4((sqrt(2) - 1)/2
 

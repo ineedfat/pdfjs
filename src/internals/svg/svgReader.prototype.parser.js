@@ -4,7 +4,6 @@
             val, i, l, next;
         this.currentPoint = {};
         this.lastCP = {};
-
         for (i = 0, l = pArr.length; i < l; i++) {
             val = pArr[i];
             if (val !== 'T' && val !== 'Q' && val !== 't' && val !== 'q') {
@@ -16,9 +15,8 @@
                         this.currentPoint.x = parseFloat(pArr[++i]);
                         this.currentPoint.y = parseFloat(pArr[++i]);
                         this.stream.moveTo(this.currentPoint.x, this.currentPoint.y);
-
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'L':
                     do {
@@ -26,54 +24,62 @@
                         this.currentPoint.y = parseFloat(pArr[++i]);
                         this.stream.lineTo(this.currentPoint.x, this.currentPoint.y);
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'H':
                     do {
                         this.currentPoint.x = parseFloat(pArr[++i]);
                         this.stream.lineTo(this.currentPoint.x, 0);
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'V':
                     do {
                         this.currentPoint.y = parseFloat(pArr[++i]);
                         this.stream.lineTo(0, this.currentPoint.y);
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'C':
                     do {
-                        this.stream.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i], this.currentPoint.x = pArr[++i], this.currentPoint.y = pArr[++i]);
+                        this.stream.bezierCurve(pArr[++i], pArr[++i], pArr[++i], pArr[++i],
+                            this.currentPoint.x = pArr[++i], this.currentPoint.y = pArr[++i]);
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'S':
                     do {
-                        this.stream.bezierCurve(pArr[++i], pArr[++i], this.currentPoint.x = pArr[++i], this.currentPoint.y = pArr[++i]);
+                        this.stream.bezierCurve(pArr[++i], pArr[++i],
+                            this.currentPoint.x = pArr[++i], this.currentPoint.y = pArr[++i]);
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'Q':
                     do {
-                        svgReader.utils.quadraticToCubicBezier.call(this, this.currentPoint.x, this.currentPoint.y, pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
+                        svgReader.utils.quadraticToCubicBezier
+                            .call(this, this.currentPoint.x, this.currentPoint.y,
+                                pArr[++i], pArr[++i], pArr[++i], pArr[++i]);
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'T':
                     var newCP;
                     next = parseFloat(pArr[i + 1]);
                     do {
                         if (this.lastCP.x || this.lastCP.y) {
-                            newCP = svgReader.utils.computePointReflection.call(this, this.lastCP, this.currentPoint);
+                            newCP = svgReader.utils.computePointReflection
+                                .call(this, this.lastCP, this.currentPoint);
                         } else {
                             newCP = {};
                             newCP.x = this.currentPoint.x;
                             newCP.y = this.currentPoint.y;
                         }
-                        svgReader.utils.quadraticToCubicBezier.call(this, this.currentPoint.x, this.currentPoint.y, newCP.x, newCP.y, pArr[++i], pArr[++i]);
+                        svgReader.utils.quadraticToCubicBezier
+                            .call(this, this.currentPoint.x, this.currentPoint.y,
+                                newCP.x, newCP.y, pArr[++i], pArr[++i]);
+
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'A':
                     var x1, y1, x2, y2, fa, fs, rx, ry, phi;
@@ -81,24 +87,25 @@
                         rx = parseFloat(pArr[++i]);
                         ry = parseFloat(pArr[++i]);
                         phi = parseFloat(pArr[++i]);
-                        fa = parseInt(pArr[++i]);
-                        fs = parseInt(pArr[++i]);
+                        fa = parseInt(pArr[++i], 10);
+                        fs = parseInt(pArr[++i], 10);
                         x2 = parseFloat(pArr[++i]);
                         y2 = parseFloat(pArr[++i]);
                         x1 = this.currentPoint.x;
                         y1 = this.currentPoint.y;
-
                         this.currentPoint.x = x2;
                         this.currentPoint.y = y2;
                         if (!rx || !ry) {
                             this.stream.lineTo(x2, y2);
                         } else {
-                            var c = svgReader.utils.computeArc.call(this, x1, y1, rx, ry, phi, fa, fs, x2, y2, this);
-                            var arc = new ellipticalArc(c.cx, c.cy, c.rx, c.ry, phi, c.theta, c.theta + c.dTheta, false);
+                            var c = svgReader.utils.computeArc
+                                .call(this, x1, y1, rx, ry, phi, fa, fs, x2, y2, this);
+                            var arc = new ellipticalArc(c.cx, c.cy, c.rx, c.ry,
+                                phi, c.theta, c.theta + c.dTheta, false);
                             arc.buildEllipticalArc(3, 0.01, this);
                         }
                         next = parseFloat(pArr[i + 1]);
-                    } while (next || next === 0)
+                    } while (next || next === 0);
                     break;
                 case 'Z':
                     this.stream.close();
@@ -175,7 +182,8 @@
                         case 'rotate':
                             if (temp.length === 3) {
                                 if (this.textCurrentPoint.x || this.textCurrentPoint.y) {
-                                    this.stream.translate(-this.textCurrentPoint.x, -this.textCurrentPoint.y);
+                                    this.stream.translate(-this.textCurrentPoint.x,
+                                        -this.textCurrentPoint.y);
                                 }
                                 this.stream.translate(temp[1], temp[2]);
                                 this.stream.rotate(utils.degreesToRads(temp[0]));
@@ -192,7 +200,6 @@
                 }
                 break;
             case 'style':
-                
         }
     },
     setCssOptions: function (attrs) {
@@ -206,20 +213,18 @@
             return;
         }
         var cssStyles = item.value.split(';');
-        
-        if (!cssStyles)
+        if (!cssStyles) {
             return;
-        
+        }
         cssStyles = cssStyles.map(function (aItem, index, arr) {
             var splits = aItem.split(':');
-            if (splits.length != 2)
+            if (splits.length != 2) {
                 return { name: 'IgnoreObject' };
-
+            }
             return { name: splits[0].trim(), value: splits[1].trim() };
         });
-        
         for (i = 0; item = cssStyles[i]; i++) {
-            this.setCssOption( item.name.toLowerCase(), item.value);
+            this.setCssOption(item.name.toLowerCase(), item.value);
         }
     },
     setCssOption: function (name, value) {
@@ -228,18 +233,18 @@
         }
         switch (name.toLowerCase()) {
             case 'font-size':
-                this.stream.fontSize(parseInt(value));
+                this.stream.fontSize(parseInt(value, 10));
                 break;
             case 'color':
             case 'fill':
-                this.setGenericOption( 'fill', value);
+                this.setGenericOption('fill', value);
                 break;
         }
     },
     setTextOptions: function (attrs) {
         var i, item;
         for (i = 0; item = attrs[i]; i++) {
-            this.setTextOption( item.name.toLowerCase(), item.value);
+            this.setTextOption(item.name.toLowerCase(), item.value);
             //console.log(item.name + ' = ' + item.value);
         }
     },
@@ -248,7 +253,6 @@
             return;
         }
         var temp, graphicState, textState;
-        
         switch (name.toLowerCase()) {
             //TODO support list coordinates
             case 'x':

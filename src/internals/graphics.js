@@ -1,5 +1,6 @@
 ﻿/**
-*Includes all supported graphic operations. Please see [pageNode.text]{@link pdfJS.pageNode#text} for details.
+*Includes all supported graphic operations. Please see
+[pageNode.text]{@link pdfJS.pageNode#text} for details.
 *@namespace
 *@memberof pdfJS*/
 var graphicOperators = {
@@ -9,7 +10,6 @@ var graphicOperators = {
     *@method
     *@param {int} tx Translate by tx pt in x direction.
     *@param {int} ty Translate by ty pt in y direction.
-    
     */
     translate: function (tx, ty) {
         var args = utils.toPrecision(arguments);
@@ -21,26 +21,23 @@ var graphicOperators = {
 
     },
     /**
-    
     *@inner
     *@method
     *@param {int} sx Scale by tx in x direction.
     *@param {int} sy Scale by ty in y direction.
-    
     */
     scale: function (sx, sy) {
         var args = utils.toPrecision(arguments);
-        if (args[0] == 1 &&  args[1] == 1)
+        if (args[0] == 1 && args[1] == 1) {
             return;
+        }
         this.graphicStateScale(args[0], args[1]);
         this.push(args[0] + ' 0 0 ' + args[1] + ' 0 0 cm');
     },
     /**
-    
     *@inner
     *@method
     *@param {int} theta Rotate by theta.
-    
     */
     rotate: function (theta) {
         var cos = parseFloat(Math.cos(theta).toFixed(2)),
@@ -48,58 +45,50 @@ var graphicOperators = {
         this.push(cos + ' ' + sin + ' ' + -sin + ' ' + cos + ' 0 0 cm');
     },
     /**
-   
    *@inner
    *@method
    *@param {int} alphaX Skew horizontally.
    *@param {int} betaY Skew vertically.
-   
    */
     skew: function (alphaX, betaY) {
-        this.push('1 ' + Math.tan(alphaX).toFixed(2) + ' ' + Math.tan(betaY).toFixed(2) + ' 1 0 0 cm');
+        this.push('1 ' + Math.tan(alphaX).toFixed(2) + ' ' +
+            Math.tan(betaY).toFixed(2) + ' 1 0 0 cm');
     },
     /**
-    
     *@inner
     *@method
     *@param {int} width Set line thickness by lineWidth in pt. Valid Value: Non-negative number.
     A value of zero means the thinnest line a device can print/render;
     therefore setting the value to zero is a device-dependent operation, not recommended'
-    
     */
     lineWidth: function (width) {
         this.push(parseFloat(width).toFixed(2) + ' w');
     },
     /**
-    
     *@inner
     *@method
     *@param {int} capStyle See [lineCapStyle]{@link pdfJS.utils.lineCapStyle} for valid values.
-    
     */
     lineCap: function (capStyle) {
         this.push(capStyle + ' J');
     },
     /**
-    
     *@inner
     *@method
     *@param {int} joinStyle See [lineCapStyle]{@link pdfJS.utils.lineJoinStyle} for valid values.
-    
     */
     lineJoin: function (joinStyle) {
         this.push(joinStyle + ' j');
     },
     /**
-    
     *@inner
     *@method
-    *@param {int} limit When two line segments meet at a sharp angle and mitered joins have been specified
-as the line join style, it is possible for the miter to extend far beyond the
-thickness of the line stroking the path. The miter limit imposes a maximum on
-the ratio of the miter length to the line width. When the limit is
-exceeded, the join is converted from a miter to a bevel.
-    
+    *@param {int} limit When two line segments meet at a sharp angle and mitered
+    joins have been specified as the line join style, it is possible for the 
+    miter to extend far beyond the thickness of the line stroking the path.
+    The miter limit imposes a maximum on the ratio of the miter length to the
+    line width. When the limit is exceeded, the join is converted from a miter
+    to a bevel.
     */
     miterLimit: function (limit) {
         this.push(limit + ' M');
@@ -110,7 +99,6 @@ exceeded, the join is converted from a miter to a bevel.
     *@method
     *@param {int} dashArray Refer to Adobe's PDF Reference v1.3 for more details
     *@param {int} dashPhase Refer to Adobe's PDF Reference v1.3 for more details
-    
     */
     dashPattern: function (dashArray, dashPhase) {
         this.push(dashArray + ' ' + dashPhase + ' d');
@@ -120,7 +108,6 @@ exceeded, the join is converted from a miter to a bevel.
     *@inner
     *@method
     *@param {int} intent See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
-    
     */
     renderingIntent: function (intent) {
         this.push(intent + ' ri');
@@ -129,7 +116,6 @@ exceeded, the join is converted from a miter to a bevel.
     TODO: Implement
    *@inner
    *@method
-   
    */
     strokeAdjustment: function () {
     },
@@ -137,7 +123,6 @@ exceeded, the join is converted from a miter to a bevel.
     *Save the current graphics state on the graphics state stack .
     *@inner
     *@method
-    
     */
     pushState: function () {
         this.push('q');
@@ -145,10 +130,9 @@ exceeded, the join is converted from a miter to a bevel.
     },
     /**
     *Restore the graphics state by removing the most recently saved state from
-the stack and making it the current state .
+    the stack and making it the current state .
     *@inner
     *@method
-    
     */
     popState: function () {
         this.push('Q');
@@ -163,7 +147,6 @@ overrides it; no vestige of the previous m operation remains in the
 path. .
     *@inner
     *@method
-    
     *@param {int} x
     *@param {int} y
     */
@@ -180,7 +163,6 @@ path. .
 (x, y). The new current point is (x, y). .
     *@inner
     *@method
-    
     *@param {int} x
     *@param {int} y
     */
@@ -197,7 +179,6 @@ path. .
 from the current point to the point (x3, y3), using the other pairs of points as the Bézier control points .
     *@inner
     *@method
-    
     *@param {int} x1
     *@param {int} y1
     *@param {int} x2
@@ -207,7 +188,6 @@ from the current point to the point (x3, y3), using the other pairs of points as
     */
     bezierCurve: function (x1, y1, x2, y2, x3, y3) {
         var args = utils.toPrecision(arguments);
-        
         switch (arguments.length) {
             case 4:
                 this.push(args.join(' ') + ' v');
@@ -233,13 +213,11 @@ from the current point to the point (x3, y3), using the other pairs of points as
         q1y = parseFloat(q1y);
         q2x = parseFloat(q2x).toFixed(2);
         q2y = parseFloat(q2y).toFixed(2);
-            
         var xq1, yq1, xq2, yq2;
         xq1 = (q1x * 2 / 3 + q0x / 3).toFixed(2);
         yq1 = (q1y * 2 / 3 + q0y / 3).toFixed(2);
         xq2 = (q1x * 2 / 3 + q2x / 3).toFixed(2);
         yq2 = (q1y * 2 / 3 + q2y / 3).toFixed(2);
-
         this.bezierCurve(xq1, yq1, xq2, yq2, q2x, q2y);
         this.graphicStateTranslate(q2x, q2y);
     },
@@ -262,7 +240,6 @@ current subpath is already closed or the current path is empty, 'close' operatio
 does nothing. .
     *@inner
     *@method
-    
     */
     close: function () {
         this.push('h');
@@ -274,7 +251,6 @@ lower-left corner (x, y) and dimensions width and height in user
 space. .
     *@inner
     *@method
-    
     *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
     */
     paintPath: function (operator) {
@@ -285,7 +261,6 @@ space. .
             this.push('B');
         }
     },
-    
     /*Path Controls END*/
     /**
     *Append a rectangle to the current path as a complete subpath, with
@@ -293,7 +268,6 @@ lower-left corner (x, y) and dimensions width and height in user
 space. .
     *@inner
     *@method
-    
     *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
     */
     strokePath: function () {
@@ -306,7 +280,6 @@ lower-left corner (x, y) and dimensions width and height in user
 space. .
     *@inner
     *@method
-    
     *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
     */
     fillPath: function () {
@@ -319,7 +292,6 @@ lower-left corner (x, y) and dimensions width and height in user
 space. .
    *@inner
    *@method
-   
    *@param {int} [operator] See [renderingIntentOption]{@link pdfJS.utils.renderingIntentOption} for valid values.
    */
     endPath: function () {
@@ -333,7 +305,6 @@ lower-left corner (x, y) and dimensions width and height in user
 space. .
     *@inner
     *@method
-    
     *@param {bool} asterisk if true, then set clipping path using even-odd rule.
     */
     clip: function (asterisk) {
@@ -359,11 +330,11 @@ space. .
     *specify the correct number of color values (e.g DeviceGray requires 1, DeviceRGB requires 2,
     *etc)
      *@inner
-    *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace}
+    required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 
     *@method
-    
     */
     fillColor: function (colorValue1, colorValue2, colorValue3) {
         var args = utils.toPrecision(arguments);
@@ -390,7 +361,8 @@ space. .
 name must be a name object. If the color space is one that can be specified by a
 name and no additional parameters (DeviceGray and DeviceRGB).
     *@inner
-    *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} required value for each specified color space.
+    *@param {int} colorValue1 See [colorSpace]{@link pdfJS.utils.colorSpace} 
+    required value for each specified color space.
     *@param {int} colorValue2 
     *@param {int} colorValue3 
     *@method
@@ -417,7 +389,8 @@ name and no additional parameters (DeviceGray and DeviceRGB).
     },
     /*Color Controls End*/
     /**
-    *Graphic Operation Setter. Please see [graphicOperators]{@link pdfJS.graphicOperators} for available operations and corresponding set of operands.
+    *Graphic Operation Setter. Please see [graphicOperators]{@link pdfJS.graphicOperators}
+    for available operations and corresponding set of operands.
     *@param {pdfJS.pageNode} pageObj Page to add image.
     *@param {int} x Translation in X direction (pt).
     *@param {int} y Translation in Y direction (pt).
@@ -428,10 +401,10 @@ name and no additional parameters (DeviceGray and DeviceRGB).
     *@method
     */
     addImage: function (imgXObj, x, y, w, h) {
-        if (w == 0) {
+        if (w === 0) {
             w = h * imgXObj.width / imgXObj.height;
         }
-        if (h == 0) {
+        if (h === 0) {
             h = w * imgXObj.height / imgXObj.width;
         }
 

@@ -5,7 +5,8 @@
 *@memberof pdfJS
 *@augments pdfJS.obj
 *@param {int} objectNumber Unique number to define this object.
-*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@param {int} generationNumber defining the number of time the
+pdf has been modified (default is 0 when creating).
 */
 var stream = function (objectNumber, generationNumber, document) {
     var self = this;

@@ -5,7 +5,7 @@
     this.operationState = operationStates.pageLevel;
 };
 statesTracker.prototype = {
-    validate: function (operation) {
+    validate: function(operation) {
         if (this.doc.settings.disableValidation) {
             return;
         }
@@ -19,7 +19,8 @@ statesTracker.prototype = {
                 return;
             }
             if (!this.operationState[opt]) {
-                console.error(opt + ' is invalid in this operation state: ' + this.operationState.state + ' at line ' + this.content.length + ' of this content stream');
+                console.error(opt + ' is invalid in this operation state: ' +
+                    this.operationState.state + ' at line ' + this.content.length + ' of this content stream');
             }
         }
     },
@@ -43,7 +44,7 @@ statesTracker.prototype = {
         }
         return { sX: current.sX, sY: current.sY };
     },
-    graphicStateFillColor: function (args) {
+    graphicStateFillColor: function(args) {
         var current = this.getCurrentGraphicState();
         if (typeof args !== 'undefined') {
             current.fillColor = arguments;
@@ -51,26 +52,26 @@ statesTracker.prototype = {
 
         return current.fillColor;
     },
-    graphicStateStrokeColor: function (args) {
+    graphicStateStrokeColor: function(args) {
         var current = this.getCurrentGraphicState();
         if (typeof args !== 'undefined') {
             current.stroke = arguments;
         }
         return current.strokeColor;
     },
-    getCurrentGraphicState: function () {
+    getCurrentGraphicState: function() {
         return this.graphicStack[this.graphicStack.length - 1];
     },
-    pushGraphicState: function () {
+    pushGraphicState: function() {
         this.graphicStack.push(utils.clone(this.getCurrentGraphicState()));
         this.pushTextState();
     },
-    popGraphicState: function () {
+    popGraphicState: function() {
         this.graphicStack.pop();
         this.popTextState();
     },
     //Text States
-    textStateTranslate: function (x, y) {
+    textStateTranslate: function(x, y) {
         var current = this.getCurrentTextState();
         if (typeof x === 'number') {
             current.tCpX += x;
@@ -80,7 +81,7 @@ statesTracker.prototype = {
         }
         return { tCpX: current.tCpX, tCpY: current.tCpY };
     },
-    textStateScale: function (s) {
+    textStateScale: function(s) {
         var current = this.getCurrentTextState();
         if (typeof s === 'number') {
             current.tS *= s;
@@ -88,13 +89,13 @@ statesTracker.prototype = {
 
         return current.tS;
     },
-    getCurrentTextState: function () {
+    getCurrentTextState: function() {
         return this.textStack[this.textStack.length - 1];
     },
-    pushTextState: function () {
+    pushTextState: function() {
         this.textStack.push(utils.clone(this.getCurrentTextState()));
     },
-    popTextState: function () {
+    popTextState: function() {
         this.textStack.pop();
     }
-}
+};

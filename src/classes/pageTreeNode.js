@@ -6,8 +6,10 @@
 *@augments pdfJS.obj
 *@param {pdfJS.pageTreeNode} parent Parent pageTreeNode of this page.
 *@param {int} objectNumber Unique number to define this object.
-*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
-*@param {object} options Define the attributes for pageTree that all children may inherit from.
+*@param {int} generationNumber defining the number of time the pdf 
+has been modified (default is 0 when creating).
+*@param {object} options Define the attributes for pageTree that all
+children may inherit from.
 */
 var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
     var self = this;
@@ -20,12 +22,26 @@ var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
     this.parent = parent;
     /**
         *Children of this page-tree node.
-        *@type array[[pdfJS.pageTreeNode]{@link pdfJS.pageTreeNode} | [pdfJS.pageNode]{@link pdfJS.pageNode}]
+        *@type array[[pdfJS.pageTreeNode]{@link pdfJS.pageTreeNode} | 
+        [pdfJS.pageNode]{@link pdfJS.pageNode}]
         */
     this.kids = [];
     this.options = options;
 };
 
+var walkPageTree = function (pageTree) {
+    var count = 0,
+        i, item;
+
+    for (i = 0; item = pageTree.kids[i]; i++) {
+        if (item instanceof pageNode) {
+            count++;
+        } else {
+            count += walkPageTree(item);
+        }
+    }
+    return count;
+};
 
 pageTreeNode.prototype = Object.create(obj.prototype, {
     out: {
@@ -45,26 +61,13 @@ pageTreeNode.prototype = Object.create(obj.prototype, {
             this.body.push('/Count ' + walkPageTree(this));
 
             if (this.parent) {
-                this.body.push('/Parent ' + this.parent.objectNumber + ' ' + this.parent.generationNumber + ' R');
+                this.body.push('/Parent ' + this.parent.objectNumber +
+                    ' ' + this.parent.generationNumber + ' R');
             }
 
             this.body.push('>>');
-
-            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+            //calling obj super class out method.
+            return obj.prototype.out.apply(this, arguments);
         }
     }
 });
-
-var walkPageTree = function (pageTree) {
-    var count = 0,
-        i, item;
-
-    for (i = 0; item = pageTree.kids[i]; i++) {
-        if (item instanceof pageNode) {
-            count++;
-        } else {
-            count += walkPageTree(item);
-        }
-    }
-    return count;
-};

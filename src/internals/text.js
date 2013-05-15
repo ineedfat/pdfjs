@@ -162,17 +162,18 @@ baseline up and opposite for negative values.
     *Print text
     *@inner
     *@method
-    *@param {array[string]} arr Show one or more text strings, allowing individual glyph positioning. Each element of array can be a string or a
-number. If the element is a string, this operator shows the string. If it is a number,
-the operator adjusts the text position by that amount; that is, it translates
-the text matrix. The number is expressed in thousandths of a unit of text
-space. This amount is subtracted from the current x coordinate in horizontal
-writing mode or from the current y coordinate in vertical writing mode.
-In the default coordinate system, a positive adjustment has the effect of moving
-the next glyph painted either to the left or down by the given amount.
+    *@param {array[string]} arr Show one or more text strings, allowing 
+    individual glyph positioning. Each element of array can be a string or a
+    number. If the element is a string, this operator shows the string. If it is a number,
+    the operator adjusts the text position by that amount; that is, it translates
+    the text matrix. The number is expressed in thousandths of a unit of text
+    space. This amount is subtracted from the current x coordinate in horizontal
+    writing mode or from the current y coordinate in vertical writing mode.
+    In the default coordinate system, a positive adjustment has the effect of moving
+    the next glyph painted either to the left or down by the given amount.
     */
     showArrayText: function (arr) {
-        var i; len, temp;
+        var i, len, temp;
         for (i = 0, len = arr.length; I < len; i++) {
             temp = arr[i];
             if (typeof temp === 'string') {

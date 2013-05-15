@@ -4,11 +4,10 @@
 *@constructor
 *@memberof pdfJS
 *@augments pdfJS.obj
-*@param {doc} document defining the number of time the pdf has been modified (default is 0 when creating).
+*@param {doc} document defining the number of time the pdf
+has been modified (default is 0 when creating).
 */
 var docTemplate = function (document) {
-    var self = this;
-
     this.templateContent = [];
     stream.call(this, 0, 0, document);
 };
@@ -16,7 +15,7 @@ var docTemplate = function (document) {
 docTemplate.prototype = Object.create(stream.prototype, {
     out: {
         value: function (objectNumber, generationNumber, page) {
-            var i, l, replaceRegex, value,
+            var replaceRegex, value,
                     templateString = this.templateContent.join('\n');
 
             this.objectNumber = objectNumber;
@@ -24,7 +23,7 @@ docTemplate.prototype = Object.create(stream.prototype, {
             if (page.data) {
                 for (var name in page.data) {
                     if (page.data.hasOwnProperty(name)) {
-                        replaceRegex = new RegExp('\{\{' + name + '\}\}', 'g');
+                        replaceRegex = new RegExp('{{' + name + '}}', 'g');
                         value = page.data[name];
                         templateString = templateString.replace(replaceRegex, value);
                     }
@@ -32,7 +31,7 @@ docTemplate.prototype = Object.create(stream.prototype, {
             }
             this.content = [templateString];
             //calling stream super class out method.
-            return stream.prototype.out.apply(this, arguments); 
+            return stream.prototype.out.apply(this, arguments);
         }
     },
     push: {

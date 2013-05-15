@@ -32,7 +32,7 @@
         'B*': 'eofillStroke', //even-odd rule stroke
         'b': 'closepathFillStroke',
         'b*': 'closepathEofillStroke', //even-odd rule
-        'n': 'noOp', //not PS
+        'n': 'noOp' //not PS
     },
     clippingPath: {
         'W': 'clip',
@@ -55,13 +55,13 @@
         'Td': 'textPosition', //not PS,
         'TD': 'textPositionLeading', //not PS
         'Tm': 'textMatrix', //not PS 
-        'T*': 'newLine', //not PS    
+        'T*': 'newLine' //not PS    
     },
     textShow: {
         'Tj': 'show',
         'TJ': 'showArrayText', //not PS
         '\'': 'nextlineShowText', //not PS
-        '"': 'wordCharSpaceNextlineShowText', //not PS
+        '"': 'wordCharSpaceNextlineShowText' //not PS
     },
     type3Font: {
         'd0': 'setcharwidth',
@@ -79,7 +79,7 @@
         'RG': 'setrgbcolor', //stroke
         'rg': 'setrgbcolor', //fill
         'K': 'setcmykcolor', //stroke
-        'k': 'setcmykcolor', //fill
+        'k': 'setcmykcolor' //fill
     },
     shadingPattern: {
         'sh': 'shfill'
@@ -103,4 +103,4 @@
         'BX': 'beginCompatibilitySection', //not PS
         'EX': 'endCompatibilitySection' //not PS
     }
-}
+};

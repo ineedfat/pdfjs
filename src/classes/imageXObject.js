@@ -5,7 +5,8 @@
 *@memberof pdfJS
 *@augments pdfJS.stream
 *@param {int} objectNumber Unique number to define this object.
-*@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
+*@param {int} generationNumber defining the number of time the
+pdf has been modified (default is 0 when creating).
 *@param {int} width Width of the image to be rendered on page in pt.
 *@param {int} height Height of the image to be rendered on page in pt.
 *@param {int} [colorSpace=DeviceRGB] Color space of the image.
@@ -13,7 +14,8 @@
 *@param {int} [filter] Filter for decoding the image data.
 *@param {object} [options] Extra options that can be set.
 */
-var imageXObject = function (objectNumber, generationNumber, width, height, colorSpace, bpc, filter, options) {
+var imageXObject = function (objectNumber, generationNumber, width,
+    height, colorSpace, bpc, filter, options) {
     var self = this;
 
     stream.call(this, objectNumber, generationNumber);
@@ -31,7 +33,7 @@ var imageXObject = function (objectNumber, generationNumber, width, height, colo
         *Color space of the image.
         *@Type pdfJS.utils.colorSpace
         */
-    this.colorSpace = colorSpace || utils.deviceRGB
+    this.colorSpace = colorSpace || utils.deviceRGB;
     /**
         *Bits per component
         *@Type int
@@ -72,7 +74,8 @@ imageXObject.prototype = Object.create(stream.prototype, {
             if (this.filter) {
                 this.dictionary['Filter'] = '/' + this.filter;
             }
-            return stream.prototype.out.apply(this, arguments); //calling obj super class out method.
+            //calling obj super class out method.
+            return stream.prototype.out.apply(this, arguments);
         }
     }
 });

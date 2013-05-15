@@ -4,16 +4,20 @@
 
     infoObj.body.push('/Producer (pdfJS ' + PDFJS_VERSION + ')');
     if (settings.documentProperties.title) {
-        infoObj.body.push('/Title (' + utils.sanitize(settings.documentProperties.title) + ')');
+        infoObj.body.push('/Title (' +
+            utils.sanitize(settings.documentProperties.title) + ')');
     }
     if (settings.documentProperties.subject) {
-        infoObj.body.push('/Subject (' + utils.sanitize(settings.documentProperties.subject) + ')');
+        infoObj.body.push('/Subject (' +
+            utils.sanitize(settings.documentProperties.subject) + ')');
     }
     if (settings.documentProperties.author) {
-        infoObj.body.push('/Author (' + utils.sanitize(settings.documentProperties.author) + ')');
+        infoObj.body.push('/Author (' +
+            utils.sanitize(settings.documentProperties.author) + ')');
     }
     if (settings.documentProperties.keywords) {
-        infoObj.body.push('/Keywords (' + utils.sanitize(settings.documentProperties.keywords) + ')');
+        infoObj.body.push('/Keywords (' +
+            utils.sanitize(settings.documentProperties.keywords) + ')');
     }
     if (settings.documentProperties.creator) {
         infoObj.body.push('/Creator (' + utils.sanitize(settings.documentProperties.creator) + ')');

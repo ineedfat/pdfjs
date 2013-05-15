@@ -1,10 +1,9 @@
-﻿var pluginAdapter = function(plugin) {
+﻿var pluginAdapter = function (plugin) {
     var dependencies = [],
-        i, l; 
-
+        i, l;
     //inject dependencies
     for (i = 0, l = plugin.length - 1; i < l; i++) {
-        switch(plugin[i]) {
+        switch (plugin[i]) {
             case 'doc':
                 dependencies.push(doc);
                 break;
@@ -37,6 +36,7 @@
                 break;
             case 'utils':
                 dependencies.push(utils);
+                break;
             case 'enums':
                 dependencies.push(enums);
                 break;
@@ -44,6 +44,5 @@
                 dependencies.push(undefined);
         }
     }
-
     plugin[l].apply(this, dependencies);
-}
+};

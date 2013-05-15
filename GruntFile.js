@@ -1,98 +1,4 @@
 ﻿module.exports = function (grunt) {
-    var stripBanner = function (src, options) {
-
-        if (!options) { options = {}; }
-        var m = [];
-        if (options.line) {
-            // Strip // ... leading banners.
-            m.push('(/{2,}[\\s\\S].*)');
-        }
-        if (options.block) {
-            // Strips all /* ... */ block comment banners.
-            m.push('(\/+\\*+[\\s\\S]*?\\*\\/+)');
-        } else {
-            // Strips only /* ... */ block comment banners, excluding /*! ... */.
-            m.push('(\/+\\*+[^!][\\s\\S]*?\\*\\/+)');
-
-        }
-        var re = new RegExp('\s*(' + m.join('|') + ')\s*', 'g');
-        src = src.replace(re, '');
-        src = src.replace(/\s{2,}(\r|\n|\s){2,}$/gm, '');
-        return src;
-    };
-    grunt.registerMultiTask('concat', 'Concatenate files.', function () {
-        // Merge task-specific and/or target-specific options with these defaults.
-        var options = this.options({
-            separator: grunt.util.linefeed,
-            banner: '',
-            footer: '',
-            stripBanners: false,
-            process: false
-        });
-        // Normalize boolean options that accept options objects.
-        if (typeof options.stripBanners === 'boolean' && options.stripBanners === true) { options.stripBanners = {}; }
-        if (typeof options.process === 'boolean' && options.process === true) { options.process = {}; }
-
-        // Process banner and footer.
-        var banner = grunt.template.process(options.banner);
-        var footer = grunt.template.process(options.footer);
-
-        // Iterate over all src-dest file pairs.
-        this.files.forEach(function (f) {
-            // Concat banner + specified files + footer.
-            var src = banner + f.src.filter(function (filepath) {
-                // Warn on and remove invalid source files (if nonull was set).
-                if (!grunt.file.exists(filepath)) {
-                    grunt.log.warn('Source file "' + filepath + '" not found.');
-                    return false;
-                } else {
-                    return true;
-                }
-            }).map(function (filepath) {
-                // Read file source.
-                var src = grunt.file.read(filepath);
-                // Process files as templates if requested.
-                if (options.process) {
-                    src = grunt.template.process(src, options.process);
-                }
-                // Strip banners if requested.
-                if (options.stripBanners) {
-                    src = stripBanner(src, options.stripBanners);
-                }
-                return src;
-            }).join(grunt.util.normalizelf(options.separator)) + footer;
-
-            // Write the destination file.
-            grunt.file.write(f.dest, src);
-
-            // Print a success message.
-            grunt.log.writeln('File "' + f.dest + '" created.');
-        });
-    });
-
-    grunt.registerMultiTask('createDocViews', 'build doc views', function () {
-        grunt.log.writeln(this.file);
-
-        var data = this.data,
-            path = require('path'),
-            files = grunt.file.expand(this.data.src),
-            dest = grunt.template.process(data.dest),
-            prefix = data.linkedPrefix;
-
-        var regex = new RegExp('(href=")(.*?)(")', 'ig');
-        var headerRegex = new RegExp('((\<\!.*\>)|(\<html.*\>)|(\<.*body\>)|(<(meta|link).*?>)|(<title.*?>.*?</title>)|(<script.*>.*?</script>)|<.*?head>)', 'igm');
-        files.forEach(function (f) {
-            var p = dest + '/' + path.basename(f),
-                contents = grunt.file.read(f);
-
-            contents = contents.replace(regex, '$1' + prefix + '$2$3');
-            contents = contents.replace(headerRegex, '');
-
-
-            grunt.file.write(p, contents);
-            grunt.log.writeln('File "' + p + '" created.');
-        });
-    });
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -115,7 +21,7 @@
           'src/classes/docTemplate.js',
           'src/classes/ellipticalArc.js',
 
-          //PDF core parts
+          //PDF cores
           'src/internals/core.js',
           'src/internals/catalog.js',
           'src/internals/info.js',
@@ -128,9 +34,6 @@
           'src/internals/operationStates.js',
           'src/internals/enums.js',
           
-
-
-
           //plugins 
           'src/internals/addImage.js',
             
@@ -165,6 +68,33 @@
                 options: { stripBanners: { block: false, line: true } },
                 src: ['<%= srcFiles %>'],
                 dest: '<%= pkg.name %>-<%= pkg.version %>.js'
+            }
+        },
+        jshint: {
+            options: {
+                camelcase: true,
+                curly: true,
+                forin: true,
+                immed: true,
+                //indent: 4,
+                latedef: true,
+                noarg: true,
+                noempty: true,
+                quotmark: 'single',
+                //undef: true,
+                //unused: true,
+                trailing: true,
+                maxdepth: 3,
+                maxlen: 120,
+                evil: true,
+                loopfunc: true,
+                boss: true,
+                sub: true
+            },
+            all: {
+                files: {
+                    src: ['<%= srcFiles %>']
+                }
             }
         },
         uglify: {
@@ -205,22 +135,19 @@
     });
 
     
-
+    grunt.loadTasks('gruntTasks');
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    //grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-jsdoc');
     //grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
 
 
     // Default task(s).
-    grunt.registerTask('debug', ['concat:debug']);
-
-    grunt.registerTask('prod', ['concat', 'copy']);
-
-    grunt.registerTask('default', ['concat', 'uglify','copy', 'doc']);
-
+    grunt.registerTask('default', ['jshint', 'concat', 'uglify', 'copy', 'doc']);
+    grunt.registerTask('debug', ['jshint','concat:debug']);
+    grunt.registerTask('prod', ['jshint', 'concat', 'copy']);
     grunt.registerTask('doc', ['clean', 'jsdoc', 'createDocViews']);
 
 };

@@ -18,7 +18,7 @@
     //In-line Image Obj,
     inlineImage: {
         state: 'In-line Image Object',
-        'ID': 'beginInlineImageData', //not PS
+        'ID': 'beginInlineImageData' //not PS
     },
     //Text Object
     text: utils.extend({state: 'Text Object'},
@@ -66,10 +66,9 @@ operationStates.clippingPath.transition = {
 };
 
 operationStates.inlineImage.transition = {
-    'EI': operationStates.pageLevel,
+    'EI': operationStates.pageLevel
 };
 
 operationStates.text.transition = {
     'ET': operationStates.pageLevel
 };
-        

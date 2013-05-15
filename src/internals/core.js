@@ -1,15 +1,16 @@
 ﻿    // Size in pt of various paper formats
     var PDF_VERSION = '1.3';
-    
 /**
     *Initialize new document object.
     *@constructor
     *@memberof pdfJS
     *@Author Trinh Ho (https://github.com/ineedfat/pdfjs)
     *@classdesc Representing a PDF document.
-    *@param {string|array} [format=letter] Paper format name or array containing width and height (e.g [width, height])
+    *@param {string|array} [format=letter] Paper format name or array
+    containing width and height (e.g [width, height])
     *@param {string} [orientation=portrait] Document orientation.
-    *@param {array} [margin=[18,18]] Horizontal and vertical margin in points (e.g [horizontal, vertical])
+    *@param {array} [margin=[18,18]] Horizontal and vertical margin in
+    points (e.g [horizontal, vertical])
 */
     var doc = function (format, orientation, margin, disableValidation) {
         var self = this;
@@ -36,7 +37,7 @@
         *@Type {[fonts]{@link pdfJS.pageNode}}  
         */
         this.currentPage = null;
-        
+
         /**
         *General document settings
         *@property {Object} settings - Document settings
@@ -50,25 +51,28 @@
         */
         this.settings = {
             dimension: enums.paperFormat['letter'],
-            documentProperties: { 'title': '', 'subject': '', 'author': '', 'keywords': '', 'creator': '' },
+            documentProperties: {
+                'title': '', 'subject': '',
+                'author': '', 'keywords': '', 'creator': ''
+            },
             disableValidation: disableValidation
         };
-        
+
         //Determine page dimensions.
         if (typeof format === 'string') {
             self.settings.dimension = enums.paperFormat[format.toLowerCase()].slice();
         } else {
             self.settings.dimension = format.slice().splice(0, 2);
         }
-        
+
         if (orientation.toLowerCase() === 'landscape') {
             var temp = self.settings.dimension[0];
             self.settings.dimension[0] = self.settings.dimension[1];
             self.settings.dimension[1] = temp;
         }
-       
+
         this.resObj = new resources(++this.objectNumber, 0);
-        
+
         /**
         *Root of the Page-Tree
         *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
@@ -78,13 +82,13 @@
                  mediabox: [0, 0, this.settings.dimension[0], this.settings.dimension[1]],
                  resources: this.resObj
              });
-        
+
         /**
        *Current pageTreeNode in context
        *@Type {[pageTreeNode]{@link pdfJS.pageTreeNode}  
        */
         this.currentNode = this.rootNode;
-        
+
         this.infoObj = info(this.settings, this.newObj());
         this.catalogObj = catalog(this.rootNode, this.newObj());
         this.addStandardFonts();
@@ -142,7 +146,15 @@
             this.pageCount++;
             this.currentPage = new pageNode(
                 this.currentNode,
-                options || { mediabox: [0, 0, width || this.settings.dimension[0], height || this.settings.dimension[1]] },
+                options ||
+                    {
+                        mediabox: [
+                            0,
+                            0,
+                            width || this.settings.dimension[0],
+                            height || this.settings.dimension[1]
+                        ]
+                    },
                 ++this.objectNumber,
                 0,
                 [this.newStream()],
@@ -158,12 +170,100 @@
         /**
         *Output PDF document.
         *@memberof pdfJS.doc#
-        *@param {string} type (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
+        *@param {string} type 
+        (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
         *@return {string} PDF data string.
         */
-        output: function(type) {
+        output: function (type) {
+            var buildPageTreeNodes = function (node) {
+                var ret = [node.out()], i, item;
+
+                for (i = 0; item = node.kids[i]; i++) {
+                    if (item instanceof pageTreeNode) {
+                        ret.push(buildPageTreeNodes(item));
+                        continue;
+                    }
+                    ret.push(item.out());
+                }
+                return ret.join('\n');
+            };
+
+            var buildDocument = function (content, catalog, info) {
+                var getOffsets = function (data) {
+                    if (typeof data !== 'string') {
+                        throw 'getOffsets expects a string input';
+                    }
+
+                    var ret = [],
+                        genRegex = /\d+(?=\sobj)/,
+                        objRegex = /^\d+/,
+                        matches, i, match,
+                        searchRegex;
+                    //let's search the string for all object declaration in data. 
+                    matches = data.match(/\d+\s\d+\sobj/gim);
+
+                    for (i = 0; match = matches[i]; i++) {
+                        searchRegex = new RegExp('[^\\d]' + match.replace(/\s+/g, '\\s+'));
+                        ret.push({
+                            objNum: parseInt(objRegex.exec(match), 10),
+                            genNum: parseInt(genRegex.exec(match), 10),
+                            offset: data.search(searchRegex)
+                        });
+                    }
+
+                    return ret;
+                };
+                var i,
+                    contentBuilder = [
+                        '%PDF-' + PDF_VERSION, //header
+                        content
+                    ];
+                var body = contentBuilder.join('\n');
+                var o = body.length;
+                var offsets = getOffsets(body);
+                var objectCount = offsets.length;
+
+                //sorting from low to high object numbers
+                offsets = offsets.sort(function (a, b) {
+                    return a.objNum - b.objNum;
+                });
+
+                // Cross-ref
+                contentBuilder.push('xref');
+                contentBuilder.push('0 ' + (objectCount + 1));
+                contentBuilder.push('0000000000 65535 f ');
+                for (i = 0; i < objectCount; i++) {
+                    //within the document.
+                    contentBuilder.push(utils.padd10(offsets[i].offset) + ' 00000 n ');
+                }
+
+                // Trailer
+                contentBuilder.push('trailer');
+                contentBuilder.push('<<');
+                contentBuilder.push('/Size ' + (objectCount + 1));
+                contentBuilder.push('/Root ' + catalog.objectNumber + ' 0 R');
+                contentBuilder.push('/Info ' + info.objectNumber + ' 0 R');
+                contentBuilder.push('>>');
+                contentBuilder.push('startxref');
+                contentBuilder.push(o);
+
+                contentBuilder.push('%%EOF');
+
+                //console.log(contentBuilder.join('\n'));
+                return contentBuilder.join('\n');
+            };
+
+            var buildObjs = function (objs) {
+                var i, obj,
+                    ret = [];
+                for (i = 0; obj = objs[i]; i++) {
+                    ret.push(obj.out());
+                }
+                return ret.join('\n');
+            };
+
             type = type || 'dataurl';
-        var content = utils.removeEmptyElement([
+            var content = utils.removeEmptyElement([
                 buildPageTreeNodes(this.rootNode),
                 buildObjs(this.resObj.fontObjs),
                 buildObjs(this.resObj.imageXObjects),
@@ -186,7 +286,8 @@
         /**
         *Output PDF document.
         *@memberof pdfJS.doc#
-        *@param {string} type (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
+        *@param {string} type 
+        (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
         *@return {string} PDF data string.
         */
         outputAsync: function(type, callback) {
@@ -229,13 +330,13 @@
         *Add a list of standard fonts to document.
         */
         addStandardFonts: function() {
-            var HELVETICA = "helvetica",
-                TIMES = "times",
-                COURIER = "courier",
-                NORMAL = "normal",
-                BOLD = "bold",
-                ITALIC = "italic",
-                BOLD_ITALIC = "bolditalic",
+            var HELVETICA = 'helvetica',
+                TIMES = 'times',
+                COURIER = 'courier',
+                NORMAL = 'normal',
+                BOLD = 'bold',
+                ITALIC = 'italic',
+                BOLD_ITALIC = 'bolditalic',
                 encoding = 'StandardEncoding',
                 standardFonts = [
                     ['Helvetica', HELVETICA, NORMAL],
@@ -255,7 +356,11 @@
                 ];
 
             for (var i = 0, l = standardFonts.length; i < l; i++) {
-                this.addFont(standardFonts[i][0], standardFonts[i][1], standardFonts[i][2], encoding);
+                this.addFont(
+                    standardFonts[i][0],
+                    standardFonts[i][1],
+                    standardFonts[i][2],
+                    encoding);
             }
             return this;
         },
@@ -277,94 +382,4 @@
                 }
             };
         }
-    };
-
-    var getOffsets = function (data) {
-        if (typeof data !== 'string') {
-            throw 'getOffsets expects a string input';
-        }
-
-        var ret = [],
-            genRegex = /\d+(?=\sobj)/,
-            objRegex = /^\d+/,
-            matches, i, match,
-            searchRegex;
-        //let's search the string for all object declaration in data. 
-        matches = data.match(/\d+\s\d+\sobj/gim);
-
-        for (i = 0; match = matches[i]; i++) {
-            searchRegex = new RegExp('[^\\d]' + match.replace(/\s+/g, '\\s+'));
-            ret.push({
-                objNum: parseInt(objRegex.exec(match)),
-                genNum: parseInt(genRegex.exec(match)),
-                offset: data.search(searchRegex)
-            });
-        }
-
-        return ret;
-    };
-
-    var buildPageTreeNodes = function (node) {
-        var ret = [node.out()], i, item;
-        
-        for (i = 0; item = node.kids[i]; i++) {
-            if (item instanceof pageTreeNode) {
-                ret.push(buildPageTreeNodes(item));
-                continue;
-            }
-            ret.push(item.out());
-        }
-        return ret.join('\n');
-    };
-
-    var buildObjs = function (objs) {
-        var i, obj,
-            ret = [];
-        for (i = 0; obj = objs[i]; i++) {
-            ret.push(obj.out());
-        }
-        return ret.join('\n');
-    };
-
-    var buildDocument = function (content, catalog, info) {
-        var i,
-            contentBuilder = [
-                '%PDF-' + PDF_VERSION, //header
-                content
-            ];
-        
-        var body = contentBuilder.join('\n');
-        var o = body.length;
-        var offsets = getOffsets(body);
-        var objectCount = offsets.length;
-
-        //sorting from low to high object numbers
-        offsets = offsets.sort(function (a, b) {
-            return a.objNum - b.objNum;
-        });
-
-        // Cross-ref
-        contentBuilder.push('xref');
-        contentBuilder.push('0 ' + (objectCount + 1));
-        contentBuilder.push('0000000000 65535 f ');
-        for (i = 0; i < objectCount; i++) {
-            //TODO: take account for free objects just in case user screw up by allocating an object doesn't use it 
-            //within the document.
-            contentBuilder.push(utils.padd10(offsets[i].offset) + ' 00000 n ');
-        }
-        
-        // Trailer
-        contentBuilder.push('trailer');
-        contentBuilder.push('<<');
-        contentBuilder.push('/Size ' + (objectCount + 1));
-        contentBuilder.push('/Root ' + catalog.objectNumber + ' 0 R');
-        contentBuilder.push('/Info ' + info.objectNumber + ' 0 R');
-        contentBuilder.push('>>');
-        contentBuilder.push('startxref');
-        contentBuilder.push(o);
-
-        contentBuilder.push('%%EOF');
-        
-        //console.log(contentBuilder.join('\n'));
-        return contentBuilder.join('\n');
     };

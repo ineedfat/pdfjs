@@ -26,16 +26,17 @@ var utils = {
         return ret;
     },
     getInstanceType: function (o) {
-        if (o === null)
+        if (o === null) {
             return null;
+        }
         var results = (funcNameRegex).exec(o.constructor.toString());
-        return (results && results.length > 1) ? results[1] : "";
+        return (results && results.length > 1) ? results[1] : '';
     },
     colorToRgb: function(name) {
         if (!colorCCanvas) {
             colorCCanvas = document.createElement('canvas');
         }
-        var ctx = colorCCanvas.getContext("2d");
+        var ctx = colorCCanvas.getContext('2d');
         ctx.strokeStyle = name;
         var colorHex = ctx.strokeStyle;
         return {
@@ -59,28 +60,36 @@ var utils = {
     },
     padd2: function (number) {
         var n = (number).toFixed(0);
-        if (number < 10) return '0' + n;
-        else return n;
+        if (number < 10) {
+            return '0' + n;
+        } else {
+            return n;
+        }
     },
     padd10: function (number) {
         var n = (number).toFixed(0);
-        if (n.length < 10) return new Array(11 - n.length).join('0') + n;
-        else return n;
+        if (n.length < 10) {
+            return new Array(11 - n.length).join('0') + n;
+        } else {
+            return n;
+        }
     },
     toPrecision: function (arr, n) {
         if (!(arr instanceof Array)) {
             arr = Array.prototype.slice.call(arr);
         }
-        if (typeof n !== 'number' || n === NaN)
+        if (typeof n !== 'number' || n.isNaN()) {
             n = 2;
+        }
         for (var i = 0, l = arr.length; i < l; i++) {
             arr[i] = parseFloat(parseFloat(arr[i]).toFixed(n));
         }
         return arr;
     },
     clone: function (obj) {
-        if (typeof obj === 'undefined')
+        if (typeof obj === 'undefined') {
             return obj;
+        }
         var type = utils.getInstanceType(obj),
             index, ret, l;
         switch(type) {

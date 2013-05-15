@@ -26,10 +26,12 @@ svgReader.prototype = {
             this.states.currentElementStack.push(temp);
             if (temp) {
                 if (temp.fill) {
-                    this.stream.fillColor.call(this.stream, temp.fill.r, temp.fill.g, temp.fill.b);
+                    this.stream.fillColor
+                        .call(this.stream, temp.fill.r, temp.fill.g, temp.fill.b);
                 }
                 if (temp.stroke) {
-                    this.stream.fillColor.call(this.stream, temp.stroke.r, temp.stroke.g, temp.stroke.b);
+                    this.stream.fillColor
+                        .call(this.stream, temp.stroke.r, temp.stroke.g, temp.stroke.b);
                 }
             }
             opt.call(this, svgElement);
@@ -40,7 +42,7 @@ svgReader.prototype = {
         } else {
             this.processChildNodes( svgElement);
         }
-    
+
     },
     drawSvg: function (svg) {
         if (svg instanceof SVGSVGElement) {
@@ -81,7 +83,7 @@ svgReader.prototype = {
     },
     getCurrentSvgElement: function() {
         return this.states.currentElementStack[this.states.currentElementStack.length - 1] || {};
-    },
+    }
 };
 
 mixin(svgReader, svgParser);
