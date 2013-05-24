@@ -3,8 +3,8 @@
 @namespace
 */
 var pdfJS = {
-    doc: function (format, orientation, margin) {
-        var pdf = new doc(format, orientation, margin);
+    doc: function (format, orientation, margin, disableValidation) {
+        var pdf = new doc(format, orientation, margin, disableValidation);
         return {
             objNum: function() {
                 pdf.objNumber.apply(pdf, arguments);

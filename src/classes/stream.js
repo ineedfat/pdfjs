@@ -8,7 +8,7 @@
 *@param {int} generationNumber defining the number of time the
 pdf has been modified (default is 0 when creating).
 */
-var stream = function (objectNumber, generationNumber, document) {
+function stream (objectNumber, generationNumber, document) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -36,7 +36,7 @@ var stream = function (objectNumber, generationNumber, document) {
 
     this.activeFillCS = undefined;
     this.activeStrokeCS = undefined;
-};
+}
 var printDictionary = function (dict) {
     var ret = [],
         temp;

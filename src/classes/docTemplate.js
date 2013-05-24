@@ -7,10 +7,10 @@
 *@param {doc} document defining the number of time the pdf
 has been modified (default is 0 when creating).
 */
-var docTemplate = function (document) {
+function docTemplate(document) {
     this.templateContent = [];
     stream.call(this, 0, 0, document);
-};
+}
 
 docTemplate.prototype = Object.create(stream.prototype, {
     out: {

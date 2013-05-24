@@ -1,5 +1,5 @@
 ﻿//Create root pageTreeNode before calling catalog.
-var catalog = function (rootNode, catalogObj) {
+function catalog (rootNode, catalogObj) {
     catalogObj.body = [];
     catalogObj.body.push('<<');
 
@@ -12,4 +12,4 @@ var catalog = function (rootNode, catalogObj) {
     catalogObj.body.push('>>');
 
     return catalogObj;
-};
+}

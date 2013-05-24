@@ -228,13 +228,18 @@
             for (var i = 0, strLen = rawData.length; i < strLen; i++) {
                 bufView[i] = rawData.charCodeAt(i);
             }
-            return  new Blob([bufView], { type: 'application/pdf' });
+           
+            var ret = new Blob([bufView], { type: 'application/pdf' });
+
+            delete bufView;
+            return ret;
         };
         doc.prototype.output = function (type, fileName) {
             switch (type.toLowerCase()) {
                 case 'downloadfile':
                     var blob = buildBlob(output.call(this, 'Default'));
                     saveAs(blob, fileName + '.pdf');
+                    delete ret;
                     break;
                 default:
                     return output.call(this, type);

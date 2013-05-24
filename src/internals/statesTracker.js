@@ -1,9 +1,9 @@
-﻿var statesTracker = function () {
+﻿function statesTracker () {
     this.graphicStack = [{ cpX: 0, cpY: 0, sX: 1, sY: 1, fillColor: [], strokeColor: []}];
     //TODO: Support Char Spacing, text length, text leading
     this.textStack = [{ tCpX: 0, tCpY: 0, tSX: 1, tSY: 1 }];
     this.operationState = operationStates.pageLevel;
-};
+}
 statesTracker.prototype = {
     validate: function(operation) {
         if (this.doc.settings.disableValidation) {

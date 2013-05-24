@@ -6,9 +6,7 @@
 *@param {int} objectNumber Unique number to define this object.
 *@param {int} generationNumber defining the number of time the pdf has been modified (default is 0 when creating).
 */
-var obj = function (objectNumber, generationNumber) {
-    var self = this;
-
+function obj (objectNumber, generationNumber) {
     /**
         *Positive integer representing the object number of pdf internal objects.
         *@Type int
@@ -27,7 +25,7 @@ var obj = function (objectNumber, generationNumber) {
         *@default []
         */
     this.body = [];
-};
+}
 obj.prototype = {
     /**
     *Output PDF data string for this obj.
@@ -35,8 +33,7 @@ obj.prototype = {
     *@memberof pdfJS.obj#
     */
     out: function () {
-        var self = this,
-            sb = [];
+        var sb = [];
 
         sb.push(this.objectNumber + ' ' + this.generationNumber + ' obj');
         sb = sb.concat(this.body);

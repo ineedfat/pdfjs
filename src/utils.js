@@ -78,7 +78,7 @@ var utils = {
         if (!(arr instanceof Array)) {
             arr = Array.prototype.slice.call(arr);
         }
-        if (typeof n !== 'number' || n.isNaN()) {
+        if (!n || !n.isNaN || n.isNaN()) {
             n = 2;
         }
         for (var i = 0, l = arr.length; i < l; i++) {
@@ -97,7 +97,7 @@ var utils = {
                 ret = {};
                 for (index in obj) {
                     if (obj.hasOwnProperty(index)) {
-                        ret[index] = utils.clone(obj[index]);
+                        ret[index] = this.clone(obj[index]);
                     }
                 }
                 break;
@@ -105,7 +105,7 @@ var utils = {
                 ret = [];
                 for (index = 0, l = obj.length; index < l; index++)
                 {
-                    ret.push(utils.clone(obj[index]));
+                    ret.push(this.clone(obj[index]));
                 }
                 break;
             default:

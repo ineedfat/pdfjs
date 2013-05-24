@@ -11,7 +11,7 @@
 *@param {array[pdfJS.stream]} contentStreams Array of stream object that populate the page.
 *@param {pdf.doc} document The document that own this page.
 */
-var pageNode = function (parent, pageOptions, objectNumber, generationNumber, contentStreams,
+function pageNode (parent, pageOptions, objectNumber, generationNumber, contentStreams,
     repeatableStreams, templateStreams, document) {
     var self = this;
     obj.call(this, objectNumber, generationNumber);
@@ -48,11 +48,11 @@ var pageNode = function (parent, pageOptions, objectNumber, generationNumber, co
         pageNum: 0,
         pageTotal: function () { return self.doc.pageCount; }
     };
-};
+}
+
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {
-            this.body = [];
             var i, l, item,
                 ret = [];
 
@@ -91,6 +91,7 @@ pageNode.prototype = Object.create(obj.prototype, {
                     ret.push(item.out());
                 }
             }
+            this.body = [];
             return ret.join('\n');
         }
     },

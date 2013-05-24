@@ -11,7 +11,7 @@ has been modified (default is 0 when creating).
 *@param {object} options Define the attributes for pageTree that all
 children may inherit from.
 */
-var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
+function pageTreeNode (parent, objectNumber, generationNumber, options) {
     var self = this;
 
     obj.call(this, objectNumber, generationNumber);
@@ -27,9 +27,9 @@ var pageTreeNode = function (parent, objectNumber, generationNumber, options) {
         */
     this.kids = [];
     this.options = options;
-};
+}
 
-var walkPageTree = function (pageTree) {
+var walkPageTree = function(pageTree) {
     var count = 0,
         i, item;
 

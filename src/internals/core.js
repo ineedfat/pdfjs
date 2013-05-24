@@ -12,7 +12,7 @@
     *@param {array} [margin=[18,18]] Horizontal and vertical margin in
     points (e.g [horizontal, vertical])
 */
-    var doc = function (format, orientation, margin, disableValidation) {
+    function doc (format, orientation, margin, disableValidation) {
         var self = this;
         this.pageCount = 0;
 
@@ -92,7 +92,8 @@
         this.infoObj = info(this.settings, this.newObj());
         this.catalogObj = catalog(this.rootNode, this.newObj());
         this.addStandardFonts();
-    };
+    }
+
     doc.prototype = {
         /**
         *Get/Set the object number of this document.
@@ -174,7 +175,7 @@
         (datauristring | datauriLstring | datauri | dataurl | dataurlnewwindow)
         *@return {string} PDF data string.
         */
-        output: function (type) {
+        output: (function () {
             var buildPageTreeNodes = function (node) {
                 var ret = [node.out()], i, item;
 
@@ -195,19 +196,42 @@
                     }
 
                     var ret = [],
-                        genRegex = /\d+(?=\sobj)/,
+                        //genRegex = /\d+(?=\sobj)/,
                         objRegex = /^\d+/,
-                        matches, i, match,
-                        searchRegex;
+                        matches, i, match;
                     //let's search the string for all object declaration in data. 
                     matches = data.match(/\d+\s\d+\sobj/gim);
 
+                    var currentOffset = 0;
+                    var search = function(m) {
+                        var offset = currentOffset;
+                        var count = 0;
+                        var k = null;
+                        var c = null;
+                        var start = null;
+                        while ((c = data[offset]) && (k = m[count])) {
+                            if (k === c) {
+                                count++;
+                                if (!start) {
+                                    start = offset;
+                                }
+                            } else {
+                                count = 0;
+                                start = null;
+                            }
+                            offset++;
+                        }
+                        if (!k) {
+                            currentOffset = start;
+                            return start;
+                        }
+                        return -1;
+                    };
                     for (i = 0; match = matches[i]; i++) {
-                        searchRegex = new RegExp('[^\\d]' + match.replace(/\s+/g, '\\s+'));
                         ret.push({
                             objNum: parseInt(objRegex.exec(match), 10),
-                            genNum: parseInt(genRegex.exec(match), 10),
-                            offset: data.search(searchRegex)
+                            genNum: 0, //parseInt(genRegex.exec(match), 10),
+                            offset: search(match)
                         });
                     }
 
@@ -262,27 +286,29 @@
                 return ret.join('\n');
             };
 
-            type = type || 'dataurl';
-            var content = utils.removeEmptyElement([
-                buildPageTreeNodes(this.rootNode),
-                buildObjs(this.resObj.fontObjs),
-                buildObjs(this.resObj.imageXObjects),
-                buildObjs(this.repeatableElements),
-                this.resObj.out(),
-                this.infoObj.out(),
-                this.catalogObj.out()
-            ]).join('\n');
+            return function(type) {
+                type = type || 'dataurl';
+                var content = utils.removeEmptyElement([
+                    buildPageTreeNodes(this.rootNode),
+                    buildObjs(this.resObj.fontObjs),
+                    buildObjs(this.resObj.imageXObjects),
+                    buildObjs(this.repeatableElements),
+                    this.resObj.out(),
+                    this.infoObj.out(),
+                    this.catalogObj.out()
+                ]).join('\n');
 
-            var pdf = buildDocument(content, this.catalogObj, this.infoObj);
-            switch (type.toLowerCase()) {
-            case 'dataurl':
-                return 'data:application/pdf;base64,' + btoa(pdf);
-            case 'base64':
+                var pdf = buildDocument(content, this.catalogObj, this.infoObj);
+                switch (type.toLowerCase()) {
+                case 'dataurl':
+                    return 'data:application/pdf;base64,' + btoa(pdf);
+                case 'base64':
                     return btoa(pdf);
-            default:
-                return pdf;
-            }
-        },
+                default:
+                    return pdf;
+                }
+            };
+        })(),
         /**
         *Output PDF document.
         *@memberof pdfJS.doc#

@@ -1,9 +1,10 @@
-﻿var dictionary = function (objectNumber, generationNumber, type, options) {
+﻿function dictionary (objectNumber, generationNumber, type, options) {
     this.type = type;
     this.options = options;
     obj.call(this, objectNumber, generationNumber);
    
-};
+}
+
 dictionary.prototype = Object.create(obj.prototype, {
     out: {
         value: function () {

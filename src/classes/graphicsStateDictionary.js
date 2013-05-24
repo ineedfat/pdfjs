@@ -1,7 +1,7 @@
-﻿var graphicsStateDictionary = function (objectNumber, generationNumber, width, height, colorSpace, bpc, filter, options) {
+﻿function graphicsStateDictionary (objectNumber, generationNumber, width, height, colorSpace, bpc, filter, options) {
 
     dictionary.call(this, objectNumber, generationNumber);
-};
+}
 
 graphicsStateDictionary.prototype = Object.create(stream.prototype, {
     out: {

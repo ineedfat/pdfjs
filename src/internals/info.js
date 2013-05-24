@@ -1,4 +1,4 @@
-﻿var info = function (settings, infoObj) {
+﻿function info (settings, infoObj) {
     infoObj.body = [];
     infoObj.body.push('<<');
 
@@ -39,4 +39,4 @@
 
     return infoObj;
 
-};
+}

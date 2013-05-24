@@ -14,7 +14,7 @@ pdf has been modified (default is 0 when creating).
 *@param {int} [filter] Filter for decoding the image data.
 *@param {object} [options] Extra options that can be set.
 */
-var imageXObject = function (objectNumber, generationNumber, width,
+function imageXObject (objectNumber, generationNumber, width,
     height, colorSpace, bpc, filter, options) {
     var self = this;
 
@@ -58,7 +58,7 @@ var imageXObject = function (objectNumber, generationNumber, width,
         *@Default {}
         */
     this.options = options || {};
-};
+}
 
 
 imageXObject.prototype = Object.create(stream.prototype, {

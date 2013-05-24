@@ -9,15 +9,15 @@
 *@param {int} generationNumber defining the number of time the
 pdf has been modified (default is 0 when creating).
 */
-var font = function (font, objectNumber, generationNumber) {
+function font(fontDescription, objectNumber, generationNumber) {
     var self = this;
     obj.call(this, objectNumber, generationNumber);
     /**
         *Font description object.
         *@Type object
         */
-    this.description = font;
-};
+    this.description = fontDescription;
+}
 
 font.codePages = {
     'WinAnsiEncoding': {
