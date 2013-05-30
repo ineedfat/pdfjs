@@ -50,8 +50,7 @@ var printDictionary = function (dict) {
 
 stream.prototype = Object.create(obj.prototype, {
     out: {
-        value: function () {
-            this.body = [];
+        value: function (buff) {
             var temp = printDictionary(this.dictionary);
             var tempContent = this.content;
 
@@ -60,19 +59,20 @@ stream.prototype = Object.create(obj.prototype, {
                 tempContent.push('Q');
             }
 
-            //Add 4 because of the extra q and Q operator with two '\n' by joining the character.
             this.body.push('<< /Length ' + (tempContent.join('\n').length));
             if (temp) {
                 this.body.push(temp);
             }
             this.body.push('>>');
             this.body.push('stream');
-            //this.body.push('q')
-            this.body = this.body.concat(tempContent);
-            //this.body.push('Q')
+            this.body.push.apply(this.body, tempContent);
             this.body.push('endstream');
 
-            return obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+            var ret = obj.prototype.out.apply(this, arguments); //calling obj super class out method.
+
+            this.body = [];
+
+            return ret;
         }
     },
     /**

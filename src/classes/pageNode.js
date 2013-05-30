@@ -52,15 +52,15 @@ function pageNode (parent, pageOptions, objectNumber, generationNumber, contentS
 
 pageNode.prototype = Object.create(obj.prototype, {
     out: {
-        value: function () {
+        value: function (buff) {
             var i, l, item,
-                ret = [];
+                ret = buff || [];
 
             for (i = 0, l = this.templateStreams.length; i < l; i++) {
                 if (!this.reservedObjectNums[i]) {
                     this.reservedObjectNums[i] = ++this.doc.objectNumber;
                 }
-                ret.push(this.templateStreams[i].out(this.reservedObjectNums[i], 0, this));
+                this.templateStreams[i].out(this.reservedObjectNums[i], 0, this, ret);
             }
             this.body.push('<< /Type /Page');
             this.body.push(pageOptionsConverter(this.pageOptions));
@@ -84,15 +84,15 @@ pageNode.prototype = Object.create(obj.prototype, {
 
             this.body.push('>>');
 
-            ret.push(obj.prototype.out.apply(this, arguments)); //calling obj super class out method.
+            obj.prototype.out.apply(this, arguments); //calling obj super class out method.
 
             if (this.contentStreams.length) {
                 for (i = 0; item = this.contentStreams[i]; i++) {
-                    ret.push(item.out());
+                    item.out(ret);
                 }
             }
             this.body = [];
-            return ret.join('\n');
+            return ret;
         }
     },
     /**

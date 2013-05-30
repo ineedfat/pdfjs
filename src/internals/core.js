@@ -176,17 +176,17 @@
         *@return {string} PDF data string.
         */
         output: (function () {
-            var buildPageTreeNodes = function (node) {
-                var ret = [node.out()], i, item;
-
+            var buildPageTreeNodes = function (node, buff) {
+                var ret = buff || [], i, item;
+                node.out(ret);
                 for (i = 0; item = node.kids[i]; i++) {
                     if (item instanceof pageTreeNode) {
-                        ret.push(buildPageTreeNodes(item));
+                        buildPageTreeNodes(item, ret);
                         continue;
                     }
-                    ret.push(item.out());
+                    item.out(ret);
                 }
-                return ret.join('\n');
+                return ret;
             };
 
             var buildDocument = function (content, catalog, info) {
@@ -273,29 +273,31 @@
 
                 contentBuilder.push('%%EOF');
 
-                //console.log(contentBuilder.join('\n'));
                 return contentBuilder.join('\n');
             };
 
             var buildObjs = function (objs) {
                 var i, obj,
-                    ret = [];
+                    ret =  [];
                 for (i = 0; obj = objs[i]; i++) {
-                    ret.push(obj.out());
+                    obj.out(ret);
                 }
                 return ret.join('\n');
             };
 
             return function(type) {
                 type = type || 'dataurl';
+
+                var pageContent = buildPageTreeNodes(this.rootNode, []);
+
                 var content = utils.removeEmptyElement([
-                    buildPageTreeNodes(this.rootNode),
+                    pageContent.join('\n'),
                     buildObjs(this.resObj.fontObjs),
                     buildObjs(this.resObj.imageXObjects),
                     buildObjs(this.repeatableElements),
-                    this.resObj.out(),
-                    this.infoObj.out(),
-                    this.catalogObj.out()
+                    this.resObj.out().join('\n'),
+                    this.infoObj.out().join('\n'),
+                    this.catalogObj.out().join('\n')
                 ]).join('\n');
 
                 var pdf = buildDocument(content, this.catalogObj, this.infoObj);

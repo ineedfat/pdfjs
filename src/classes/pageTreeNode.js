@@ -45,8 +45,7 @@ var walkPageTree = function(pageTree) {
 
 pageTreeNode.prototype = Object.create(obj.prototype, {
     out: {
-        value: function () {
-            this.body = [];
+        value: function (buff) {
             var i, item;
             this.body.push(
                 '<< /Type /Pages',
@@ -67,7 +66,10 @@ pageTreeNode.prototype = Object.create(obj.prototype, {
 
             this.body.push('>>');
             //calling obj super class out method.
-            return obj.prototype.out.apply(this, arguments);
+            var ret = obj.prototype.out.apply(this, arguments);
+            this.body = [];
+
+            return ret;
         }
     }
 });

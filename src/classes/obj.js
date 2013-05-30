@@ -32,14 +32,14 @@ obj.prototype = {
     *@return {string}
     *@memberof pdfJS.obj#
     */
-    out: function () {
-        var sb = [];
+    out: function (buff) {
+        var sb = buff || [];
 
         sb.push(this.objectNumber + ' ' + this.generationNumber + ' obj');
-        sb = sb.concat(this.body);
+        sb.push.apply(sb, this.body);
         sb.push('endobj');
 
-        return sb.join('\n');
+        return sb;
     },
     body: [],
     objectNumber: 0,

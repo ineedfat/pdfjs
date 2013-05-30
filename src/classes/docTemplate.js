@@ -14,7 +14,7 @@ function docTemplate(document) {
 
 docTemplate.prototype = Object.create(stream.prototype, {
     out: {
-        value: function (objectNumber, generationNumber, page) {
+        value: function (objectNumber, generationNumber, page, buff) {
             var replaceRegex, value,
                     templateString = this.templateContent.join('\n');
 
@@ -31,7 +31,7 @@ docTemplate.prototype = Object.create(stream.prototype, {
             }
             this.content = [templateString];
             //calling stream super class out method.
-            return stream.prototype.out.apply(this, arguments);
+            return stream.prototype.out.call(this, buff);
         }
     },
     push: {
