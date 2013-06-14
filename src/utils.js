@@ -1,8 +1,9 @@
 ﻿var colorCCanvas;
-var funcNameRegex = /function (.{1,})\(/;
+var funcNameRegex = /function\s+(\S{1,})\s*\(/;
 var sanitizeRegex = /((\(|\)|\\))/ig;
 var listParamsRegex = /(\S*)\(((\d|,|;|\.|\-|\s)*)\)/gm;
 var operatorRegex = /(\w{1,3}$)/gm;
+var objectNameRegex = /^\[object (.*)\]$/;
 
 
 var utils = {
@@ -30,7 +31,13 @@ var utils = {
             return null;
         }
         var results = (funcNameRegex).exec(o.constructor.toString());
-        return (results && results.length > 1) ? results[1] : '';
+
+        if (results && results.length > 1) {
+            return results[1];
+        }
+
+        //In cases where we cannot extract function name from the constructor object. (IE)
+        return Object.prototype.toString.call(o).match(objectNameRegex)[1];
     },
     colorToRgb: function(name) {
         if (!colorCCanvas) {

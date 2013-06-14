@@ -5,7 +5,7 @@ plugin.highcharts = ['stream', 'utils', function (stream, utils) {
         var div = document.createElement("div");
         div.style.height = (height) + 'px';
         div.style.width = (width) + 'px';
-        div.style.opacity = 0;
+        //div.style.opacity = 0;
         div.setAttribute('id', 'cloneHighchart');
         
         var options = utils.clone(highchart.options);
@@ -17,7 +17,9 @@ plugin.highcharts = ['stream', 'utils', function (stream, utils) {
         /*We need to temporary inject this into the DOM
         otherwise highchats may not render the chart correctly.*/
         document.body.appendChild(div);
-        return new Highcharts.Chart(options);
+        var chart = new Highcharts.Chart(options);
+
+        return chart;
     };
     var computeChartDimension = function(highchart, width, height) {
         var chargSvg = highchart.container.childNodes[0],
@@ -72,8 +74,8 @@ plugin.highcharts = ['stream', 'utils', function (stream, utils) {
             reader.drawSvg(chartSvg);
             this.popState();
 
-            newChart.destroy();
-            document.body.removeChild(document.getElementById('cloneHighchart'));
+            //newChart.destroy();
+            //document.body.removeChild(document.getElementById('cloneHighchart'));
 
             return { width: scaleX * svgWidth, height: scaleY * svgHeight };
         };
